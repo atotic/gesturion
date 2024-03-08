@@ -1,0 +1,29 @@
+{
+  "name": "js-gestures",
+  "version": "0",
+  "description": "Javascript gesture library",
+  "main": "gestureManager.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atotic/js-gestures.git"
+  },
+  "keywords": [
+    "gestures"
+  ],
+  "author": "atotic@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atotic/js-gestures/issues"
+  },
+  "homepage": "https://github.com/atotic/js-gestures#README.md",
+  "scripts": {
+    "localhost": "'./node_modules/.bin/http-server' --port 8082 -c-1",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "md": "npx mdlive"
+  },
+  "devDependencies": {
+    "jsdoc": "^4.x",
+    "markdown-live": "^1.x",
+    "http-server": "^14.1.1"
+  }
+}

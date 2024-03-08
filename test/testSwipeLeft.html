@@ -1,0 +1,47 @@
+<!doctype html>
+<script type="module" src="../src/gestureManager.js"></script>
+<script type="module" src="../src/gestures/swipeLeft.js"></script>
+<script src="testUtils.js"></script>
+<style>
+  gesture-logger {
+    font-family:monospace;
+    font-size: 10px;
+  }
+  gesture-logger[data-gesture-state=idle] {
+    background-color:#ffeaea;
+  }
+  gesture-logger[data-gesture-state=waiting] {
+    background-color:#fbff4e;
+  }
+  gesture-logger[data-gesture-state=active] {
+    background-color:#bdebd3;
+  }
+  </style>
+<h1>SwipeLeft test</h1>
+<div id="t1" style="border:1px solid black;width:300px;height:200px;">
+  &lt;--- Swipe left
+</div>
+<div id="t2" style="border:1px solid black;width:300px;height:200px;">
+  <gesture-logger></gesture-logger>
+  I am just a test.
+</div>
+
+<script type="module">
+  import SwipeLeft from "../src/gestures/swipeLeft.js";
+  import GestureManager from "../src/gestureManager.js";
+
+  function test1() {
+    let el = document.querySelector("#t1");
+    let g = new SwipeLeft(el, {callbacks: loggerOptions});
+    GestureManager.addGesture(el, g);
+  }
+
+  function test2() {
+    let el = document.querySelector("#t2");
+    let logger = el.querySelector("gesture-logger");
+    let g = new SwipeLeft(el, {callbacks: logger.gestureOptions});
+    GestureManager.addGesture(el, g);
+  } 
+
+  test2();
+</script>
