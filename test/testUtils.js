@@ -20,8 +20,7 @@ var loggerOptions = {
 };
 
 /**
- * GestureLogger 
- * 
+ * GestureLogger - custom element that 
  */
 class GestureLogger extends HTMLElement {
 
@@ -91,5 +90,5 @@ gesture-logger[data-gesture-state=waiting] {
 gesture-logger[data-gesture-state=active] {
   background-color:#bdebd3;
 }`;
-document.querySelector("head").append(style);
+document.querySelector("head").prepend(style);
 

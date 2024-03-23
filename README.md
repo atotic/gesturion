@@ -7,18 +7,25 @@ gesture recognition library
 - multiple gestures can be recognized at the same time
 - users can add new gesture types
 - a11y: gestures should be accessible
+  - Something like this, but for the web: https://developer.android.com/guide/topics/ui/accessibility/principles#accessibility-actions
+
 - library is a module
 - tests
 - bundlers should strip out unused gestures (rollup, webpack)
 
+- Technical considerations
+  - memory should not be leaked if users do not unregister gesture
+  - disabling text selection: 
+
 ## TODO
+
+- Prevent text dragging during swipeLeft. 
 - make some nice looking gestures!
-  
+  https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
 - test framework
-  - qunit: hammer.js uses it
+  - qunit: hammer.js uses it. Need a test runner for qunit that does Chrome/FF/Safari
   - https://bestofjs.org/projects?tags=test&sort=monthly-downloads
-  - https://testing-library.com/docs/
-  - Mocha - it("is rspec weird english names style tests, no go")
+- investigate stop gesture propagation
 
 ### Initial API
 Gesture library
@@ -157,6 +164,8 @@ Why not just use hammer.js:
 
 
 ## DONE
+Mar-22 Callbacks should be flat part of options
+Mar-22 gesture-logger custom element for testing
 Mar-22 1st gesture implementation: swipeLeft
 Mar-22 Initial gesture API
          use jsdoc to document public API and interesting types

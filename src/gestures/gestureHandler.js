@@ -32,31 +32,30 @@ export default class GestureHandler {
   // Never change this value directly, always request state change from GestureManager
   myState = '';
   #element; // Element, default gesture target
-  callbacks = { // First argument to every callback is gesture handler.
+
+  options = { // First argument to every callback is gesture handler.
     idleStart: null,  // idle state begins. f(handler)
     waitStart: null,  // wait state begins  f(handler, event)
     activeStart: null,// active state begins f(handler, event)
     moved: null, // move happened f(handler, event, gestureHandlerState)
     completed: null,  // gesture has been completed, usually at the end of active state
     cancelled: null,  // gesture has been cancelled
+    disableSelection: true, // most gestures do not want selection to happen
   };
 
   /**
    * @arg {Element} element - default gesture target
    * @arg {Object} options - GestureHandler options 
-   * @arg {Object} options.callbacks - GestureHandler lifecycle callbacks
    * */
   constructor(element, options) {
     this.#element = element;
-    if (options && options.callbacks) {
-      this.callbacks = {
-        idleStart: options.callbacks.idleStart,
-        waitStart: options.callbacks.waitStart,
-        activeStart: options.callbacks.activeStart,
-        moved: options.callbacks.moved,
-        completed: options.callbacks.completed,
-        cancelled: options.callbacks.cancelled,
-      }
+    if (options) {
+      this.options.idleStart = options.idleStart;
+      this.options.waitStart = options.waitStart;
+      this.options.activeStart = options.activeStart;
+      this.options.moved = options.moved;
+      this.options.completed = options.completed;
+      this.options.cancelled = options.cancelled;
     }
   }
 
@@ -104,24 +103,24 @@ export default class GestureHandler {
     this.myState = newState;
     switch (this.myState) {
       case 'idle':
-        if (this.callbacks.idleStart)
-          this.callbacks.idleStart(this);
+        if (this.options.idleStart)
+          this.options.idleStart(this);
         break;
       case 'waiting':
-        if (this.callbacks.waitStartPartial) {
-          this.callbacks.waitStartPartial();
-          delete this.callbacks.waitStartPartial;
+        if (this.options.waitStartPartial) {
+          this.options.waitStartPartial();
+          delete this.options.waitStartPartial;
         } else {
-          if (this.callbacks.waitStart)
+          if (this.options.waitStart)
             console.warn("GestureHandler did not create waitStartPartial");
         }
         break;
       case 'active':
-        if (this.callbacks.activeStartPartial) {
-          this.callbacks.activeStartPartial();
-          delete this.callbacks.activeStartPartial;
+        if (this.options.activeStartPartial) {
+          this.options.activeStartPartial();
+          delete this.options.activeStartPartial;
         } else {
-          if (this.callbacks.activeStart)
+          if (this.options.activeStart)
             console.warn("GestureHandler did not create activeStartPartial");
         }
         break;
@@ -151,9 +150,9 @@ export default class GestureHandler {
   makePartialCallback(name, ...args) {
     if (['activeStart', 'waitStart'].indexOf(name) == -1) 
       console.warn("Bad name argument to makePartialCallback ", name);
-    if (this.callbacks[name]) {
-      let fn = this.callbacks[name];
-      this.callbacks[name + "Partial"] = () => {
+    if (this.options[name]) {
+      let fn = this.options[name];
+      this.options[name + "Partial"] = () => {
         return fn(...args);
       }
     }

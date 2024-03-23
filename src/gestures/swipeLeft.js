@@ -8,7 +8,7 @@ import GestureHandler from "./gestureHandler.js"
 export default class SwipeLeft extends GestureHandler {
   #myEventSpecs = new Map([
     ['idle', ['pointerdown']],
-    ['waiting', ['pointermove', 'pointerleave', 'pointercancel']],
+    ['waiting', ['pointermove', 'pointerleave', 'pointercancel', 'pointerup']],
     ['active', ['pointermove', 'pointerleave', 'pointercancel', 'pointerup']]
   ]);
 
@@ -50,17 +50,17 @@ export default class SwipeLeft extends GestureHandler {
   handleWaitEvent(ev) {
     if (ev.type == 'pointermove') {
       let delta = this.pageStart.x - ev.pageX;
-      if (this.callbacks.moved)
-        this.callbacks.moved( this, ev,this.getState(), delta);
+      if (this.options.moved)
+        this.options.moved( this, ev,this.getState(), delta);
       if (delta > this.threshold) {
         this.makePartialCallback("activeStart", this, ev);
         return 'active';
       }
       return;
     }
-    if (ev.type == 'pointerleave' || ev.type == 'pointercancel') {
-      if (this.callbacks.cancelled)
-        this.callbacks.cancelled(this, ev);
+    if (ev.type == 'pointerleave' || ev.type == 'pointercancel' || ev.type == 'pointerup') {
+      if (this.options.cancelled)
+        this.options.cancelled(this, ev);
       return "idle";
     }
     console.warn("Unexpected wait event", ev.type);
@@ -68,18 +68,18 @@ export default class SwipeLeft extends GestureHandler {
 
   handleActiveEvent(ev) {
     if (ev.type == 'pointerup') {
-      if (this.callbacks.completed)
-        this.callbacks.completed(this, ev);
+      if (this.options.completed)
+        this.options.completed(this, ev);
       return "idle";
     }
     if (ev.type == 'pointermove') {
-      if (this.callbacks.moved) 
-        this.callbacks.moved(this, ev, this.getState(), this.pageStart.x - ev.pageX);
+      if (this.options.moved) 
+        this.options.moved(this, ev, this.getState(), this.pageStart.x - ev.pageX);
       return;
     }
     if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {
-      if (this.callbacks.cancelled)
-        this.callbacks.cancelled(this, ev);
+      if (this.options.cancelled)
+        this.options.cancelled(this, ev);
       return "idle";
     }
     console.warn("unexpected active event", ev.type);

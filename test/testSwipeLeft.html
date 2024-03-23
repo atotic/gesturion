@@ -16,32 +16,167 @@
   gesture-logger[data-gesture-state=active] {
     background-color:#bdebd3;
   }
+  :root {
+    --light-gray-text: #999;
+  }
+  .messageContainer {
+    position:relative;
+    width: 300px;
+    border:1px solid green;
+    font-family: sans-serif;
+    overflow:hidden;
+  }
+  .messageContainer .message {
+
+  }
+  .message {
+    line-height: 1.2em;
+    padding: 8px;
+  }
+  .message .line1 {
+    display:flex;
+  }
+  .line1 .sender {
+    font-weight: bold;
+    flex-grow: 1;
+  }
+  .line1 .datetime {
+    color: var(--light-gray-text);
+    flex-grow:1;
+    text-align:right;
+  }
+  .message .line2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .message .line3 {
+    color: var(--light-gray-text);
+    height: 2.4em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .swipeLeftMenuContainer {
+    display:flex;
+    position:absolute;
+    right: 0;
+    top:0;
+    height: 100%;
+    width:200px;
+  }
+  .swipeHorizontalMenuItem {
+    flex-grow: 1;
+    flex-basis: 4em;
+    flex-shrink: 1;
+    min-width: 0;
+    color: white;
+    overflow:hidden;
+  }
+  .swipeHorizontalMenuItem .title {
+    display:flex;
+    width:4em;
+    /* border: 1px solid black; */
+    position:relative;  /* vertical centering */
+    top:50%;
+    transform: translateY(-50%);
+    justify-content:center; /* horizontal centering */
+  }
   </style>
 <h1>SwipeLeft test</h1>
-<div id="t1" style="border:1px solid black;width:300px;height:200px;">
+<!-- <div id="t1" style="border:1px solid black;width:300px;height:200px;">
   &lt;--- Swipe left
 </div>
 <div id="t2" style="border:1px solid black;width:300px;height:200px;">
   <gesture-logger></gesture-logger>
   I am just a test.
+</div> -->
+<div id="t3">
+  <div class="messageContainer">
+    <div class="message">
+      <div class="line1">
+        <div class="sender">Ian Kilpatrick (via X)</div>
+        <div class="datetime">Yesterday</div>
+      </div>
+      <div class="line2">
+        Visit a world of entertainment with KQED such as three body problem
+      </div>
+      <div class="line3">
+        Explore new places, periods and experiences with KQED passport. Members can stream new episodes of Call the Midwife 30 days before they are on TV.
+      </div>
+    </div><!-- message -->
+  </div><!-- messgeContainer -->
 </div>
 
 <script type="module">
   import SwipeLeft from "../src/gestures/swipeLeft.js";
   import GestureManager from "../src/gestureManager.js";
 
+  function createMessageSwipeLeftMenu() {
+    let menuItems = [
+    {title: "More…", color: "#c8c7ce"},
+    {title: "Flag", color: "#ff9503"},
+    {title: "Trash", color: "#ff3a2e"}
+    ];
+    let menu = document.createElement("div");
+    menu.classList.add("swipeLeftMenuContainer");
+    for (let i of menuItems) {
+      let m = document.createElement('div');
+      m.classList.add("swipeHorizontalMenuItem");
+      let title = document.createElement("div");
+      title.classList.add("title");
+      title.innerText = i.title;
+      m.append(title);
+      m.style.backgroundColor = i.color;
+      menu.append(m);
+    }
+    return menu;
+  }
   function test1() {
     let el = document.querySelector("#t1");
-    let g = new SwipeLeft(el, {callbacks: loggerOptions});
+    let g = new SwipeLeft(el, {loggerOptions});
     GestureManager.addGesture(el, g);
   }
 
   function test2() {
     let el = document.querySelector("#t2");
     let logger = el.querySelector("gesture-logger");
-    let g = new SwipeLeft(el, {callbacks: logger.gestureOptions});
+    let g = new SwipeLeft(el, logger.gestureOptions);
     GestureManager.addGesture(el, g);
-  } 
+  }
 
-  test2();
+  function test3() {
+    let el = document.querySelector("#t3");
+    let mc = el.querySelector(".messageContainer");
+    let swipeLeftFeedback = {
+      activeStart: (gesture, ev) => {
+        swipeLeftFeedback.leftMenu = createMessageSwipeLeftMenu();
+        mc.append(swipeLeftFeedback.leftMenu);
+        swipeLeftFeedback.maxWidth = parseInt(window.getComputedStyle(swipeLeftFeedback.leftMenu).width);
+        swipeLeftFeedback.leftMenu.style.width = "0";
+
+      },
+      moved: (gesture, ev, state, delta) => {
+        if (gesture.getState() != 'active')
+          return;
+        if (swipeLeftFeedback.leftMenu) {
+          let newWidth = Math.max(0, Math.min(delta, swipeLeftFeedback.maxWidth));
+          console.log(newWidth);
+          swipeLeftFeedback.leftMenu.style.width = `${newWidth}px`;
+        }
+      },
+      completed: (gesture, ev) => {
+        swipeLeftFeedback.leftMenu.remove();
+        swipeLeftFeedback.leftMenu = undefined;
+      },
+      cancelled: (gesture, ev) => {
+        if (swipeLeftFeedback.leftMenu)
+        swipeLeftFeedback.leftMenu.remove();
+        swipeLeftFeedback.leftMenu = undefined;
+      }
+    }
+    let g = new SwipeLeft(mc, swipeLeftFeedback);
+    GestureManager.addGesture(mc, g);
+  }
+  test3();
+
 </script>
