@@ -3,21 +3,12 @@
 <script type="module" src="../src/gestures/swipeLeft.js"></script>
 <script src="testUtils.js"></script>
 <style>
-  gesture-logger {
-    font-family:monospace;
-    font-size: 10px;
-  }
-  gesture-logger[data-gesture-state=idle] {
-    background-color:#ffeaea;
-  }
-  gesture-logger[data-gesture-state=waiting] {
-    background-color:#fbff4e;
-  }
-  gesture-logger[data-gesture-state=active] {
-    background-color:#bdebd3;
-  }
   :root {
     --light-gray-text: #999;
+  }
+  body {
+    min-height: 100vh;
+    border: 4px solid #EEE;
   }
   .messageContainer {
     position:relative;

@@ -1,6 +1,10 @@
 # js-gestures
 gesture recognition library
 ## TODO
+- swipeLeft
+
+- start wrinting basic documentation for gesture users, gesture authors
+
 - make some nice looking gestures!
   https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
 - test framework
@@ -8,7 +12,14 @@ gesture recognition library
   - https://bestofjs.org/projects?tags=test&sort=monthly-downloads
 - investigate stop gesture propagation
 
-
+## Documentation
+### Gesture authors
+  EventSpecs:
+    it is common to listen to events on document.body.
+    eventSpec supports this as a shortcut where:
+      eventSpec.element: 'body' will automatically substitute document.body for body.
+        
+    eventSpec{ eventType: *, element: 'body'} is treated as:
 ## Design
 
 - gestures are registered like event listeners

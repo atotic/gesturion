@@ -8,9 +8,20 @@ import GestureHandler from "./gestureHandler.js"
 export default class SwipeLeft extends GestureHandler {
   #myEventSpecs = new Map([
     ['idle', ['pointerdown']],
-    ['waiting', ['pointermove', 'pointerleave', 'pointercancel', 'pointerup']],
-    ['active', ['pointermove', 'pointerleave', 'pointercancel', 'pointerup']]
-  ]);
+    ['waiting', [
+      { eventType: 'pointermove', element: 'body' },
+      { eventType: 'pointerleave', element: 'body' },
+      { eventType: 'pointercancel', element: 'body' },
+      { eventType: 'pointerup', element: 'body' }
+      ]
+    ],
+    ['active', [
+      { eventType: 'pointermove', element: 'body' },
+      { eventType: 'pointerleave', element: 'body' },
+      { eventType: 'pointercancel', element: 'body' },
+      { eventType: 'pointerup', element: 'body' }
+      ]
+    ]]);
 
   threshold = 3; // travel at least this much before activation
   pageStart = { x: -1, y: -1}

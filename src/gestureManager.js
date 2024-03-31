@@ -107,6 +107,11 @@ Implementation:
   #canonicalEventSpec(eventSpec, gesture) {
     if ((typeof eventSpec) == 'string')
       eventSpec = { eventType: eventSpec, element: gesture.element()};
+    if ((typeof eventSpec.element) === 'string') {
+      // Special case: treat 'body' as document.body becuase it is so common.
+      if (eventSpec.element == 'body')
+        eventSpec.element = document.body;
+    }
     if (!eventSpec.eventType || !eventSpec.element)
       throw "Bad eventSpec " + eventSpec.eventType + " " + eventSpec.element;
     return eventSpec;

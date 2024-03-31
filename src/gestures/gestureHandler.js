@@ -14,7 +14,7 @@ export default class GestureHandler {
   /**
    * @typedef {Object} EventSpecVerbose - Listen for an event on element
    * @property {String} eventType - event name
-   * @property {Element} element - element to attach listener to
+   * @property {Element|string} element - element to attach listener to. Can use string 'body' if body.
    */
   /**
    * @typedef {EventSpecVerbose|string} EventSpec - String value is a shorthand for EventSpecVerbose where value is event name, and element is implied current element
