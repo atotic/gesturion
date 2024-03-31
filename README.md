@@ -1,5 +1,13 @@
 # js-gestures
 gesture recognition library
+## TODO
+- make some nice looking gestures!
+  https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
+- test framework
+  - qunit: hammer.js uses it. Need a test runner for qunit that does Chrome/FF/Safari
+  - https://bestofjs.org/projects?tags=test&sort=monthly-downloads
+- investigate stop gesture propagation
+
 
 ## Design
 
@@ -15,17 +23,12 @@ gesture recognition library
 
 - Technical considerations
   - memory should not be leaked if users do not unregister gesture
+  - handle element being deleted mid-gesture
+    - will no longer receive events
   - disabling text selection: 
 
-## TODO
-
-- Prevent text dragging during swipeLeft. 
-- make some nice looking gestures!
-  https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
-- test framework
-  - qunit: hammer.js uses it. Need a test runner for qunit that does Chrome/FF/Safari
-  - https://bestofjs.org/projects?tags=test&sort=monthly-downloads
-- investigate stop gesture propagation
+## Tests needed:
+ - textSelectionEnabled
 
 ### Initial API
 Gesture library

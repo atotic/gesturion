@@ -74,7 +74,7 @@ class GestureLogger extends HTMLElement {
 }
 customElements.define("gesture-logger", GestureLogger);
 let style = document.createElement("style");
-style.setAttribute("id", "gesture-logger-style");
+style.setAttribute("id", "able-gesture-testUtils.js");
 style.innerText = `
 gesture-logger {
   font-family:monospace;

@@ -9,6 +9,7 @@ function log(...args) {
     console.log(...args);
 }
 
+
 /**
  GestureManager - main gesture handling API
 
@@ -174,6 +175,23 @@ Implementation:
     for (let spec of gesture.eventSpecs(newState)) {
       this.#addGestureListener(spec, gesture);
     }
+    this.#setTextSelection(newState == 'active' ? 
+        gesture.textSelectionEnabled() : true);
+  }
+
+  // Utility routine to prevent text selection
+  #setTextSelection(enabled) {
+    // TODO
+    // Bug: if we stop tracking a gesture in active state,
+    //   selection might be stuck being disabled, bad UX.
+    // Fix: heartbeat that reenables selection if no active gestures
+    //   need testcase for this.
+    console.log("setTextSelection", enabled);
+    if (enabled) {
+      document.body.classList.remove('ableGestureSelectNone');
+    } else {
+      document.body.classList.add('ableGestureSelectNone');
+    }
   }
 
   // handles events intented for gesture handlers
@@ -203,6 +221,18 @@ Implementation:
 }
 
 export default new GestureManager();
+
+// Import our styles into main document
+{
+  let style = document.createElement("style");
+  style.setAttribute("id", "able-gesture-gestureManager.js");
+  style.innerText = `
+    .ableGestureSelectNone {
+      user-select: none;
+    }
+  `;
+  document.querySelector("head").prepend(style);  
+}
 
 // export default const singleton = new GestureManagerClass();
 /*

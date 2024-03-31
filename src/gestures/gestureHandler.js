@@ -40,7 +40,7 @@ export default class GestureHandler {
     moved: null, // move happened f(handler, event, gestureHandlerState)
     completed: null,  // gesture has been completed, usually at the end of active state
     cancelled: null,  // gesture has been cancelled
-    disableSelection: true, // most gestures do not want selection to happen
+    textSelectionEnabled: false, // should text selection be disabled during gesture?
   };
 
   /**
@@ -56,6 +56,8 @@ export default class GestureHandler {
       this.options.moved = options.moved;
       this.options.completed = options.completed;
       this.options.cancelled = options.cancelled;
+      if ('textSelectionEnabled' in options)
+        this.options.textSelectionEnabled = options.textSelectionEnabled;
     }
   }
 
@@ -64,6 +66,7 @@ export default class GestureHandler {
   /** @returns string */
   name() { return ""; }
 
+  textSelectionEnabled() { return this.options.textSelectionEnabled};
   /**
    * Process gesture events. 
    * If you do not override this method, you need to implement handle(Idle|Wait|Active)Event
