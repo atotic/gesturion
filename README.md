@@ -1,8 +1,21 @@
 # js-gestures
 gesture recognition library
 ## TODO
-- swipeLeft
-
+- swipeLeftFeedback
+  - completed
+    - if open > 50% (or 100px?) leave menu fully open
+    - if open < 50% close menu
+  - if another gesture started, cancel any other gesture feedbacks?
+  - if gesture was already open, and same gestures started on the same element, reuse old feedback.
+    - we might need some kind of gestureFeedback manager too?
+    swipeLeft.js
+    feedback library: do not name after gestures, name after feedback types?
+  - cleaning uo feedback items?
+    - cleanup of gesture feedback artifact
+      - feedback always has a method called "clear" that cleans up all artifacts.
+    - not strictly part of gesture handling
+  - animation 
+  - icons with [font awesome](https://docs.fontawesome.com/web/setup/packages/)
 - start wrinting basic documentation for gesture users, gesture authors
 
 - make some nice looking gestures!
@@ -27,6 +40,8 @@ gesture recognition library
 - users can add new gesture types
 - a11y: gestures should be accessible
   - Something like this, but for the web: https://developer.android.com/guide/topics/ui/accessibility/principles#accessibility-actions
+  - a11y front end developer, maybe talk to her
+    https://www.ellyloel.com/blog/front-end-development-s-identity-crisis/
 
 - library is a module
 - tests
@@ -176,6 +191,9 @@ pointerdown on drag source:
 Why not just use hammer.js:
 - not a fan of the API, demos. I am a fan of gesture composability
 
+## Related work
+[Svelte gestures](https://github.com/Rezi/svelte-gestures)
+  Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
 Mar-22 Callbacks should be flat part of options
