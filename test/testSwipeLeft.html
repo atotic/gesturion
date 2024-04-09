@@ -17,9 +17,7 @@
     font-family: sans-serif;
     overflow:hidden;
   }
-  .messageContainer .message {
 
-  }
   .message {
     line-height: 1.2em;
     padding: 8px;
@@ -57,7 +55,7 @@
   }
   .swipeHorizontalMenuItem {
     flex-grow: 1;
-    flex-basis: 4em;
+    flex-basis: 3.5em;
     flex-shrink: 1;
     min-width: 0;
     color: white;
@@ -71,6 +69,9 @@
     top:50%;
     transform: translateY(-50%);
     justify-content:center; /* horizontal centering */
+  }
+  .swipeLeftPositionRelative {
+    position:relative !important;
   }
   </style>
 <h1>SwipeLeft test</h1>
@@ -153,6 +154,9 @@
           delete swipeLeftFeedback.leftMenu;
         } 
       },
+      messageDiv: () => {
+        return mc.querySelector(".message");
+      },
       activeStart: (gesture, ev) => {
         swipeLeftFeedback.clear();
         swipeLeftFeedback.leftMenu = createMessageSwipeLeftMenu(swipeLeftFeedback);
@@ -160,26 +164,42 @@
         swipeLeftFeedback.maxWidth = parseInt(window.getComputedStyle(swipeLeftFeedback.leftMenu).width);
         swipeLeftFeedback.leftMenu.style.width = "0";
       },
+      animateMenuToWidth: (finalWidth, duration=300) => {
+        let animOptions = {
+          duration: duration,
+          easing: 'ease-out'
+        };
+        let menuAnimation =  swipeLeftFeedback.leftMenu.animate(
+          [
+            {width: `${swipeLeftFeedback.leftMenu.offsetWidth}px`},
+            {width: `${finalWidth}px`}
+          ], animOptions);
+        menuAnimation.finished.then( _ => {
+          if (swipeLeftFeedback.leftMenu)
+            swipeLeftFeedback.leftMenu.style.width = `${finalWidth}px`;
+        });
+        let message = swipeLeftFeedback.messageDiv();
+        if (message) {
+          message.classList.add("swipeLeftPositionRelative");
+          message.animate(
+            [ 
+              { left: `${message.offsetLeft}px`},
+              { left: `-${finalWidth}px`}
+            ], animOptions).finished.then( _ => {
+              message.style.left = `-${finalWidth}px`;
+            });
+        } else {
+          console.warn("no message");
+        }
+        return menuAnimation;
+      },
       moved: (gesture, ev, state, delta) => {
         if (gesture.getState() != 'active')
           return;
         if (swipeLeftFeedback.leftMenu) {
           let newWidth = Math.max(0, Math.min(delta, swipeLeftFeedback.maxWidth));
-          console.log(newWidth);
-          swipeLeftFeedback.leftMenu.style.width = `${newWidth}px`;
+          swipeLeftFeedback.animateMenuToWidth(newWidth, 0);
         }
-      },
-      animateMenuToWidth: (finalWidth, duration=300) => {
-        return swipeLeftFeedback.leftMenu.animate(
-          [
-            {width: `${swipeLeftFeedback.leftMenu.offsetWidth}px`},
-            {width: `${finalWidth}px`}
-          ], 
-          {
-            duration: duration,
-            easing: 'ease-out'
-          }
-        );
       },
       completed: (gesture, ev) => {
         if (swipeLeftFeedback.leftMenu.offsetWidth < swipeLeftFeedback.maxWidth / 2) {
@@ -190,18 +210,15 @@
             });
         } else {
           // if width > 50%, grow menu to full size
-          swipeLeftFeedback.animateMenuToWidth(swipeLeftFeedback.maxWidth)
-            .finished.then(_ => {
-              swipeLeftFeedback.leftMenu.style.width = `${swipeLeftFeedback.maxWidth}px`;
-            })
+          swipeLeftFeedback.animateMenuToWidth(swipeLeftFeedback.maxWidth);
         }
       },
       cancelled: (gesture, ev) => {
         if (swipeLeftFeedback.leftMenu) {
           swipeLeftFeedback.animateMenuToWidth(0)
-          .finished.then( _ => {
-            swipeLeftFeedback.clear();
-          })
+            .finished.then( _ => {
+              swipeLeftFeedback.clear();
+            })
         }
       }
     }

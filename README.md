@@ -2,9 +2,6 @@
 gesture recognition library
 ## TODO
 - swipeLeftFeedback
-  - completed
-    - if open > 50% (or 100px?) leave menu fully open
-    - if open < 50% close menu
   - if another gesture started, cancel any other gesture feedbacks?
   - if gesture was already open, and same gestures started on the same element, reuse old feedback.
     - we might need some kind of gestureFeedback manager too?
@@ -14,6 +11,7 @@ gesture recognition library
     - cleanup of gesture feedback artifact
       - feedback always has a method called "clear" that cleans up all artifacts.
     - not strictly part of gesture handling
+  
   - animation 
   - icons with [font awesome](https://docs.fontawesome.com/web/setup/packages/)
 - start wrinting basic documentation for gesture users, gesture authors
@@ -64,8 +62,6 @@ Gesture library
   2. Gesture developer
     - gesture developer never calls addEventListener to handle events on their own.
       if they did, the library could not coordinate multiple simultaneous gestures 
-
-$8qHxSK2OMfhdOsmI0R&
 
 What does gesture library do?
 1. Translates events to gestures. 
@@ -196,6 +192,12 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-3 SwipeLeft: add clear method for feedbacks
+Apr-3 SwipeLeft: animate all movement, animate message body too
+Apr-3 SwipeLeft: show over 50%, hide under 50%
+Mar-30 SwipeLeft animations
+Mar-30 SwipeLeft listen on body
+Mar-30 GestureManager: disable text selection (user-select on body)
 Mar-22 Callbacks should be flat part of options
 Mar-22 gesture-logger custom element for testing
 Mar-22 1st gesture implementation: swipeLeft
