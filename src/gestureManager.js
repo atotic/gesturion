@@ -137,9 +137,12 @@ Implementation:
     if (allGestureHandlers.has(eventSpec.eventType)) {
       handlerList = allGestureHandlers.get(eventSpec.eventType);
     } else {
+      // First handler, start listening for events
       handlerList = [];
       allGestureHandlers.set(eventSpec.eventType, handlerList);
-      // First handler, start listening for events
+      // Prevent scrolling      
+      // if (eventSpec.eventType == 'pointermove')
+      //   eventSpec.element.addEventListener('touchmove',  ev => ev.preventDefault());
       eventSpec.element.addEventListener(eventSpec.eventType, this.boundHandleGHEvent);
     }
     handlerList.push(gesture);
@@ -191,7 +194,7 @@ Implementation:
     //   selection might be stuck being disabled, bad UX.
     // Fix: heartbeat that reenables selection if no active gestures
     //   need testcase for this.
-    console.log("setTextSelection", enabled);
+    // console.log("setTextSelection", enabled);
     if (enabled) {
       document.body.classList.remove('ableGestureSelectNone');
     } else {

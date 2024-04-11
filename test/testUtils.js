@@ -1,33 +1,53 @@
-var loggerOptions = {
-  idleStart: (gesture) => {
+// Event logger logs effect callbacks
+class TestEventLogger {
+  forwardTo;  // forward callbacks to this effect
+  constructor(forwardTo) {
+    this.forwardTo = forwardTo;
+  }
+  idleStart(gesture)  {
     console.log("idleStart", gesture.name());
-  },
-  waitStart: (gesture, ev) => {
+    if (this.forwardTo)
+      this.forwardTo.idleStart(gesture);
+  }
+  waitStart (gesture, ev) {
     console.log("waitStart", gesture.name(), ev.type);
-  },
-  activeStart: (gesture, ev) => {
+    if (this.forwardTo)
+      this.forwardTo.waitStart(gesture, ev);
+  }
+  activeStart (gesture, ev) {
     console.log("activeStart", gesture.name(), ev.type);
-  },
-  moved: (gesture, ev, state, delta) => {
+    if (this.forwardTo)
+      this.forwardTo.activeStart(gesture, ev);
+  }
+  moved(gesture, ev, state, delta) {
     console.log("moved", gesture.name(), ev.type, state, delta);
-  },
-  completed: (gesture, ev) => {
+    if (this.forwardTo)
+      this.forwardTo.moved(gesture, ev, state, delta);
+  }
+  completed(gesture, ev) {
     console.log("completed", gesture.name(), ev.type);
-  },
-  cancelled: (gesture, ev) => {
+    if (this.forwardTo)
+      this.forwardTo.completed(gesture, ev);
+  }
+  cancelled(gesture, ev) {
     console.log("cancelled", gesture.name(), ev.type);
+    if (this.forwardTo)
+      this.forwardTo.cancelled(gesture, ev);
+  }
+  clear() {
+    console.error("clear is now part of the callback API?")
   }
 };
 
 /**
- * GestureLogger - custom element that 
+ * GestureLogger - custom element that displays/logs effect callbacks
  */
 class GestureLogger extends HTMLElement {
 
   connectedCallback() {
     this.innerText = "GestureLogger";
     let me = this;
-    this.gestureOptions = {
+    this.gestureEffect = {
       idleStart: (gesture) => {
         console.log("idleStart", gesture.name());
         me.setAttribute("data-gesture-state", "idle");
@@ -68,7 +88,8 @@ class GestureLogger extends HTMLElement {
         me.innerHTML = `
         <span>cancelled</span>
         <span>${gesture.name()}</span>`;
-      }
+      },
+      clear: () => {}
     }
   }
 }

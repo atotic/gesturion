@@ -1,15 +1,11 @@
 /**
  * GestureHandler
  * 
- * GestureManager uses GestureHandlers to work with gestures.
- * If you are defining your own GestureHandler, you can use
- * GestureHandler as a superclass for your gesture.
- * Or you can use it as a template.
+ * GestureManager expects all gestures to implement GestureHandler API.
+ * Subclass this class if you are defining your own gesture.
  */
-/**
- * GestureHandler interface
- * Works with GestureManager to implement gestures.
- */
+import GestureEffect from "../effects/gestureEffect.js";
+
 export default class GestureHandler {
   /**
    * @typedef {Object} EventSpecVerbose - Listen for an event on element
@@ -34,12 +30,7 @@ export default class GestureHandler {
   #element; // Element, default gesture target
 
   options = { // First argument to every callback is gesture handler.
-    idleStart: null,  // idle state begins. f(handler)
-    waitStart: null,  // wait state begins  f(handler, event)
-    activeStart: null,// active state begins f(handler, event)
-    moved: null, // move happened f(handler, event, gestureHandlerState)
-    completed: null,  // gesture has been completed, usually at the end of active state
-    cancelled: null,  // gesture has been cancelled
+    effects: new GestureEffect(),
     textSelectionEnabled: false, // should text selection be disabled during gesture?
   };
 
@@ -50,12 +41,8 @@ export default class GestureHandler {
   constructor(element, options) {
     this.#element = element;
     if (options) {
-      this.options.idleStart = options.idleStart;
-      this.options.waitStart = options.waitStart;
-      this.options.activeStart = options.activeStart;
-      this.options.moved = options.moved;
-      this.options.completed = options.completed;
-      this.options.cancelled = options.cancelled;
+      if ('effects' in options)
+        this.options.effects = options.effects;
       if ('textSelectionEnabled' in options)
         this.options.textSelectionEnabled = options.textSelectionEnabled;
     }
@@ -106,15 +93,14 @@ export default class GestureHandler {
     this.myState = newState;
     switch (this.myState) {
       case 'idle':
-        if (this.options.idleStart)
-          this.options.idleStart(this);
+        this.options.effects.idleStart(this);
         break;
       case 'waiting':
         if (this.options.waitStartPartial) {
           this.options.waitStartPartial();
           delete this.options.waitStartPartial;
         } else {
-          if (this.options.waitStart)
+          if (this.options.effects.waitStart)
             console.warn("GestureHandler did not create waitStartPartial");
         }
         break;
@@ -123,7 +109,7 @@ export default class GestureHandler {
           this.options.activeStartPartial();
           delete this.options.activeStartPartial;
         } else {
-          if (this.options.activeStart)
+          if (this.options.effects.activeStart)
             console.warn("GestureHandler did not create activeStartPartial");
         }
         break;
@@ -153,8 +139,8 @@ export default class GestureHandler {
   makePartialCallback(name, ...args) {
     if (['activeStart', 'waitStart'].indexOf(name) == -1) 
       console.warn("Bad name argument to makePartialCallback ", name);
-    if (this.options[name]) {
-      let fn = this.options[name];
+    if (this.options.effects[name]) {
+      let fn = this.options.effects[name].bind(this.options.effects);
       this.options[name + "Partial"] = () => {
         return fn(...args);
       }
