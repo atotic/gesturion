@@ -1,5 +1,5 @@
 // Event logger logs effect callbacks
-class TestEventLogger {
+class LoggerEffect {
   forwardTo;  // forward callbacks to this effect
   constructor(forwardTo) {
     this.forwardTo = forwardTo;

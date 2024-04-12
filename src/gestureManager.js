@@ -140,9 +140,8 @@ Implementation:
       // First handler, start listening for events
       handlerList = [];
       allGestureHandlers.set(eventSpec.eventType, handlerList);
-      // Prevent scrolling      
-      // if (eventSpec.eventType == 'pointermove')
-      //   eventSpec.element.addEventListener('touchmove',  ev => ev.preventDefault());
+      if (gesture.preventDefaultScroll(eventSpec.eventType))
+        this.#preventScrolling(true, eventSpec.element);
       eventSpec.element.addEventListener(eventSpec.eventType, this.boundHandleGHEvent);
     }
     handlerList.push(gesture);
@@ -161,10 +160,16 @@ Implementation:
       if (handlerList.length == 0) {
         // No more gestures listening.
         allGestureHandlers.delete(eventSpec.eventType);
+        // TODO: this only really works with a single gesture
+        // multiple gestures could be interacting with scrolling.
+        // what we really want is to preventScroll after examining entire gesture set
+        if (gesture.preventDefaultScroll(eventSpec.eventType))
+          this.#preventScrolling(false, eventSpec.element);
         eventSpec.element.removeEventListener(eventSpec.eventType, this.boundHandleGHEvent);
       }
     }
   }
+
   #removeAllEventSpecs(gesture) {
     for (let eventSpec of gesture.allEventSpecs())
       this.#removeGestureListener(eventSpec, gesture);
@@ -183,22 +188,49 @@ Implementation:
     for (let spec of gesture.eventSpecs(newState)) {
       this.#addGestureListener(spec, gesture);
     }
-    this.#setTextSelection(newState == 'active' ? 
-        gesture.textSelectionEnabled() : true);
+    this.#preventTextSelection(newState == 'active' ? 
+        gesture.preventTextSelection() : false);
   }
 
-  // Utility routine to prevent text selection
-  #setTextSelection(enabled) {
+  // Gestures often prevent text selection during gesture
+  // Implemented by setting user-select:none on <BODY>
+  #preventTextSelection(prevent) {
     // TODO
     // Bug: if we stop tracking a gesture in active state,
     //   selection might be stuck being disabled, bad UX.
+    // This can happen if element stops being tracked in the middle of the gesture.
+    // For example, if element is deleted from DOM.
     // Fix: heartbeat that reenables selection if no active gestures
     //   need testcase for this.
-    // console.log("setTextSelection", enabled);
-    if (enabled) {
-      document.body.classList.remove('ableGestureSelectNone');
-    } else {
+    // console.log("preventTextSelection", prevent);
+    if (prevent) 
       document.body.classList.add('ableGestureSelectNone');
+    else
+      document.body.classList.remove('ableGestureSelectNone');
+  }
+
+  #preventScrolling(prevent, element) {
+    // setPointerCapture does not seem to prevent default scroll on iOS
+    // 
+    // eventSpec.element.setPointerCapture(event.pointerId);
+    if (prevent) {
+      if (this.preventScrollingListener)
+        return;
+      this.preventScrollingListener = {
+        element: element,
+        callback: ev => {
+          console.log("preventing touchMove")
+          ev.preventDefault()
+        }
+      };
+      element.addEventListener('touchmove', this.preventScrollingListener.callback,  
+        { passive: false });
+    } else {
+      if (!this.preventScrollingListener)
+        return;
+      this.preventScrollingListener.element.removeEventListener('touchmove', this.preventScrollingListener.callback,  
+        { passive: false })
+      delete this.preventScrollingListener;
     }
   }
 

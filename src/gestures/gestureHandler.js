@@ -31,7 +31,8 @@ export default class GestureHandler {
 
   options = { // First argument to every callback is gesture handler.
     effects: new GestureEffect(),
-    textSelectionEnabled: false, // should text selection be disabled during gesture?
+    preventTextSelection: true, // should disable text selection when gesture is active?
+    preventScrollOnMove: true, // shold disable default scroll on pointer move?
   };
 
   /**
@@ -43,17 +44,24 @@ export default class GestureHandler {
     if (options) {
       if ('effects' in options)
         this.options.effects = options.effects;
-      if ('textSelectionEnabled' in options)
-        this.options.textSelectionEnabled = options.textSelectionEnabled;
+      if ('preventTextSelection' in options)
+        this.options.preventTextSelection = options.preventTextSelection;
+      if ('preventScrollOnMove' in options)
+        this.options.preventScrollOnMove = options.preventScrollOnMove;
     }
   }
 
-  /* OVERRIDES START - override following methods in your subclasses */
+  /* OVERRIDES START - you can override following methods in your subclasses */
 
   /** @returns string */
   name() { return ""; }
 
-  textSelectionEnabled() { return this.options.textSelectionEnabled};
+  preventTextSelection() { return this.options.preventTextSelection};
+
+  preventDefaultScroll(eventType) {
+    return eventType == 'pointermove' && this.options.preventScrollOnMove;
+  }
+
   /**
    * Process gesture events. 
    * If you do not override this method, you need to implement handle(Idle|Wait|Active)Event

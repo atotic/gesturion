@@ -137,7 +137,7 @@
   }
   function test1() {
     let el = document.querySelector("#t1");
-    let g = new SwipeLeft(el, new TestEventLogger());
+    let g = new SwipeLeft(el, new LoggerEffect());
     GestureManager.addGesture(el, g);
   }
 
@@ -229,7 +229,7 @@
         } 
       },
     }
-    let g = new SwipeLeft(mc, {effects: new TestEventLogger(swipeLeftFeedback)});
+    let g = new SwipeLeft(mc, {effects: new LoggerEffect(swipeLeftFeedback)});
     GestureManager.addGesture(mc, g);
   }
 
