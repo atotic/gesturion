@@ -1,12 +1,24 @@
 # js-gestures
 gesture recognition library
 ## TODO
-- swipeLeftFeedback
-  - if another gesture started, cancel any other gesture feedbacks?
-  - if gesture was already open, and same gestures started on the same element, reuse old feedback.
-    - we might need some kind of gestureFeedback manager too?
-    swipeLeft.js
-    feedback library: do not name after gestures, name after feedback types?
+- Where to store classes?
+  inside gestureManage styles
+- GestureManager
+  - handling gestures nested inside DOM (stopPropagation, but for DOM?)
+- GestureHandler
+- GestureEffect
+  - effects cleanup (removal from DOM)
+    - internal to effect: when button is pressed, need to reference effect for cleanup
+    - external
+      - another gesture starts
+      - click on body
+- SwipeLeft
+- SwipeLeftMenuEffect
+  - extract "createButtonMenu" from test case
+  - extract menu effect out of the test case
+  - default button: expands to cover the entire area, fires on full swipe
+  - only default button mode
+
   - cleaning uo feedback items?
     - cleanup of gesture feedback artifact
       - feedback always has a method called "clear" that cleans up all artifacts.
@@ -192,6 +204,11 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-16 making progress in separating out button menus, effects
+Apr-16 styles needed will be dynamically added by every component with appendStyleRule
+Apr-12 preventScrollOnMove gestureHandler option
+Apr-11 gestureEffect initial API
+Apr-9 SwipeLeft: animateMenuToWidth
 Apr-3 SwipeLeft: add clear method for feedbacks
 Apr-3 SwipeLeft: animate all movement, animate message body too
 Apr-3 SwipeLeft: show over 50%, hide under 50%

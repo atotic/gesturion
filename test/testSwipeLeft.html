@@ -56,7 +56,6 @@
     right: 0;
     top:0;
     height: 100%;
-    width:200px;
   }
   .swipeHorizontalMenuItem {
     flex-grow: 1;
@@ -69,7 +68,6 @@
   .swipeHorizontalMenuItem .title {
     display:flex;
     width:4em;
-    /* border: 1px solid black; */
     position:relative;  /* vertical centering */
     top:50%;
     transform: translateY(-50%);
@@ -110,21 +108,29 @@
 <script type="module">
   import SwipeLeft from "../src/gestures/swipeLeft.js";
   import GestureManager from "../src/gestureManager.js";
+  import SwipeLeftButtonMenuEffect from "../src/effects/swipeLeftButtonMenu.js";
 
-  function createMessageSwipeLeftMenu(feedback) {
-    let menuItems = [
-    {title: "More…", color: "#c8c7ce"},
-    {title: "Flag", color: "#ff9503"},
-    {title: "Trash", color: "#ff3a2e"}
-    ];
+  /**
+   * Creates a menu used for swiping left.
+   * @arg {Object} options - 
+   * @param {Object[]} options.items - button descriptions
+   * @param {string} options.items[].title - button title
+   * @param {string} options.items[].color - button color
+   * @param {string} options.containerClass  - CSS class to assign to menu container
+   * @param {string} options.itemClass - CSS class to assign to button
+   * @returns menu element
+   */
+  function createButtonMenu(effect, container, options) {
     let menu = document.createElement("div");
-    menu.classList.add("swipeLeftMenuContainer");
-    for (let i of menuItems) {
+    let defaultContainerClass = "swipeLeftMenuContainer";
+    let defaultItemClass = "swipeHorizontalMenuItem";
+    menu.classList.add(options.containerClass || defaultContainerClass);
+    for (let i of options.items || [{title: "Specify menuItemOptions.items", color: "red"}]) {
       let m = document.createElement('div');
       m.classList.add("swipeHorizontalMenuItem");
       m.addEventListener("click", ev => {
         console.log("Item clicked", i.title);
-        feedback.clear();
+        effect.clear();
       });
       let title = document.createElement("div");
       title.classList.add("title");
@@ -135,6 +141,7 @@
     }
     return menu;
   }
+
   function test1() {
     let el = document.querySelector("#t1");
     let g = new SwipeLeft(el, new LoggerEffect());
@@ -148,91 +155,27 @@
     GestureManager.addGesture(el, g);
   }
 
-  function test3() {
+  function test5() {
     let el = document.querySelector("#t3");
     let mc = el.querySelector(".messageContainer");
-    let swipeLeftFeedback = {
-      animateMenuToWidth: (finalWidth, duration=300) => {
-        let animOptions = {
-          duration: duration,
-          easing: 'ease-out'
-        };
-        let menuAnimation =  swipeLeftFeedback.leftMenu.animate(
-          [
-            {width: `${swipeLeftFeedback.leftMenu.offsetWidth}px`},
-            {width: `${finalWidth}px`}
-          ], animOptions);
-        menuAnimation.finished.then( _ => {
-          if (swipeLeftFeedback.leftMenu)
-            swipeLeftFeedback.leftMenu.style.width = `${finalWidth}px`;
-        });
-        let message = swipeLeftFeedback.messageDiv();
-        if (message) {
-          message.classList.add("swipeLeftPositionRelative");
-          message.animate(
-            [ 
-              { left: `${message.offsetLeft}px`},
-              { left: `-${finalWidth}px`}
-            ], animOptions).finished.then( _ => {
-              message.style.left = `-${finalWidth}px`;
-            });
-        } else {
-          console.warn("no message");
-        }
-        return menuAnimation;
-      },
-      messageDiv: () => {
-        return mc.querySelector(".message");
-      },
-      idleStart: () => {},
-      waitStart: () => {},
-      activeStart: (gesture, ev) => {
-        swipeLeftFeedback.clear();
-        swipeLeftFeedback.leftMenu = createMessageSwipeLeftMenu(swipeLeftFeedback);
-        mc.append(swipeLeftFeedback.leftMenu);
-        swipeLeftFeedback.maxWidth = parseInt(window.getComputedStyle(swipeLeftFeedback.leftMenu).width);
-        swipeLeftFeedback.leftMenu.style.width = "0";
-      },
-      moved: (gesture, ev, state, delta) => {
-        if (gesture.getState() != 'active')
-          return;
-        if (swipeLeftFeedback.leftMenu) {
-          let newWidth = Math.max(0, Math.min(delta, swipeLeftFeedback.maxWidth));
-          swipeLeftFeedback.animateMenuToWidth(newWidth, 0);
-        }
-      },
-      completed: (gesture, ev) => {
-        if (swipeLeftFeedback.leftMenu.offsetWidth < swipeLeftFeedback.maxWidth / 2) {
-          // If width < 50% remove menu
-          swipeLeftFeedback.animateMenuToWidth(0)
-            .finished.then( _ => {
-              swipeLeftFeedback.clear();
-            });
-        } else {
-          // if width > 50%, grow menu to full size
-          swipeLeftFeedback.animateMenuToWidth(swipeLeftFeedback.maxWidth);
-        }
-      },
-      cancelled: (gesture, ev) => {
-        if (swipeLeftFeedback.leftMenu) {
-          swipeLeftFeedback.animateMenuToWidth(0)
-            .finished.then( _ => {
-              swipeLeftFeedback.clear();
-            })
-        }
-      },
-      clear: () => {
-        // Should there be an option to animate?
-        if (swipeLeftFeedback.leftMenu) {
-          swipeLeftFeedback.leftMenu.remove();
-          delete swipeLeftFeedback.leftMenu;
-        } 
-      },
-    }
-    let g = new SwipeLeft(mc, {effects: new LoggerEffect(swipeLeftFeedback)});
+
+    let swipeLeftOptions = {
+      container: mc,
+      contentSelector: ".message",
+      menuBuilder: createButtonMenu,
+      menuBuilderOptions: {
+        items: [
+          {title: "More…", color: "#c8c7ce"},
+          {title: "Flag", color: "#ff9503"},
+          {title: "Trash", color: "#ff3a2e"}
+        ]
+      }
+    };
+    let g = new SwipeLeft(mc, {effects: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
     GestureManager.addGesture(mc, g);
   }
 
-  test3();
+  test5();
+  // test3();
 
 </script>

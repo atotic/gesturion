@@ -1,3 +1,4 @@
+import appendStyleRule from "./gestureStyles.js";
 
 let debug = 1;
 function warn(...args) {
@@ -19,6 +20,8 @@ function log(...args) {
   
   */
 const GMSym = Symbol("GestureManagerSymbol");
+
+let SelectNoneCSSClass = "ableGestureSelectNone";
 
 class GestureManager {
   /* Implementation notes:
@@ -204,9 +207,9 @@ Implementation:
     //   need testcase for this.
     // console.log("preventTextSelection", prevent);
     if (prevent) 
-      document.body.classList.add('ableGestureSelectNone');
+      document.body.classList.add(SelectNoneCSSClass);
     else
-      document.body.classList.remove('ableGestureSelectNone');
+      document.body.classList.remove(SelectNoneCSSClass);
   }
 
   #preventScrolling(prevent, element) {
@@ -262,19 +265,9 @@ Implementation:
 
 export default new GestureManager();
 
-// Import our styles into main document
-{
-  let style = document.createElement("style");
-  style.setAttribute("id", "able-gesture-gestureManager.js");
-  style.innerText = `
-    .ableGestureSelectNone {
-      user-select: none;
-    }
-  `;
-  document.querySelector("head").prepend(style);  
-}
+// style for preventTextSelection
+appendStyleRule(`.${SelectNoneCSSClass}`, "{user-select: none;}");
 
-// export default const singleton = new GestureManagerClass();
 /*
 Implementation:
 1. memory leaks: ignore for now, implementation is complex as is!
