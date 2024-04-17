@@ -22,7 +22,6 @@
     font-family: sans-serif;
     overflow:hidden;
   }
-
   .message {
     line-height: 1.2em;
     padding: 8px;
@@ -50,32 +49,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .swipeLeftMenuContainer {
-    display:flex;
-    position:absolute;
-    right: 0;
-    top:0;
-    height: 100%;
-  }
-  .swipeHorizontalMenuItem {
-    flex-grow: 1;
-    flex-basis: 3.5em;
-    flex-shrink: 1;
-    min-width: 0;
-    color: white;
-    overflow:hidden;
-  }
-  .swipeHorizontalMenuItem .title {
-    display:flex;
-    width:4em;
-    position:relative;  /* vertical centering */
-    top:50%;
-    transform: translateY(-50%);
-    justify-content:center; /* horizontal centering */
-  }
-  .swipeLeftPositionRelative {
-    position:relative !important;
-  }
   </style>
 <h1>SwipeLeft test</h1>
 <!-- <div id="t1" style="border:1px solid black;width:300px;height:200px;">
@@ -101,59 +74,12 @@
     </div><!-- message -->
   </div><!-- messgeContainer -->
 </div>
-<div id="t4" style="border:1px solid red">
-  Animation tester
-</div>
 
 <script type="module">
   import SwipeLeft from "../src/gestures/swipeLeft.js";
   import GestureManager from "../src/gestureManager.js";
-  import SwipeLeftButtonMenuEffect from "../src/effects/swipeLeftButtonMenu.js";
-
-  /**
-   * Creates a menu used for swiping left.
-   * @arg {Object} options - 
-   * @param {Object[]} options.items - button descriptions
-   * @param {string} options.items[].title - button title
-   * @param {string} options.items[].color - button color
-   * @param {string} options.containerClass  - CSS class to assign to menu container
-   * @param {string} options.itemClass - CSS class to assign to button
-   * @returns menu element
-   */
-  function createButtonMenu(effect, container, options) {
-    let menu = document.createElement("div");
-    let defaultContainerClass = "swipeLeftMenuContainer";
-    let defaultItemClass = "swipeHorizontalMenuItem";
-    menu.classList.add(options.containerClass || defaultContainerClass);
-    for (let i of options.items || [{title: "Specify menuItemOptions.items", color: "red"}]) {
-      let m = document.createElement('div');
-      m.classList.add("swipeHorizontalMenuItem");
-      m.addEventListener("click", ev => {
-        console.log("Item clicked", i.title);
-        effect.clear();
-      });
-      let title = document.createElement("div");
-      title.classList.add("title");
-      title.innerText = i.title;
-      m.append(title);
-      m.style.backgroundColor = i.color;
-      menu.append(m);
-    }
-    return menu;
-  }
-
-  function test1() {
-    let el = document.querySelector("#t1");
-    let g = new SwipeLeft(el, new LoggerEffect());
-    GestureManager.addGesture(el, g);
-  }
-
-  function test2() {
-    let el = document.querySelector("#t2");
-    let logger = el.querySelector("gesture-logger");
-    let g = new SwipeLeft(el, logger.gestureEffect);
-    GestureManager.addGesture(el, g);
-  }
+  import SwipeLeftButtonMenuEffect from "../src/effects/swipeLeftButtonMenuEffect.js";
+  import createButtonMenu from  "../src/effects/buttonMenu.js";
 
   function test5() {
     let el = document.querySelector("#t3");

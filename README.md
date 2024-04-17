@@ -1,8 +1,6 @@
 # js-gestures
 gesture recognition library
 ## TODO
-- Where to store classes?
-  inside gestureManage styles
 - GestureManager
   - handling gestures nested inside DOM (stopPropagation, but for DOM?)
 - GestureHandler
@@ -204,6 +202,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-17 refactored out buttonMenu, swipeLeftButtomMenuEffect
 Apr-16 making progress in separating out button menus, effects
 Apr-16 styles needed will be dynamically added by every component with appendStyleRule
 Apr-12 preventScrollOnMove gestureHandler option

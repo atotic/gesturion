@@ -3,11 +3,17 @@
  * 
  * to avoid packaging all the styles in a single css file,
  * stylesheet is generated dynamically by javscript. 
+ * 
+ * Usage:
+import appendStyleRule from "../gestureStyles.js"
+appendStyleRule(`.${SelectNoneCSSClass}`, `{
+  user-select: none;
+}`);
  */
 
 export default function appendStyleRule(selector, declaration) {
   let SHEET_ID = "able-gestures-style";
-  let styleElement = document.querySelector(SHEET_ID);
+  let styleElement = document.getElementById(SHEET_ID);
   if (!styleElement) {
     styleElement = document.createElement("style");
     styleElement.setAttribute("id", SHEET_ID);

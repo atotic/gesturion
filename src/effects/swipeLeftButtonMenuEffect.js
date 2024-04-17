@@ -1,14 +1,13 @@
 /*
 Implements menu that displays when you swipe left
-
-
  */
-
+import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
+
+let POSITION_RELATIVE_CLASS="swipeLeftPositionRelative";
 
 export default class SwipeLeftButtonMenuEffect extends GestureEffect {
 
-  static POS_RELATIVE = "swipeLeftPositionRelative";
   leftMenu; // Menu being displayed
 
   // Menu container. Needs to be an "absolute positioning containing block"
@@ -50,7 +49,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     });
     let content = this.contentElement();
     if (content) {
-      content.classList.add(SwipeLeftButtonMenuEffect.POS_RELATIVE);
+      content.classList.add(POSITION_RELATIVE_CLASS);
       content.animate(
         [ 
           { left: `${content.offsetLeft}px`},
@@ -112,7 +111,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
         delete this.leftMenu;
         let content = this.contentElement();
         if (content) {
-          content.classList.remove(SwipeLeftButtonMenuEffect.POS_RELATIVE);
+          content.classList.remove(POSITION_RELATIVE_CLASS);
           content.style.left = "";
         }       
       }
@@ -126,3 +125,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     }   
   }
 }
+
+appendStyleRule(`.${POSITION_RELATIVE_CLASS}`, `{
+  position:relative !important;
+}`);
