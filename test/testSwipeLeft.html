@@ -91,16 +91,18 @@
   function test5() {
     let el = document.querySelector("#t3");
     let mc = el.querySelector(".messageContainer");
-
+    let clickHandler = function(ev) {
+      console.log("Clicked ", ev.target.querySelector(".title").innerText);
+    }
     let swipeLeftOptions = {
       container: mc,
       contentSelector: ".message",
       menuBuilder: createButtonMenu,
       menuBuilderOptions: {
         items: [
-          {title: "More…", color: "#c8c7ce"},
-          {title: "Flag", color: "#ff9503"},
-          {title: "Trash", color: "#ff3a2e", default: true }
+          {title: "More…", color: "#c8c7ce", click: clickHandler},
+          {title: "Flag", color: "#ff9503", click: clickHandler},
+          {title: "Trash", color: "#ff3a2e", default: true, click: clickHandler}
         ]
       }
     };

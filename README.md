@@ -12,11 +12,6 @@ gesture recognition library
       - click on body
 - SwipeLeft
 - SwipeLeftMenuEffect
-  - extract "createButtonMenu" from test case
-  - extract menu effect out of the test case
-  - default button: expands to cover the entire area, fires on full swipe
-  - only default button mode
-
   - cleaning uo feedback items?
     - cleanup of gesture feedback artifact
       - feedback always has a method called "clear" that cleans up all artifacts.
@@ -202,6 +197,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-18 swipe callback options
 Apr-18 implemented default mode for swipe
 Apr-17 refactored out buttonMenu, swipeLeftButtomMenuEffect
 Apr-16 making progress in separating out button menus, effects
