@@ -16,19 +16,21 @@ let ITEM_CLASS = "swipeHorizontalMenuItem";
 export default function createButtonMenu(effect, container, options) {
   let menu = document.createElement("div");
   menu.classList.add(options.containerClass || CONTAINER_CLASS);
-  for (let i of options.items || [{title: "Specify menuItemOptions.items", color: "red"}]) {
-    let m = document.createElement('div');
-    m.classList.add(options.itemClass || ITEM_CLASS);
-    m.addEventListener("click", ev => {
-      console.log("Item clicked", i.title);
+  for (let item of options.items || [{title: "Specify menuItemOptions.items", color: "red"}]) {
+    let dom = document.createElement('div');
+    if (item.default)
+      dom.setAttribute("data-gesture-default", 1);
+    dom.classList.add(options.itemClass || ITEM_CLASS);
+    dom.addEventListener("click", ev => {
+      console.log("Item clicked", item.title);
       effect.clear();
     });
     let title = document.createElement("div");
     title.classList.add("title");
-    title.innerText = i.title;
-    m.append(title);
-    m.style.backgroundColor = i.color;
-    menu.append(m);
+    title.innerText = item.title;
+    dom.append(title);
+    dom.style.backgroundColor = item.color;
+    menu.append(dom);
   }
   return menu;
 }
