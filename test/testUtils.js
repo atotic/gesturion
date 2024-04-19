@@ -20,7 +20,7 @@ class LoggerEffect {
       this.forwardTo.activeStart(gesture, ev);
   }
   moved(gesture, ev, state, delta) {
-    console.log("moved", gesture.name(), ev.type, state, delta);
+    console.log("moved", gesture.name(), ev.type, state /*delta*/);
     if (this.forwardTo)
       this.forwardTo.moved(gesture, ev, state, delta);
   }
@@ -37,9 +37,9 @@ class LoggerEffect {
   clear() {
     console.error("clear is now part of the callback API?")
   }
-  instantActiveOnWait() {
+  hasVisibleEffect() {
     if (this.forwardTo)
-      return this.forwardTo.instantActiveOnWait();
+      return this.forwardTo.hasVisibleEffect();
     return false;
   }
 };
@@ -95,7 +95,7 @@ class GestureLogger extends HTMLElement {
         <span>${gesture.name()}</span>`;
       },
       clear: () => {},
-      instantActiveOnWait: () => { return false; }
+      hasVisibleEffect: () => { return false; }
     }
   }
 }

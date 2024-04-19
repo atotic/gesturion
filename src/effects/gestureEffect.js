@@ -30,7 +30,7 @@ export default class GestureEffect {
   // Return true if gesture should be activated immediately 
   // on wait. Useful if effect is already displayed,
   // and you do not want to miss events.
-  instantActiveOnWait() {
+  hasVisibleEffect() {
     return false;
   }
 };

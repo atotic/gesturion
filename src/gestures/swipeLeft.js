@@ -48,7 +48,7 @@ export default class SwipeLeft extends GestureHandler {
   handleIdleEvent(ev) {
     if (ev.type == 'pointerdown') {
       this.pageStart = { x: ev.pageX, y: ev.pageY };
-      if (this.threshold <= 0)
+      if (this.threshold <= 0 || this.options.effects.hasVisibleEffect())
         return "active";
       return 'waiting';
     }
@@ -56,9 +56,6 @@ export default class SwipeLeft extends GestureHandler {
   }
   
   handleWaitEvent(ev) {
-    if (this.options.effects.instantActiveOnWait()) {
-      return 'active';
-    }
     if (ev.type == 'pointermove') {
       let delta = this.pageStart.x - ev.pageX;
       this.options.effects.moved( this, ev,this.getState(), delta);

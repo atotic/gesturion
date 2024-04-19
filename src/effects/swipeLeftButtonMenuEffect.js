@@ -8,10 +8,12 @@ let POSITION_RELATIVE_CLASS="swipeLeftPositionRelative";
 
 export default class SwipeLeftButtonMenuEffect extends GestureEffect {
 
+  // Effect state
   leftMenu; // Menu being displayed
   defaultButton;  // Default button, if specified as data-gesture-default
   defaultModeOn; // True if default mode is active
-
+  hasMoved; // True if pointer has moved since activated
+  dismissOnPointerUp; // If user clicks outside of the already open menu, menu should be dismissed
   // Options:
   // Menu container. Needs to be an "absolute positioning containing block"
   // https://drafts.csswg.org/css-position/#ref-for-absolute-positioning-containing-block%E2%91%A0
@@ -105,16 +107,28 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
 
   // GestureEffect overrides
   
-  idleStart (){}
+  idleStart (){
+    this.hasMoved = false;
+    this.dismissOnPointerUp = false;
+  }
   waitStart (){}
   activeStart(gesture, ev) {
-   
     if (this.leftMenu) {  // parentNode checks if menu is still in DOM
+      // user has clicked on container with alredy expanded menu
+
       if (!this.leftMenu.parentNode)
         console.error("buttonMenu deleted without calling effect.clear()");
       
-      // clicking on an alredy expanded menu
       this.initialWidth = this.leftMenu.offsetWidth;
+
+      // if click is outside the menu, menu should be dismissed on pointerup
+      let targetChain = ev.target;
+      while (targetChain != null) {
+        if (targetChain == this.leftMenu)
+          return;
+        targetChain = targetChain.parentNode;
+      }
+      this.dismissOnPointerUp = true;
       return;
     }
     this.clear();
@@ -130,7 +144,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     if (gesture.getState() != 'active')
       return;
     if (this.leftMenu) {
-      // let newWidth = Math.max(0, Math.min(delta, this.maxWidth));
+      this.hasMoved = true;
       let newWidth = Math.max(0, delta + this.initialWidth);
       // If there is no default button, do not grow bigger than maximum width.
       if (!this.defaultButton)
@@ -155,7 +169,13 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
       this.defaultButton.dispatchEvent(new Event('click'));
       return;
     }
-    if (this.leftMenu.offsetWidth < this.maxWidth / 2) {
+    // Dismiss menu if:
+    // - width < 50% of menu width, or:
+    // - dismissOnPointerUp && pointer has not moved
+    let dismissMenu =
+      (this.leftMenu.offsetWidth < this.maxWidth / 2)
+      || (this.dismissOnPointerUp && !this.hasMoved);
+    if (dismissMenu) {
       // If width < 50% remove menu
       this.animateMenuToWidth(0)
         .finished.then( _ => {
@@ -181,6 +201,8 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
         delete this.leftMenu;
         delete this.defaultButton;
         delete this.defaultModeOn;
+        this.hasMoved = false;
+        this.dismissOnPointerUp = false;
         let content = this.contentElement();
         if (content) {
           content.classList.remove(POSITION_RELATIVE_CLASS);
@@ -196,7 +218,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
         cleanup();
     }   
   }
-  instantActiveOnWait() {
+  hasVisibleEffect() {
     return this.leftMenu != null;
   }
 }
