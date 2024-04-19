@@ -143,8 +143,10 @@ Implementation:
       // First handler, start listening for events
       handlerList = [];
       allGestureHandlers.set(eventSpec.eventType, handlerList);
-      if (gesture.preventDefaultScroll(eventSpec.eventType))
+      if (gesture.preventDefaultScroll(eventSpec.eventType) 
+          && gesture.getState() == 'active') {
         this.#preventScrolling(true, eventSpec.element);
+      }
       eventSpec.element.addEventListener(eventSpec.eventType, this.boundHandleGHEvent);
     }
     handlerList.push(gesture);
