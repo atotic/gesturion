@@ -94,7 +94,7 @@ export default class GestureHandler {
 
   element() { return this.#element; }
 
-  setState(newState) {
+  setState(newState, event) {
     if (this.myState == newState) {
       console.warn("setState noop", newState);
     }
@@ -104,22 +104,14 @@ export default class GestureHandler {
         this.options.effects.idleStart(this);
         break;
       case 'waiting':
-        if (this.options.waitStartPartial) {
-          this.options.waitStartPartial();
-          delete this.options.waitStartPartial;
-        } else {
-          if (this.options.effects.waitStart)
-            console.warn("GestureHandler did not create waitStartPartial");
-        }
+        if (!event)
+          console.error("WaitStart without an event");
+        this.options.effects.waitStart(this, event);
         break;
       case 'active':
-        if (this.options.activeStartPartial) {
-          this.options.activeStartPartial();
-          delete this.options.activeStartPartial;
-        } else {
-          if (this.options.effects.activeStart)
-            console.warn("GestureHandler did not create activeStartPartial");
-        }
+        if (!event)
+          console.error("ActiveStart without an event");
+        this.options.effects.activeStart(this, event);
         break;
     }
   }
@@ -140,18 +132,5 @@ export default class GestureHandler {
         m.set(evType, true);
     }
     return m.keys();
-  }
-
-  // Sets up a partial callback. Used to save arguments to state callbacks,
-  // when they are called later.
-  makePartialCallback(name, ...args) {
-    if (['activeStart', 'waitStart'].indexOf(name) == -1) 
-      console.warn("Bad name argument to makePartialCallback ", name);
-    if (this.options.effects[name]) {
-      let fn = this.options.effects[name].bind(this.options.effects);
-      this.options[name + "Partial"] = () => {
-        return fn(...args);
-      }
-    }
   }
 }

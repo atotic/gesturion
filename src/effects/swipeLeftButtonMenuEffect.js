@@ -196,6 +196,9 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
         cleanup();
     }   
   }
+  instantActiveOnWait() {
+    return this.leftMenu != null;
+  }
 }
 
 appendStyleRule(`.${POSITION_RELATIVE_CLASS}`, `{

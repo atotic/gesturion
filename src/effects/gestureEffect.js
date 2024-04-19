@@ -27,4 +27,10 @@ export default class GestureEffect {
   clear() {
     console.warn("clear not handled");
   }
+  // Return true if gesture should be activated immediately 
+  // on wait. Useful if effect is already displayed,
+  // and you do not want to miss events.
+  instantActiveOnWait() {
+    return false;
+  }
 };

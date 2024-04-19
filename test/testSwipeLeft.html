@@ -65,6 +65,25 @@
   <gesture-logger></gesture-logger>
   I am just a test.
 </div> -->
+<template id="mailMessageTemplate">
+  <div id="t3">
+    <div class="messageContainer">
+      <div class="message">
+        <div class="line1">
+          <div class="sender">Ian Kilpatrick (via X)</div>
+          <div class="datetime">Yesterday</div>
+        </div>
+        <div class="line2">
+          Visit a world of entertainment with KQED such as three body problem
+        </div>
+        <div class="line3">
+          Explore new places, periods and experiences with KQED passport. Members can stream new episodes of Call the Midwife 30 days before they are on TV.
+        </div>
+      </div><!-- message -->
+    </div><!-- messgeContainer -->
+  </div>
+</template>
+<div id="allMessages">
 <div id="t3">
   <div class="messageContainer">
     <div class="message">
@@ -81,7 +100,7 @@
     </div><!-- message -->
   </div><!-- messgeContainer -->
 </div>
-
+</div>
 <script type="module">
   import SwipeLeft from "../src/gestures/swipeLeft.js";
   import GestureManager from "../src/gestureManager.js";
@@ -92,7 +111,7 @@
     let el = document.querySelector("#t3");
     let mc = el.querySelector(".messageContainer");
     let clickHandler = function(ev) {
-      console.log("Clicked ", ev.target.querySelector(".title").innerText);
+      console.log("Clicked ", ev.currentTarget.querySelector(".title").innerText);
     }
     let swipeLeftOptions = {
       container: mc,
@@ -110,7 +129,77 @@
     GestureManager.addGesture(mc, g);
   }
 
+  function test6() {
+    let messages = [
+      {
+        sender: "Ian Kilpatrick (via X)",
+        date: "Yesterday",
+        title: "Visit a world of entertainment with KQED such as three body problem",
+        preview: "Explore new places, periods and experiences with KQED passport. Members can stream new episodes of Call the Midwife 30 days before they are on TV."
+      },
+      {
+        sender: "Shally Stecker",
+        date: "10 days ago",
+        title: "your invited to join our quest",
+        preview: "we found you! And we'd love to talk with you about making magic happen with us. Are you still with"
+      },
+      {
+        sender: "bugzilla-daemon@webkit.org",
+        date: "1 day ago",
+        title: "[Bug 272479] REGRESSION (271848@main): Incorrect position of ::before",
+        preview: "Good point, I'll make a WPT version of the test."
+      },
+      {
+        sender: "RLS Foundation",
+        date: "2 days ago",
+        title: "Action Alert: Support Sleep Disorder Research",
+        preview: "To increase support for this letter, we ask that you reach out to your congressional House representatives today! "
+      },
+      {
+        sender: "LUNA Sandals",
+        date: "4 minutes ago",
+        title: "BTR Special Edition LUNAs 🚨!",
+        preview: "It's that time again - BORN TO RUN SEASON IS HERE! If you're a #runfreelunatic you know what that means."
+      },
+    ];
+    messages = [...messages, ...messages, ...messages, ...messages];
+ 
+    let clickHandler = function(ev) {
+      console.log("Clicked ", ev.currentTarget.querySelector(".title").innerText);
+    }
+    let swipeLeftOptions = {
+      container: null,
+      contentSelector: ".message",
+      menuBuilder: createButtonMenu,
+      menuBuilderOptions: {
+        items: [
+          {title: "More…", color: "#c8c7ce", click: clickHandler},
+          {title: "Flag", color: "#ff9503", click: clickHandler},
+          {title: "Trash", color: "#ff3a2e", default: true, click: clickHandler}
+        ]
+      }
+    };
+
+    let createMessageDom = msg => {
+      let dom = document.getElementById("mailMessageTemplate").content.cloneNode(true);
+      dom.querySelector(".sender").textContent = msg.sender;
+      dom.querySelector(".datetime").textContent = msg.date;
+      dom.querySelector(".line2").textContent = msg.title;
+      dom.querySelector(".line3").textContent = msg.preview;
+      return dom;
+    }
+    let allMessages = document.querySelector("#allMessages");
+    for (let m of messages) {
+      let dom = createMessageDom(m);
+      let messageContainer = dom.querySelector(".messageContainer");
+      swipeLeftOptions.container = messageContainer;
+      let g = new SwipeLeft(messageContainer, {effects: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
+      GestureManager.addGesture(messageContainer, g);
+      allMessages.append(dom);
+    }
+  }
+
   test5();
-  // test3();
+  test6();
 
 </script>

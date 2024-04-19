@@ -177,7 +177,7 @@ Implementation:
     for (let eventSpec of gesture.allEventSpecs())
       this.#removeGestureListener(eventSpec, gesture);
   }
-  #setGestureState(gesture, newState) {
+  #setGestureState(gesture, newState, event=null) {
     // remove all old state listeners
     let oldState = gesture.getState();
     if (oldState == newState) {
@@ -187,7 +187,7 @@ Implementation:
       for (let spec of gesture.eventSpecs(oldState))
         this.#removeGestureListener(spec, gesture);
     }
-    gesture.setState(newState);
+    gesture.setState(newState, event);
     for (let spec of gesture.eventSpecs(newState)) {
       this.#addGestureListener(spec, gesture);
     }
@@ -258,7 +258,7 @@ Implementation:
         newStateRequests.push({gesture: gh, state:newState});
     }
     for (let r of newStateRequests)
-      this.#setGestureState(r.gesture, r.state);
+      this.#setGestureState(r.gesture, r.state, event);
   }
   // TODO: special case for active state handling: conflict resolution, etc.
 }

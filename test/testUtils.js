@@ -37,6 +37,11 @@ class LoggerEffect {
   clear() {
     console.error("clear is now part of the callback API?")
   }
+  instantActiveOnWait() {
+    if (this.forwardTo)
+      return this.forwardTo.instantActiveOnWait();
+    return false;
+  }
 };
 
 /**
@@ -89,7 +94,8 @@ class GestureLogger extends HTMLElement {
         <span>cancelled</span>
         <span>${gesture.name()}</span>`;
       },
-      clear: () => {}
+      clear: () => {},
+      instantActiveOnWait: () => { return false; }
     }
   }
 }

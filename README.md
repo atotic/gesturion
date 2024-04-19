@@ -12,6 +12,8 @@ gesture recognition library
       - click on body
 - SwipeLeft
 - SwipeLeftMenuEffect
+ - bug cleanup
+ 
   - cleaning uo feedback items?
     - cleanup of gesture feedback artifact
       - feedback always has a method called "clear" that cleans up all artifacts.
@@ -197,6 +199,9 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-19 Removed partials
+Apr-19 Add instantActiveOnWait to resume gesture
+Apr-19 Multi-message swipe test
 Apr-18 swipe callback options
 Apr-18 implemented default mode for swipe
 Apr-17 refactored out buttonMenu, swipeLeftButtomMenuEffect
