@@ -25,6 +25,12 @@ export default class SwipeLeft extends GestureHandler {
 
   threshold = 3; // travel at least this much before activation
   pageStart = { x: -1, y: -1}
+  lastPointer = { // used to compute pointer speed
+    x: -1, 
+    timeStamp: 0, 
+    speed: 0  // last computed speed, pixels/100ms. More than 4 seems fast
+  }
+
   /**
    * @param {Object} options 
    * @param {number} options.threshold - how far left in pixels to move before swipe activates
@@ -37,6 +43,20 @@ export default class SwipeLeft extends GestureHandler {
       this.threshold = parseInt(options.threshold);
   }
 
+  #updateSpeed(ev) {
+    let speed = null;
+    if (this.lastPointer.x != -1) {
+      let timeDelta = ev.timeStamp - this.lastPointer.timeStamp;
+      if (timeDelta < 1)
+        timeDelta = 1;
+      let xDelta = ev.pageX - this.lastPointer.x;
+      speed = xDelta/timeDelta * 100;
+    }
+    this.lastPointer = {
+      x: ev.pageX, timeStamp: ev.timeStamp, speed: speed
+    }
+    return speed;
+  }
   name() {
     return "SwipeLeft";
   }
@@ -48,7 +68,9 @@ export default class SwipeLeft extends GestureHandler {
   handleIdleEvent(ev) {
     if (ev.type == 'pointerdown') {
       this.pageStart = { x: ev.pageX, y: ev.pageY };
-      if (this.threshold <= 0 || this.options.effects.hasVisibleEffect())
+      this.lastX = ev.pageX;
+      this.#updateSpeed(ev);
+      if (this.threshold <= 0 || this.options.effect.hasVisibleEffect())
         return "active";
       return 'waiting';
     }
@@ -58,14 +80,14 @@ export default class SwipeLeft extends GestureHandler {
   handleWaitEvent(ev) {
     if (ev.type == 'pointermove') {
       let delta = this.pageStart.x - ev.pageX;
-      this.options.effects.moved( this, ev,this.getState(), delta);
+      this.options.effect.moved( this, ev,this.getState(), delta, this.#updateSpeed(ev));
       if (delta > this.threshold) {
         return 'active';
       }
       return;
     }
     if (ev.type == 'pointerleave' || ev.type == 'pointercancel' || ev.type == 'pointerup') {
-      this.options.effects.cancelled(this, ev);
+      this.options.effect.cancelled(this, ev);
       return "idle";
     }
     console.warn("Unexpected wait event", ev.type);
@@ -73,17 +95,18 @@ export default class SwipeLeft extends GestureHandler {
 
   handleActiveEvent(ev) {
     if (ev.type == 'pointerup') {
-      this.options.effects.completed(this, ev);
+      this.options.effect.completed(this, ev, this.lastPointer.speed);
       return "idle";
     }
     if (ev.type == 'pointermove') {
-      if (this.options.effects.moved) 
-       this.options.effects.moved(this, ev, this.getState(), this.pageStart.x - ev.pageX);
+      this.#updateSpeed(ev);
+      if (this.options.effect.moved) 
+       this.options.effect.moved(this, ev, this.getState(), this.pageStart.x - ev.pageX);
       return;
     }
     if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {
-      if (this.options.effects.cancelled)
-        this.options.effects.cancelled(this, ev);
+      if (this.options.effect.cancelled)
+        this.options.effect.cancelled(this, ev);
       return "idle";
     }
     console.warn("unexpected active event", ev.type);

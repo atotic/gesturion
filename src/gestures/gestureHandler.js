@@ -30,7 +30,7 @@ export default class GestureHandler {
   #element; // Element, default gesture target
 
   options = { // First argument to every callback is gesture handler.
-    effects: new GestureEffect(),
+    effect: new GestureEffect(),
     preventTextSelection: true, // should disable text selection when gesture is active?
     preventScrollOnMove: true, // shold disable default scroll on pointer move?
   };
@@ -42,8 +42,8 @@ export default class GestureHandler {
   constructor(element, options) {
     this.#element = element;
     if (options) {
-      if ('effects' in options)
-        this.options.effects = options.effects;
+      if ('effect' in options)
+        this.options.effect = options.effect;
       if ('preventTextSelection' in options)
         this.options.preventTextSelection = options.preventTextSelection;
       if ('preventScrollOnMove' in options)
@@ -101,17 +101,17 @@ export default class GestureHandler {
     this.myState = newState;
     switch (this.myState) {
       case 'idle':
-        this.options.effects.idleStart(this);
+        this.options.effect.idleStart(this);
         break;
       case 'waiting':
         if (!event)
           console.error("WaitStart without an event");
-        this.options.effects.waitStart(this, event);
+        this.options.effect.waitStart(this, event);
         break;
       case 'active':
         if (!event)
           console.error("ActiveStart without an event");
-        this.options.effects.activeStart(this, event);
+        this.options.effect.activeStart(this, event);
         break;
     }
   }

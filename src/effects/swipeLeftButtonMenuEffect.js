@@ -9,7 +9,7 @@ let POSITION_RELATIVE_CLASS="swipeLeftPositionRelative";
 export default class SwipeLeftButtonMenuEffect extends GestureEffect {
 
   // Effect state
-  leftMenu; // Menu being displayed
+  leftMenu; // Menu being displayed.
   defaultButton;  // Default button, if specified as data-gesture-default
   defaultModeOn; // True if default mode is active
   hasMoved; // True if pointer has moved since activated
@@ -140,7 +140,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     this.leftMenu.style.width = "0";
     this.initialWidth = 0;
   }
-  moved(gesture, ev, state, delta) {
+  moved(gesture, ev, state, delta, speed) {
     if (gesture.getState() != 'active')
       return;
     if (this.leftMenu) {
@@ -162,7 +162,9 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
       this.animateMenuToWidth(newWidth, 0);
     }
   }
-  completed(gesture, ev) {
+  completed(gesture, ev, speed) {
+    if (!this.leftMenu)
+      return;
     // In default mode, the large button receives a click on completion
     // and performs the default action.
     if (this.defaultModeOn) {
@@ -172,9 +174,14 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     // Dismiss menu if:
     // - width < 50% of menu width, or:
     // - dismissOnPointerUp && pointer has not moved
-    let dismissMenu =
-      (this.leftMenu.offsetWidth < this.maxWidth / 2)
-      || (this.dismissOnPointerUp && !this.hasMoved);
+    let dismissMenu = false;
+    const speedThreshold = 4;
+    // Quick right flick
+    dismissMenu ||= speed > speedThreshold;  
+    // Menu is narrow, slow flick
+    dismissMenu ||=  (this.leftMenu.offsetWidth < this.maxWidth / 3) && speed > -speedThreshold;
+    // click next to open left menu
+    dismissMenu ||= this.dismissOnPointerUp && !this.hasMoved; 
     if (dismissMenu) {
       // If width < 50% remove menu
       this.animateMenuToWidth(0)

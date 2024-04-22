@@ -125,7 +125,7 @@
         ]
       }
     };
-    let g = new SwipeLeft(mc, {effects: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
+    let g = new SwipeLeft(mc, {effect: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
     GestureManager.addGesture(mc, g);
   }
 
@@ -193,7 +193,7 @@
       let dom = createMessageDom(m);
       let messageContainer = dom.querySelector(".messageContainer");
       swipeLeftOptions.container = messageContainer;
-      let g = new SwipeLeft(messageContainer, {effects: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
+      let g = new SwipeLeft(messageContainer, {effect: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
       GestureManager.addGesture(messageContainer, g);
       allMessages.append(dom);
     }

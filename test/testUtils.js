@@ -19,15 +19,15 @@ class LoggerEffect {
     if (this.forwardTo)
       this.forwardTo.activeStart(gesture, ev);
   }
-  moved(gesture, ev, state, delta) {
+  moved(gesture, ev, state, ...rest) {
     console.log("moved", gesture.name(), ev.type, state /*delta*/);
     if (this.forwardTo)
-      this.forwardTo.moved(gesture, ev, state, delta);
+      this.forwardTo.moved(gesture, ev, state, ...rest);
   }
-  completed(gesture, ev) {
+  completed(gesture, ev, ...rest) {
     console.log("completed", gesture.name(), ev.type);
     if (this.forwardTo)
-      this.forwardTo.completed(gesture, ev);
+      this.forwardTo.completed(gesture, ev, ...rest);
   }
   cancelled(gesture, ev) {
     console.log("cancelled", gesture.name(), ev.type);
