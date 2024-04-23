@@ -1,35 +1,32 @@
 # js-gestures
 gesture recognition library
 ## TODO
+Testing
+- write real tests:
+  - swipe left. click outside, watch it go away
+  - swipe left all the way to default button
+
+Next stop: selenium, the granddad of all test frameworks
+
 - GestureManager
   - handling gestures nested inside DOM (stopPropagation, but for DOM?)
 - GestureHandler
 - GestureEffect
-  - effects cleanup (removal from DOM)
-    - internal to effect: when button is pressed, need to reference effect for cleanup
-    - external
-      - another gesture starts
-      - click on body
 - SwipeLeft
 - SwipeLeftMenuEffect
  - bug cleanup
- 
-  - cleaning uo feedback items?
-    - cleanup of gesture feedback artifact
-      - feedback always has a method called "clear" that cleans up all artifacts.
-    - not strictly part of gesture handling
-  
-  - animation 
-  - icons with [font awesome](https://docs.fontawesome.com/web/setup/packages/)
+   - icons with [font awesome](https://docs.fontawesome.com/web/setup/packages/)
 - start wrinting basic documentation for gesture users, gesture authors
 
 - make some nice looking gestures!
   https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
 - test framework
-  - qunit: hammer.js uses it. Need a test runner for qunit that does Chrome/FF/Safari
+  - qunit: hammer.js uses it. Need a test runner for qunit that does Chrome/FF/Safari. Could not find test runner, how about cypress? 
   - https://bestofjs.org/projects?tags=test&sort=monthly-downloads
-- investigate stop gesture propagation
 
+Contact Red Blob games about what I've done. He might be interested
+in using it.
+https://www.redblobgames.com/blog/2024-04-17-draggable-examples/
 ## Documentation
 ### Gesture authors
   EventSpecs:
@@ -199,6 +196,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-24 Created small testFramework that can be run by Selenium
 Apr-23 EffectCleaner cleans on pointerdown. To make it work,
        gestureManager has to do "stopPropagation"
 Apr-22 globalEffectClear: still needs to handle null clicks

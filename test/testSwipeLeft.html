@@ -11,13 +11,13 @@
     border: 4px solid #EEE;
     margin: 0px;
   }
-  @media (prefers-color-scheme: dark) {
+  /* @media (prefers-color-scheme: dark) {
     body {
       background: #222;
       color: #FFF;
       border-color: #444;
     }
-  }
+  } */
   .messageContainer {
     position:relative;
     max-width: 600px;
@@ -54,6 +54,7 @@
     text-overflow: ellipsis;
   }
   </style>
+
 <h1>SwipeLeft test</h1>
 <!-- <div id="t1" style="border:1px solid black;width:300px;height:200px;">
   &lt;--- Swipe left
@@ -103,7 +104,8 @@
   import GestureManager from "../src/gestureManager.js";
   import SwipeLeftButtonMenuEffect from "../src/effects/swipeLeftButtonMenuEffect.js";
   import createButtonMenu from  "../src/effects/buttonMenu.js";
-  import {LoggerEffect} from "./testUtils.js"
+  import TestRunner from "./testFramework.js";
+  import {LoggerEffect} from "./testUtils.js";
 
   function test5() {
     let el = document.querySelector("#t3");
@@ -200,4 +202,7 @@
   test5();
   test6();
 
+  TestRunner.test( _ => {
+    console.error("My first test");
+  }, "First test");
 </script>

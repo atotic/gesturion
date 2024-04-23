@@ -248,7 +248,7 @@ Implementation:
       this.preventScrollingListener = {
         element: element,
         callback: ev => {
-          console.log("preventing touchMove")
+          // console.log("preventing touchMove")
           ev.preventDefault()
         }
       };

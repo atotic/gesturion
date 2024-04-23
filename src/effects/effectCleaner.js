@@ -25,6 +25,13 @@ import gestureManager from "../gestureManager.js";
 const cleanupDataMarker = "data-effect-cleanup-mark";
 const cleanupSym = Symbol("EffectCleanerSymbol");
 
+/* 
+Simple cleanup strategy:
+  register() marks elements for cleanup with data attribute
+  cleanup() finds elements for cleanup with querySelector
+
+  it skips elements that have currently active gesture
+*/
 class EffectCleaner {
   register(element, effect) {
     element.setAttribute(cleanupDataMarker, 1);
@@ -66,7 +73,7 @@ gestureManager.addEventListener(gestureManager.ACTIVE_GESTURE_EVENT, ev => {
 // 
 document.body.addEventListener('pointerdown', ev => {
   singleton.cleanup(gestureManager.activeGestures());
-  console.warn("EffectCleaner click");
+  // console.warn("EffectCleaner click");
 });
 
 export default singleton;

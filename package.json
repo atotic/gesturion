@@ -24,6 +24,7 @@
   "devDependencies": {
     "jsdoc": "^4.x",
     "markdown-live": "^1.x",
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "selenium-webdriver": "^4.19.0"
   }
 }
