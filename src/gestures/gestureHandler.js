@@ -56,6 +56,13 @@ export default class GestureHandler {
   /** @returns string */
   name() { return ""; }
 
+  /**
+   * @return {Element} - element created by gestureEffect
+   */
+  effectElement() {
+    return this.options.effect.element();
+  }
+
   preventTextSelection() { return this.options.preventTextSelection};
 
   preventDefaultScroll(eventType) {

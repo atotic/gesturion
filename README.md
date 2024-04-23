@@ -199,6 +199,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-22 globalEffectClear: still needs to handle null clicks
 Apr-22 Add speed to swipes, reveal/hide by quick swipe.
 Apr-19 Prevent scrolling only if gesture is active
 Apr-19 Dismiss menu on click in content area

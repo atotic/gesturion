@@ -3,6 +3,7 @@ Implements menu that displays when you swipe left
  */
 import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
+import GlobalEffectClear from "./globalEffectClear.js";
 
 let POSITION_RELATIVE_CLASS="swipeLeftPositionRelative";
 
@@ -98,6 +99,9 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
           scopeItem.style.flexShrink = '';
           scopeItem.style.display = "none";
         });
+        // Most native apps vibrate for default selection
+        if (navigator.vibrate)
+          navigator.vibrate(100);
       } else {
         item.style.display = "";
       }
@@ -106,7 +110,36 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
   } 
 
   // GestureEffect overrides
-  
+  clear(animate) {
+    if (this.leftMenu) {
+      let cleanup = () => {
+        this.leftMenu.remove();
+        delete this.leftMenu;
+        delete this.defaultButton;
+        delete this.defaultModeOn;
+        this.hasMoved = false;
+        this.dismissOnPointerUp = false;
+        let content = this.contentElement();
+        if (content) {
+          content.classList.remove(POSITION_RELATIVE_CLASS);
+          content.style.left = "";
+        }       
+      }
+      if (animate) {
+        this.animateMenuToWidth(0)
+        .finished.then( _ => {
+          cleanup();
+        });
+      } else
+        cleanup();
+    }   
+  }
+  hasVisibleEffect() {
+    return this.leftMenu != null;
+  }
+  element() {
+    return this.leftMenu;
+  }
   idleStart (){
     this.hasMoved = false;
     this.dismissOnPointerUp = false;
@@ -139,6 +172,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     this.maxWidth = parseInt(window.getComputedStyle(this.leftMenu).width);
     this.leftMenu.style.width = "0";
     this.initialWidth = 0;
+    GlobalEffectClear.register(this.leftMenu, this);
   }
   moved(gesture, ev, state, delta, speed) {
     if (gesture.getState() != 'active')
@@ -183,11 +217,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     // click next to open left menu
     dismissMenu ||= this.dismissOnPointerUp && !this.hasMoved; 
     if (dismissMenu) {
-      // If width < 50% remove menu
-      this.animateMenuToWidth(0)
-        .finished.then( _ => {
-          this.clear();
-        });
+      this.clear(true);
     } else {
       // if width > 50%, grow menu to full size
       this.animateMenuToWidth(this.maxWidth);
@@ -200,33 +230,6 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
           this.clear();
         })
     }
-  }
-  clear(animate) {
-    if (this.leftMenu) {
-      let cleanup = () => {
-        this.leftMenu.remove();
-        delete this.leftMenu;
-        delete this.defaultButton;
-        delete this.defaultModeOn;
-        this.hasMoved = false;
-        this.dismissOnPointerUp = false;
-        let content = this.contentElement();
-        if (content) {
-          content.classList.remove(POSITION_RELATIVE_CLASS);
-          content.style.left = "";
-        }       
-      }
-      if (animate) {
-        this.animateMenuToWidth(0)
-        .finished.then( _ => {
-          cleanup();
-        });
-      } else
-        cleanup();
-    }   
-  }
-  hasVisibleEffect() {
-    return this.leftMenu != null;
   }
 }
 

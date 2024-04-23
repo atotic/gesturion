@@ -4,6 +4,21 @@ class LoggerEffect {
   constructor(forwardTo) {
     this.forwardTo = forwardTo;
   }
+  clear(animate) {
+    if (this.forwardTo)
+      return this.forwardTo.clear(animate);
+    console.error("clear is now part of the callback API?")
+  }
+  element() {
+    console.log("element");
+    if (this.forwardTo)
+      return this.forwardTo.element();
+  }
+  hasVisibleEffect() {
+    if (this.forwardTo)
+      return this.forwardTo.hasVisibleEffect();
+    return false;
+  }
   idleStart(gesture)  {
     console.log("idleStart", gesture.name());
     if (this.forwardTo)
@@ -33,14 +48,6 @@ class LoggerEffect {
     console.log("cancelled", gesture.name(), ev.type);
     if (this.forwardTo)
       this.forwardTo.cancelled(gesture, ev);
-  }
-  clear() {
-    console.error("clear is now part of the callback API?")
-  }
-  hasVisibleEffect() {
-    if (this.forwardTo)
-      return this.forwardTo.hasVisibleEffect();
-    return false;
   }
 };
 

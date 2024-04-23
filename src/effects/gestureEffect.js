@@ -24,13 +24,16 @@ export default class GestureEffect {
   cancelled(gesture, ev) {
     console.warn("cancelled not handled");
   }
-  clear() {
+  clear(animate) {
     console.warn("clear not handled");
+  }
+  element() {
+    console.warn("element not handled");
   }
   // Return true if gesture should be activated immediately 
   // on wait. Useful if effect is already displayed,
   // and you do not want to miss events.
   hasVisibleEffect() {
-    return false;
+    return this.element() != null;
   }
 };

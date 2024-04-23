@@ -1,10 +1,5 @@
 import appendStyleRule from "./gestureStyles.js";
 
-let debug = 1;
-function warn(...args) {
-  if (debug)
-    console.warn(...args);
-}
 function log(...args) {
   if (debug)
     console.log(...args);
@@ -14,23 +9,29 @@ function log(...args) {
 /**
  GestureManager - main gesture handling API
 
-  Web Developer Usage:
-  - add/remove gestures from DOM.
-  - coordinates event processing between GestureHandlers
+  Usage, Web Developer:
+  - add/remove gestures to DOM elements (add/removeGesture)
   
-  */
+  Usage, Gesture Developer:
+  - 
+
+  Usage, Other:
+  - broadcasts 'gestureActivated' event when new gesture becomes active
+    CustomEvent(detail: gesture | [gesture])
+
+*/
 const GMSym = Symbol("GestureManagerSymbol");
 
 let SelectNoneCSSClass = "ableGestureSelectNone";
 
-class GestureManager {
+class GestureManager extends EventTarget {
   /* Implementation notes:
 
 GestureManager cannot keep references to gestures/elements on itself because
 a reference would keep them alive in memory even after Element has been removed
 from DOM, causing memory leaks.
 
-What GestureManaager does:
+What GestureManager does:
 1. keeps track of mapping between gesture names and classes, 
   so you can use addGesture with a name.
 2. event coordination - coordinates events between multiple gesture handlers
@@ -70,11 +71,14 @@ Implementation:
 */
   HandlerTypes = new Map(); // "gestureName" => GestureHandler
 
-  ActiveHandlers = []; // currently active GestureHandler
+  #activeGestures = []; // currently active GestureHandler
 
   static GestureStates = ['idle', 'waiting', 'active'].freeze;
 
+  ACTIVE_GESTURE_EVENT = 'gestureActivated';
+
   constructor() {
+    super();
     this.boundHandleGHEvent = this.handleGHEvent.bind(this);
   }
   /**
@@ -97,7 +101,7 @@ Implementation:
       let handler = this.HandlerTypes.get(gesture);
       if (handler === undefined) 
         throw `Unrecognized gesture type "${gesture}". Did you forget to register it?`;
-      gesture = new handler(gestureOptions);
+      gesture = new handler(el, gestureOptions);
     }
     this.#setGestureState(gesture, 'idle');
     return gesture;
@@ -105,6 +109,13 @@ Implementation:
 
   removeGesture(gesture) {
     this.#removeAllEventSpecs(gesture);
+  }
+
+  /**
+   * @returns {Array<GestureHandler>}
+   */
+  activeGestures() {
+    return this.#activeGestures;
   }
 
   #canonicalEventSpec(eventSpec, gesture) {
@@ -179,22 +190,35 @@ Implementation:
     for (let eventSpec of gesture.allEventSpecs())
       this.#removeGestureListener(eventSpec, gesture);
   }
+  // Set gesture state, and setup gesture's event listeners
   #setGestureState(gesture, newState, event=null) {
     // remove all old state listeners
     let oldState = gesture.getState();
     if (oldState == newState) {
-      warn("setGestureState called, but gesture was in newState already");
+      console.warn("setGestureState called, but gesture was in newState already");
+      return;
     }
     if (oldState) {
       for (let spec of gesture.eventSpecs(oldState))
         this.#removeGestureListener(spec, gesture);
     }
     gesture.setState(newState, event);
+    if (newState == 'active')
+      this.#activeGestures = [gesture];
+    else
+      this.#activeGestures = [];
+
     for (let spec of gesture.eventSpecs(newState)) {
       this.#addGestureListener(spec, gesture);
     }
     this.#preventTextSelection(newState == 'active' ? 
         gesture.preventTextSelection() : false);
+
+    if (newState == 'active') {
+      this.dispatchEvent(new CustomEvent(this.ACTIVE_GESTURE_EVENT, {
+        detail: this.#activeGestures
+      } ));
+    }
   }
 
   // Gestures often prevent text selection during gesture
@@ -243,12 +267,12 @@ Implementation:
   handleGHEvent(event) {
     let allGestureHandlers = event.currentTarget[GMSym];
     if (!allGestureHandlers) {
-      warn("No GestureHanders of any type for ", ev.currentTarget, ev);
+      console.warn("No GestureHanders of any type for ", ev.currentTarget, ev);
       return;
     }
     let eventGestureHandlers = allGestureHandlers.get(event.type);
     if (!eventGestureHandlers) {
-      warn("No GestureHanders of type ", ev.type, " for ", ev.currentTarget, ev);
+      console.warn("No GestureHanders of type ", ev.type, " for ", ev.currentTarget, ev);
       return;
     }
     let newStateRequests = [];
