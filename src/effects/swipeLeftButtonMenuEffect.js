@@ -113,6 +113,8 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
   clear(animate) {
     if (this.leftMenu) {
       let cleanup = () => {
+        if (!this.leftMenu)
+          return;
         this.leftMenu.remove();
         delete this.leftMenu;
         delete this.defaultButton;

@@ -9,13 +9,13 @@
  * completes, but should go away when another gesture starts.
  * 
  * Example:
- * import GlobalEffectClear from "./globalEffectClear.js";
+ * import EffectCleaner from "./effectCleaner.js";
  * 
  * class myEffect 
  *   activeStart(gesture, ev) {
  *     if (this.myMenu == null) {
  *        this.myMenu = createElement(div)
- *        GlobalEffects
+ *        EffectCleaner.register(div, this);
  *     }
  *   }
  */
@@ -63,9 +63,10 @@ gestureManager.addEventListener(gestureManager.ACTIVE_GESTURE_EVENT, ev => {
   singleton.cleanup(ev.detail);
 });
 
-// document.body.addEventListener('click', ev => {
-//   singleton.cleanup(gestureManager.activeGestures());
-//   console.log("click");
-// });
+// 
+document.body.addEventListener('pointerdown', ev => {
+  singleton.cleanup(gestureManager.activeGestures());
+  console.warn("EffectCleaner click");
+});
 
 export default singleton;

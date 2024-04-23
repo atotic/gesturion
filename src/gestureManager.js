@@ -278,6 +278,12 @@ Implementation:
     let newStateRequests = [];
     for (let gh of eventGestureHandlers) {
       let newState = gh.handleEvent(event);
+      // Active gestures stop propagation of their events.
+      // EffectCleaner depends on this 
+      if (gh.getState() == 'active' || newState == 'active') {
+        console.log("stopPropagation", event.type);
+        event.stopPropagation();
+      }
       // Process new states later. Doing it now is not safe because
       // it can modify eventGestureHandlers array.
       if (newState)
