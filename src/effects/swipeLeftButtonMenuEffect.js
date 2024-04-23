@@ -3,7 +3,7 @@ Implements menu that displays when you swipe left
  */
 import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
-import GlobalEffectClear from "./globalEffectClear.js";
+import EffectCleaner from "./effectCleaner.js";
 
 let POSITION_RELATIVE_CLASS="swipeLeftPositionRelative";
 
@@ -172,7 +172,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
     this.maxWidth = parseInt(window.getComputedStyle(this.leftMenu).width);
     this.leftMenu.style.width = "0";
     this.initialWidth = 0;
-    GlobalEffectClear.register(this.leftMenu, this);
+    EffectCleaner.register(this.leftMenu, this);
   }
   moved(gesture, ev, state, delta, speed) {
     if (gesture.getState() != 'active')

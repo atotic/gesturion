@@ -1,7 +1,11 @@
-// Event logger logs effect callbacks
-class LoggerEffect {
+import GestureEffect from "../src/effects/gestureEffect.js";
+import appendStyleRule from "../src/gestureStyles.js"
+
+// LoggerEffect logs effect callbacks
+class LoggerEffect  extends GestureEffect {
   forwardTo;  // forward callbacks to this effect
   constructor(forwardTo) {
+    super();
     this.forwardTo = forwardTo;
   }
   clear(animate) {
@@ -107,22 +111,17 @@ class GestureLogger extends HTMLElement {
   }
 }
 customElements.define("gesture-logger", GestureLogger);
-let style = document.createElement("style");
-style.setAttribute("id", "able-gesture-testUtils.js");
-style.innerText = `
-gesture-logger {
+
+export {LoggerEffect, GestureLogger}
+
+appendStyleRule("gesture-logger",`
   font-family:monospace;
   font-size: 10px;
   display:block;
-}
-gesture-logger[data-gesture-state=idle] {
-  background-color:#ffeaea;
-}
-gesture-logger[data-gesture-state=waiting] {
-  background-color:#fbff4e;
-}
-gesture-logger[data-gesture-state=active] {
-  background-color:#bdebd3;
-}`;
-document.querySelector("head").prepend(style);
-
+`);
+appendStyleRule("gesture-logger[data-gesture-state=idle]",`
+  background-color:#ffeaea;`);
+appendStyleRule("gesture-logger[data-gesture-state=waiting]",`
+  background-color:#fbff4e;`);
+appendStyleRule("gesture-logger[data-gesture-state=active]",`
+  background-color:#bdebd3;`);

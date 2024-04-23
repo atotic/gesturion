@@ -2,9 +2,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SwipeLeft test</title>
-<script type="module" src="../src/gestureManager.js"></script>
-<script type="module" src="../src/gestures/swipeLeft.js"></script>
-<script src="testUtils.js"></script>
 <style>
   :root {
     --light-gray-text: #999;
@@ -106,6 +103,7 @@
   import GestureManager from "../src/gestureManager.js";
   import SwipeLeftButtonMenuEffect from "../src/effects/swipeLeftButtonMenuEffect.js";
   import createButtonMenu from  "../src/effects/buttonMenu.js";
+  import {LoggerEffect} from "./testUtils.js"
 
   function test5() {
     let el = document.querySelector("#t3");

@@ -23,9 +23,9 @@
 import gestureManager from "../gestureManager.js";
 
 const cleanupDataMarker = "data-effect-cleanup-mark";
-const cleanupSym = Symbol("GlobalEffectCleanupSymbol");
+const cleanupSym = Symbol("EffectCleanerSymbol");
 
-class GlobalEffectClear {
+class EffectCleaner {
   register(element, effect) {
     element.setAttribute(cleanupDataMarker, 1);
     element[cleanupSym] = effect;
@@ -57,7 +57,7 @@ class GlobalEffectClear {
   }
 }
 
-let singleton = new GlobalEffectClear();
+let singleton = new EffectCleaner();
 
 gestureManager.addEventListener(gestureManager.ACTIVE_GESTURE_EVENT, ev => {
   singleton.cleanup(ev.detail);
