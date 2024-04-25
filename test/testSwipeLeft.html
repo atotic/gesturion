@@ -90,6 +90,12 @@ body {
     });
     return ev;
   }
+
+  async function awaitTimeout(timeout=200) {
+    return new Promise((resolve, reject) => {
+      window.setTimeout( _ => resolve(), timeout);
+    });
+  }
   async function test1() {
     // 1. swipe left so that menu remains visible
     // 2. click in empty area, so that menu goes away
@@ -120,8 +126,13 @@ body {
       createEvent("pointerup", container, {right: 200})
     );
     // Wait till end of animation
+    await awaitTimeout(200);
+    
     container.dispatchEvent(
       createEvent("pointerdown", container, {right: 300})
+    );
+    container.dispatchEvent(
+      createEvent("pointerup", container, {right: 300})
     );
     // pointermove - enters waiting
     // pointer move -200px;
@@ -129,7 +140,7 @@ body {
     // pointer up
     // pointer down 
     // Cleanup
-    // GestureManager.removeGesture(gesture);
+    GestureManager.removeGesture(gesture);
   }
 
   TestRunner.test(test1, "First test");
