@@ -3,6 +3,7 @@ gesture recognition library
 ## TODO
 Testing
 - write real tests:
+  - swipe left, 
   - swipe left. click outside, watch it go away
   - swipe left all the way to default button
 

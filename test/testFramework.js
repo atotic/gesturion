@@ -116,7 +116,8 @@ export class TestRunner {
       this.tests[testIndex].status =`PASS${ v == null ? "" : ": " + v }`;
       this.#updateTestUi(testIndex);
     }
-
+    this.tests[testIndex].status = "RUNNING";
+    this.#updateTestUi(testIndex);
     try {
       let v =this.tests[testIndex].test();
       if (v && v.then) {

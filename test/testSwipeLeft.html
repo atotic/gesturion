@@ -3,206 +3,134 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SwipeLeft test</title>
 <style>
-  :root {
-    --light-gray-text: #999;
-  }
-  body {
-    min-height: 100vh;
-    border: 4px solid #EEE;
-    margin: 0px;
-  }
-  /* @media (prefers-color-scheme: dark) {
-    body {
-      background: #222;
-      color: #FFF;
-      border-color: #444;
-    }
-  } */
-  .messageContainer {
-    position:relative;
-    max-width: 600px;
-    width: 100%;
-    border:1px solid green;
-    font-family: sans-serif;
-    overflow:hidden;
-  }
-  .message {
-    line-height: 1.2em;
-    padding: 8px;
-  }
-  .message .line1 {
-    display:flex;
-  }
-  .line1 .sender {
-    font-weight: bold;
-    flex-grow: 1;
-  }
-  .line1 .datetime {
-    color: var(--light-gray-text);
-    flex-grow:1;
-    text-align:right;
-  }
-  .message .line2 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .message .line3 {
-    color: var(--light-gray-text);
-    height: 2.4em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  </style>
-
+body {
+  min-height: 100vh;
+  margin: 0px;
+}
+.list {
+  width: 100%;
+  max-width: 500px;
+}
+.listItemContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.listItemContent {
+  font-size: 36px;
+  border: 4px solid gray;
+  border-bottom-color: #DDD;
+  padding: 4px;
+}
+</style>
 <h1>SwipeLeft test</h1>
-<!-- <div id="t1" style="border:1px solid black;width:300px;height:200px;">
-  &lt;--- Swipe left
-</div>
-<div id="t2" style="border:1px solid black;width:300px;height:200px;">
-  <gesture-logger></gesture-logger>
-  I am just a test.
-</div> -->
-<template id="mailMessageTemplate">
-  <div id="t3">
-    <div class="messageContainer">
-      <div class="message">
-        <div class="line1">
-          <div class="sender">Ian Kilpatrick (via X)</div>
-          <div class="datetime">Yesterday</div>
-        </div>
-        <div class="line2">
-          Visit a world of entertainment with KQED such as three body problem
-        </div>
-        <div class="line3">
-          Explore new places, periods and experiences with KQED passport. Members can stream new episodes of Call the Midwife 30 days before they are on TV.
-        </div>
-      </div><!-- message -->
-    </div><!-- messgeContainer -->
-  </div>
-</template>
-<div id="allMessages">
-<div id="t3">
-  <div class="messageContainer">
-    <div class="message">
-      <div class="line1">
-        <div class="sender">Ian Kilpatrick (via X)</div>
-        <div class="datetime">Yesterday</div>
-      </div>
-      <div class="line2">
-        Visit a world of entertainment with KQED such as three body problem
-      </div>
-      <div class="line3">
-        Explore new places, periods and experiences with KQED passport. Members can stream new episodes of Call the Midwife 30 days before they are on TV.
-      </div>
-    </div><!-- message -->
-  </div><!-- messgeContainer -->
-</div>
+<pre>Tested:
+- gestures/swipeLeft.js
+- effects/swipeLeftButtonMenuEffect.js
+- effects/buttonMenu.js
+</pre>
+<div id="list1" class="list">
 </div>
 <script type="module">
-  import SwipeLeft from "../src/gestures/swipeLeft.js";
+  // Setup
+
+  for (let i=1;i<=20;++i) {
+    // Create list items
+    let container = document.createElement("div");
+    let content = document.createElement("div");
+    container.classList.add("listItemContainer");
+    container.append(content);
+    content.classList.add("listItemContent");
+    content.textContent = `This is a list item ${i}`;
+    document.getElementById("list1").append(container);
+  }
+</script>
+<script type="module">
   import GestureManager from "../src/gestureManager.js";
+  import SwipeLeft from "../src/gestures/swipeLeft.js";
   import SwipeLeftButtonMenuEffect from "../src/effects/swipeLeftButtonMenuEffect.js";
   import createButtonMenu from  "../src/effects/buttonMenu.js";
   import TestRunner from "./testFramework.js";
   import {LoggerEffect} from "./testUtils.js";
 
-  function test5() {
-    let el = document.querySelector("#t3");
-    let mc = el.querySelector(".messageContainer");
-    let clickHandler = function(ev) {
-      console.log("Clicked ", ev.currentTarget.querySelector(".title").innerText);
+  let nullClickHandler = _ => {};
+  let swipeLeftMailMenuOptions = {
+    container: null,
+    contentSelector: ".listItemContent",
+    menuBuilder: createButtonMenu,
+    menuBuilderOptions: {
+      items: [
+        {title: "More…", color: "#c8c7ce", click: nullClickHandler},
+        {title: "Flag", color: "#ff9503", click: nullClickHandler},
+        {title: "Trash", color: "#ff3a2e",  click: nullClickHandler}
+      ]
     }
-    let swipeLeftOptions = {
-      container: mc,
-      contentSelector: ".message",
-      menuBuilder: createButtonMenu,
-      menuBuilderOptions: {
-        items: [
-          {title: "More…", color: "#c8c7ce", click: clickHandler},
-          {title: "Flag", color: "#ff9503", click: clickHandler},
-          {title: "Trash", color: "#ff3a2e", default: true, click: clickHandler}
-        ]
-      }
-    };
-    let g = new SwipeLeft(mc, {effect: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
-    GestureManager.addGesture(mc, g);
+  };
+
+  function createEvent(type, element, location) {
+    let elRect = element.getBoundingClientRect();
+  
+    let pageX = elRect.x;
+    let pageY = elRect.y;
+    if (location) {
+      if (location.x)
+        pageX += location.x;
+      if (location.y)
+        pageY += location.y;
+      if (location.left)
+        pageX += location.left;
+      if (location.right)
+        pageX += elRect.width - location.right;
+    }
+    let ev = new PointerEvent(type, {
+      bubbles: true, 
+      timeStamp: 5,
+      clientX: pageX - window.scrollX, 
+      clientY: pageY - window.scrollY
+    });
+    return ev;
+  }
+  async function test1() {
+    // 1. swipe left so that menu remains visible
+    // 2. click in empty area, so that menu goes away
+    // Setup
+    let container = document.querySelector(".list .listItemContainer");
+    swipeLeftMailMenuOptions.container = container;
+    let effect = new LoggerEffect(
+      new SwipeLeftButtonMenuEffect(swipeLeftMailMenuOptions));
+    let gesture = new SwipeLeft(container, 
+      { effect: effect});
+    GestureManager.addGesture(container, gesture);
+
+    // Test
+    // pointerdown 
+    container.dispatchEvent(
+      createEvent("pointerdown", container, {right: 5})
+    );
+    container.dispatchEvent(
+      createEvent("pointermove", container, {right: 10})
+    );
+    container.dispatchEvent(
+      createEvent("pointermove", container, {right: 100})
+    );
+    container.dispatchEvent(
+      createEvent("pointermove", container, {right: 200})
+    );
+    container.dispatchEvent(
+      createEvent("pointerup", container, {right: 200})
+    );
+    // Wait till end of animation
+    container.dispatchEvent(
+      createEvent("pointerdown", container, {right: 300})
+    );
+    // pointermove - enters waiting
+    // pointer move -200px;
+    // pointer move -100px;
+    // pointer up
+    // pointer down 
+    // Cleanup
+    // GestureManager.removeGesture(gesture);
   }
 
-  function test6() {
-    let messages = [
-      {
-        sender: "Ian Kilpatrick (via X)",
-        date: "Yesterday",
-        title: "Visit a world of entertainment with KQED such as three body problem",
-        preview: "Explore new places, periods and experiences with KQED passport. Members can stream new episodes of Call the Midwife 30 days before they are on TV."
-      },
-      {
-        sender: "Shally Stecker",
-        date: "10 days ago",
-        title: "your invited to join our quest",
-        preview: "we found you! And we'd love to talk with you about making magic happen with us. Are you still with"
-      },
-      {
-        sender: "bugzilla-daemon@webkit.org",
-        date: "1 day ago",
-        title: "[Bug 272479] REGRESSION (271848@main): Incorrect position of ::before",
-        preview: "Good point, I'll make a WPT version of the test."
-      },
-      {
-        sender: "RLS Foundation",
-        date: "2 days ago",
-        title: "Action Alert: Support Sleep Disorder Research",
-        preview: "To increase support for this letter, we ask that you reach out to your congressional House representatives today! "
-      },
-      {
-        sender: "LUNA Sandals",
-        date: "4 minutes ago",
-        title: "BTR Special Edition LUNAs 🚨!",
-        preview: "It's that time again - BORN TO RUN SEASON IS HERE! If you're a #runfreelunatic you know what that means."
-      },
-    ];
-    messages = [...messages, ...messages, ...messages, ...messages];
- 
-    let clickHandler = function(ev) {
-      console.log("Clicked ", ev.currentTarget.querySelector(".title").innerText);
-    }
-    let swipeLeftOptions = {
-      container: null,
-      contentSelector: ".message",
-      menuBuilder: createButtonMenu,
-      menuBuilderOptions: {
-        items: [
-          {title: "More…", color: "#c8c7ce", click: clickHandler},
-          {title: "Flag", color: "#ff9503", click: clickHandler},
-          {title: "Trash", color: "#ff3a2e", default: true, click: clickHandler}
-        ]
-      }
-    };
-
-    let createMessageDom = msg => {
-      let dom = document.getElementById("mailMessageTemplate").content.cloneNode(true);
-      dom.querySelector(".sender").textContent = msg.sender;
-      dom.querySelector(".datetime").textContent = msg.date;
-      dom.querySelector(".line2").textContent = msg.title;
-      dom.querySelector(".line3").textContent = msg.preview;
-      return dom;
-    }
-    let allMessages = document.querySelector("#allMessages");
-    for (let m of messages) {
-      let dom = createMessageDom(m);
-      let messageContainer = dom.querySelector(".messageContainer");
-      swipeLeftOptions.container = messageContainer;
-      let g = new SwipeLeft(messageContainer, {effect: new LoggerEffect(new SwipeLeftButtonMenuEffect(swipeLeftOptions))});
-      GestureManager.addGesture(messageContainer, g);
-      allMessages.append(dom);
-    }
-  }
-
-  test5();
-  test6();
-
-  TestRunner.test( _ => {
-    console.error("My first test");
-  }, "First test");
+  TestRunner.test(test1, "First test");
 </script>

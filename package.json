@@ -19,7 +19,8 @@
   "scripts": {
     "localhost": "'./node_modules/.bin/http-server' --port 8082 -c-1",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "md": "npx mdlive"
+    "md": "npx mdlive",
+    "wc": "find . -not \\( -path ./node_modules -prune \\) -not \\( -path ./.git -prune \\) -name '*.js' -or -name '*.html' | xargs wc"
   },
   "devDependencies": {
     "jsdoc": "^4.x",

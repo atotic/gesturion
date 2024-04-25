@@ -108,7 +108,29 @@ Implementation:
   }
 
   removeGesture(gesture) {
+    this.#removeFromActive(gesture);
     this.#removeAllEventSpecs(gesture);
+  }
+
+  #addToActive(gesture) {
+    let activeIdx = this.#activeGestures.indexOf(gesture);
+    if (activeIdx != -1) {
+      console.warn("#addToActive on already active gesture");
+      return;
+    }
+    this.#activeGestures.push(gesture);
+    this.#updateTextSelectionPrevention();
+    this.dispatchEvent(new CustomEvent(this.ACTIVE_GESTURE_EVENT, {
+      detail: this.#activeGestures
+    } ));
+  }
+
+  #removeFromActive(gesture) {
+    let activeIdx = this.#activeGestures.indexOf(gesture);
+    if (activeIdx != -1) {
+      this.#activeGestures.splice(activeIdx, 1);
+      this.#updateTextSelectionPrevention();
+    }
   }
 
   /**
@@ -190,6 +212,7 @@ Implementation:
     for (let eventSpec of gesture.allEventSpecs())
       this.#removeGestureListener(eventSpec, gesture);
   }
+
   // Set gesture state, and setup gesture's event listeners
   #setGestureState(gesture, newState, event=null) {
     // remove all old state listeners
@@ -203,27 +226,19 @@ Implementation:
         this.#removeGestureListener(spec, gesture);
     }
     gesture.setState(newState, event);
-    if (newState == 'active')
-      this.#activeGestures = [gesture];
-    else
-      this.#activeGestures = [];
 
     for (let spec of gesture.eventSpecs(newState)) {
       this.#addGestureListener(spec, gesture);
     }
-    this.#preventTextSelection(newState == 'active' ? 
-        gesture.preventTextSelection() : false);
-
-    if (newState == 'active') {
-      this.dispatchEvent(new CustomEvent(this.ACTIVE_GESTURE_EVENT, {
-        detail: this.#activeGestures
-      } ));
-    }
+    if (oldState == 'active')
+      this.#removeFromActive(gesture);
+    if (newState == 'active')
+      this.#addToActive(gesture);
   }
 
   // Gestures often prevent text selection during gesture
   // Implemented by setting user-select:none on <BODY>
-  #preventTextSelection(prevent) {
+  #updateTextSelectionPrevention() {
     // TODO
     // Bug: if we stop tracking a gesture in active state,
     //   selection might be stuck being disabled, bad UX.
@@ -232,6 +247,10 @@ Implementation:
     // Fix: heartbeat that reenables selection if no active gestures
     //   need testcase for this.
     // console.log("preventTextSelection", prevent);
+    let prevent = false;
+    for (let g of this.#activeGestures) {
+      prevent ||= g.preventTextSelection() 
+    }
     if (prevent) 
       document.body.classList.add(SelectNoneCSSClass);
     else
@@ -281,7 +300,7 @@ Implementation:
       // Active gestures stop propagation of their events.
       // EffectCleaner depends on this 
       if (gh.getState() == 'active' || newState == 'active') {
-        console.log("stopPropagation", event.type);
+        // console.log("stopPropagation", event.type);
         event.stopPropagation();
       }
       // Process new states later. Doing it now is not safe because
