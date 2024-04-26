@@ -28,9 +28,10 @@ export class TestRunner {
     right: 10px;
     top: 10px;
     max-width: 400px;
-    border: 2px dotted #9b870c;
+    border: 2px dotted #888;
     padding:4px;
     font-family:monospace;
+    background-color: #ddd;
   }
  /* @media (prefers-color-scheme: dark)  {
     .testPanel {

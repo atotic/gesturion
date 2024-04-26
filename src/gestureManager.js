@@ -296,17 +296,21 @@ Implementation:
     }
     let newStateRequests = [];
     for (let gh of eventGestureHandlers) {
-      let newState = gh.handleEvent(event);
-      // Active gestures stop propagation of their events.
-      // EffectCleaner depends on this 
-      if (gh.getState() == 'active' || newState == 'active') {
-        // console.log("stopPropagation", event.type);
-        event.stopPropagation();
+      try {
+        let newState = gh.handleEvent(event);
+        // Active gestures stop propagation of their events.
+        // EffectCleaner depends on this 
+        if (gh.getState() == 'active' || newState == 'active') {
+          // console.log("stopPropagation", event.type);
+          event.stopPropagation();
+        }
+        // Process new states later. Doing it now is not safe because
+        // it can modify eventGestureHandlers array.
+        if (newState)
+          newStateRequests.push({gesture: gh, state:newState});
+      } catch(err) {
+        console.error("Uncaught exception inside a gesture event handler", err, event, gh);
       }
-      // Process new states later. Doing it now is not safe because
-      // it can modify eventGestureHandlers array.
-      if (newState)
-        newStateRequests.push({gesture: gh, state:newState});
     }
     for (let r of newStateRequests)
       this.#setGestureState(r.gesture, r.state, event);

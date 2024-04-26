@@ -32,24 +32,24 @@ export default function createButtonMenu(effect, container, options) {
     dom.append(title);
     dom.style.backgroundColor = item.color;
 
-    let actionListener;
+    let actionListener = (ev) => effect.clear(); // Default listener closes the menu
     if (item.action) {
       if (item.preventClickAutoClose)
         actionListener = item.action;
       else {
         let itemAction = item.action;
         actionListener = ev => {
-          effect.clear();
-          itemAction(ev);
+          try {
+            itemAction(ev);
+          } catch(err) {
+            console.error("Uncaught exception in buttonMenu item action", err);
+          } finally {
+            effect.clear();
+          }
         }
       }
-    } else {
-      actionListener = ev => {
-        effect.clear();
-      }
-    }
+    } 
     dom.addEventListener("click", actionListener);
-
     menu.append(dom);
   }
   return menu;
@@ -61,6 +61,7 @@ appendStyleRule(`.${CONTAINER_CLASS}`, `{
   right: 0;
   top:0;
   height: 100%;
+  user-select: none;
 }`);
 appendStyleRule(`.${ITEM_CLASS}`, `{
   flex-grow: 1;
