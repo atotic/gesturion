@@ -124,14 +124,13 @@ GestureHandler API:
   // @returns null, or newState if desired.
   handleEvent(event);
 }
-## Renaming library
+## IDEAS
 - js-gestures describes it, but a bit too generic.
-- i'd like to introduce a11y into the name. able-gestures? 
-Ideas:
-1. able-gestures (has a11y angle in the name)
+able-gestures (has a11y angle in the name)
+gesturability
 
-## Code structure:
-modules vs plain javascript? 
+Also, if ever doing a video, introduce some fun hand gestures: middle finger, etc 
+
 ## Brainstorming
 
 Initial idea: Accessibility as [Gesture Toolbox](https://docs.google.com/document/d/1-ptDjG1yDTsGYcRsG-raieqpq8seACmtMMUb5gFLisQ/edit#heading=h.g739nyt99zt6) 
@@ -187,6 +186,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-26 GestureEffect.ANIM_TIME
 Apr-26 SwipeLeft tests done. 6 mighty tests for button menu!
 Apr-24 Created small testFramework that can be run by Selenium
 Apr-23 EffectCleaner cleans on pointerdown. To make it work,

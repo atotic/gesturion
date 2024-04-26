@@ -40,7 +40,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
       return this.container.querySelector(this.contentSelector);
     return null;
   }
-  animateMenuToWidth(finalWidth, duration=300) {
+  animateMenuToWidth(finalWidth, duration=GestureEffect.ANIM_TIME) {
     let animOptions = {
       duration: duration,
       easing: 'ease-out'
@@ -75,7 +75,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
       return;
     // Default button mode, hide other buttons
     let animOptions = {
-      duration: 200,
+      duration: GestureEffect.ANIM_TIME,
       easing: 'ease-out'
     }
     for (let item of this.leftMenu.querySelectorAll(".swipeHorizontalMenuItem")) {

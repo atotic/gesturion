@@ -6,6 +6,8 @@
  */
 
 export default class GestureEffect {
+  static ANIM_TIME = 300;
+
   idleStart(gesture)  {
     console.warn("idleStart not handled");
   }
