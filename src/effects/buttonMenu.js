@@ -32,23 +32,23 @@ export default function createButtonMenu(effect, container, options) {
     dom.append(title);
     dom.style.backgroundColor = item.color;
 
-    let clickListener;
-    if (item.click) {
+    let actionListener;
+    if (item.action) {
       if (item.preventClickAutoClose)
-        clickListener = item.click;
+        actionListener = item.action;
       else {
-        let itemClick = item.click;
-        clickListener = ev => {
+        let itemAction = item.action;
+        actionListener = ev => {
           effect.clear();
-          itemClick(ev);
+          itemAction(ev);
         }
       }
     } else {
-      clickListener = ev => {
+      actionListener = ev => {
         effect.clear();
       }
     }
-    dom.addEventListener("click", clickListener);
+    dom.addEventListener("click", actionListener);
 
     menu.append(dom);
   }

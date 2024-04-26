@@ -27,6 +27,7 @@ export class TestRunner {
     position: fixed;
     right: 10px;
     top: 10px;
+    max-width: 400px;
     border: 2px dotted #9b870c;
     padding:4px;
     font-family:monospace;
@@ -76,7 +77,7 @@ export class TestRunner {
   #updateTestUi(testIndex) {
     let ui = this.#ui();
     let tbody = ui.querySelector('tbody');
-    let testRow = tbody.querySelector(`:nth-child(${testIndex+1})`);
+    let testRow = tbody.querySelector(`tr:nth-child(${testIndex+1})`);
     if (!testRow) {
       testRow = document.createElement("tr");
       let td = document.createElement("td");
@@ -89,8 +90,8 @@ export class TestRunner {
       testRow.append(document.createElement("td"));
       tbody.append(testRow);
     }
-    let nameTd = testRow.querySelector(":nth-child(2)");
-    let statusTd = testRow.querySelector(":nth-child(3)");
+    let nameTd = testRow.querySelector("td:nth-child(2)");
+    let statusTd = testRow.querySelector("td:nth-child(3)");
     nameTd.textContent = this.tests[testIndex].name;
     statusTd.textContent = this.tests[testIndex].status;
   }
@@ -102,36 +103,28 @@ export class TestRunner {
     return this.tests.length - 1;
   }
 
-  runOne(testIndex) {
+  async runOne(testIndex) {
     if (testIndex >= this.tests.length) {
       document.body.style.backgroundColor = "red";
-      console.error("trying to run nonexistent test!!!!")
-    }
-    let reportError = err => {
-      console.error(err, testIndex);
-      this.tests[testIndex].status = `FAIL: ${err}`;
-      this.#updateTestUi(testIndex);
-    }
-    let reportSuccess = v => {
-      this.tests[testIndex].status =`PASS${ v == null ? "" : ": " + v }`;
-      this.#updateTestUi(testIndex);
+      console.error("trying to run nonexistent test!!!!");
+      
     }
     this.tests[testIndex].status = "RUNNING";
     this.#updateTestUi(testIndex);
     try {
-      let v =this.tests[testIndex].test();
-      if (v && v.then) {
-        v.then(reportSuccess, reportError);
-      } else
-        reportSuccess(v);
+      let v = await this.tests[testIndex].test();
+      this.tests[testIndex].status =`PASS${ v == null ? "" : ": " + v }`;
+      this.#updateTestUi(testIndex);
     } catch(err) {
-      reportError(err);
+      console.error(err, testIndex);
+      this.tests[testIndex].status = `FAIL: ${err}`;
+      this.#updateTestUi(testIndex);
     }
   }
 
-  runAll() {
+  async runAll() {
     for (let i=0; i<this.tests.length; ++i)
-      this.runOne(i);
+      await this.runOne(i);
   }
 }
 
