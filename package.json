@@ -18,14 +18,15 @@
   "homepage": "https://github.com/atotic/js-gestures#README.md",
   "scripts": {
     "localhost": "'./node_modules/.bin/http-server' --port 8082 -c-1",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test/seleniumRunner.js",
     "md": "npx mdlive",
     "wc": "find . -not \\( -path ./node_modules -prune \\) -not \\( -path ./.git -prune \\) -name '*.js' -or -name '*.html' | xargs wc"
   },
   "devDependencies": {
+    "colorize-node": "^0.5.1",
+    "http-server": "^14.1.1",
     "jsdoc": "^4.x",
     "markdown-live": "^1.x",
-    "http-server": "^14.1.1",
     "selenium-webdriver": "^4.19.0"
   }
 }

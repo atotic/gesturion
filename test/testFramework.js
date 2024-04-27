@@ -1,9 +1,21 @@
 /**
- * Simple TestRunner
- * 
- * Idea:
- * - each test page has 
- */
+
+Simple TestRunner
+
+Usage:
+
+import TestRunner from "./testFramework.js";
+
+// Register tests
+TestRunner.test(test1,  "Install menu on item 1" );
+TestRunner.test(test2,  "Install menu with default" );
+// Registering tests displays UI for running tests
+
+// Run all tests
+TestRunner.runAll() 
+
+TestRunner also integrates with Selenium by runAutomatedTests
+*/
 
 let singleton;
 
@@ -15,7 +27,8 @@ window.addEventListener("error", (event) => {
 
 export class TestRunner {
 
-  static HTML = `<button id="runAll">Run all</button>
+  static HTML = `<button id="runAllTests">Run all</button>
+  <button id="runAllTestsAutomated" style="width:1px;opacity:0"></button>
   <table>
     <col style="min-width:50px">
     <col style="min-width:100px">
@@ -39,11 +52,11 @@ export class TestRunner {
     font-family:monospace;
     background-color: #ddd;
   }
- /* @media (prefers-color-scheme: dark)  {
+  @media (prefers-color-scheme: dark)  {
     .testPanel {
       border-color: yellow;
     }
-  }*/
+  }
   .testPanel table {
     border-collapse:collapse;
     margin-top: 8px;
@@ -62,6 +75,35 @@ export class TestRunner {
     singleton = this;
   }
 
+  // Runs all tests, and stores a JSON-encoded result inside a <PRE>
+  runAutomatedTests() {
+    // Runs all tests, stores result as JSON 
+    const SELENIM_DIV = "seleniumTestReport";
+    let reportDiv = document.getElementById(SELENIM_DIV);
+    if (reportDiv)
+      reportDiv.remove();
+    reportDiv = document.createElement("pre");
+    reportDiv.setAttribute("id", SELENIM_DIV);
+    let report = {
+      title: document.title,
+      tests: []
+    }
+    this.runAll()
+      .catch( err => {
+        console.error("Error running automated tests", err);
+      })
+      .finally( _ => {
+        for (let t of singleton.tests) {
+          report.tests.push({
+            name: t.name,
+            status: t.status
+          });
+        }
+        reportDiv.textContent = JSON.stringify(report);
+        document.body.append(reportDiv);
+      });
+  }
+
   #ui() {
     const TEST_PANEL_ID = "AbleTestPanel";
     let ui = document.querySelector(`#${TEST_PANEL_ID}`);
@@ -70,8 +112,10 @@ export class TestRunner {
       ui.setAttribute("id", TEST_PANEL_ID);
       ui.classList.add("testPanel");
       ui.innerHTML = TestRunner.HTML;
-      ui.querySelector("#runAll")
+      ui.querySelector("#runAllTests")
         .addEventListener("click" , _ => singleton.runAll());
+      ui.querySelector("#runAllTestsAutomated")
+        .addEventListener("click", _ => singleton.runAutomatedTests());
       document.body.append(ui);
       let styleElement = document.createElement("style");
       styleElement.setAttribute("id", `${TEST_PANEL_ID}Style`);

@@ -1,7 +1,21 @@
 # js-gestures
 gesture recognition library
 ## TODO
-Selenium: automatically run tests and report results
+Selenium: run multiple tests, basically glob + run and total tests
+
+Next: more gestures
+SwipeLeft becomes 
+SwipeHorizontal + Left/Right variants
+SwipeVertical -- needs to deal with scrollbars, spinner effect on top,
+Drag
+Press
+
+swipe tap pinch rotation pan screenEdgePan longPress hover dragNdrop
+doubleTap
+
+
+Probably there will be a general swipe class that I slowly evolve towards.
+
 
 - GestureManager
   - handling gestures nested inside DOM (stopPropagation, but for DOM?)
@@ -186,6 +200,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-26 npm run test will run Selenium, and display results
 Apr-26 Add window.onerror to testFramework to catch uncaught errors
 Apr-26 GestureEffect.ANIM_TIME
 Apr-26 SwipeLeft tests done. 6 mighty tests for button menu!
