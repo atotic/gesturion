@@ -258,7 +258,7 @@ body {
       GestureManager.addGesture(container, gesture);
 
       // Test
-      // swipe left.
+      // Gesture 1: swipe left.
       container.dispatchEvent(
         createEvent("pointerdown", container, {right: 5})
       );
@@ -268,14 +268,16 @@ body {
       container.dispatchEvent(
         createEvent("pointermove", container, {right: 200})
       );
-      // Wait till end of animation
       await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem"));
+      container.dispatchEvent(
+        createEvent("pointerup", container, {left: 5})
+      );
       // Click outside of the button
       container.dispatchEvent(
-        createEvent("pointerdown", container, {right: 300})
+        createEvent("pointerdown", container, {left: 5})
       );
       container.dispatchEvent(
-        createEvent("pointerup", container, {right: 300})
+        createEvent("pointerup", container, {left: 5})
       );
       await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem"));
     } catch(err) {

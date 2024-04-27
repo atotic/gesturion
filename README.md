@@ -186,6 +186,7 @@ Why not just use hammer.js:
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-26 Add window.onerror to testFramework to catch uncaught errors
 Apr-26 GestureEffect.ANIM_TIME
 Apr-26 SwipeLeft tests done. 6 mighty tests for button menu!
 Apr-24 Created small testFramework that can be run by Selenium

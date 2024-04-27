@@ -7,6 +7,12 @@
 
 let singleton;
 
+let windowError; // Last window error, used to catch uncaught exceptions
+window.addEventListener("error", (event) => {
+  windowError = event;
+  //{source: event.filename, lineno: event.lineno, colno:event.colno, error: event.error};
+});
+
 export class TestRunner {
 
   static HTML = `<button id="runAll">Run all</button>
@@ -111,9 +117,16 @@ export class TestRunner {
       
     }
     this.tests[testIndex].status = "RUNNING";
+    windowError = null;
     this.#updateTestUi(testIndex);
     try {
       let v = await this.tests[testIndex].test();
+      if (!v) {
+        if (windowError) {
+          console.error("Test failed with uncaught error", windowError);
+          throw windowError.error;
+        }
+      }
       this.tests[testIndex].status =`PASS${ v == null ? "" : ": " + v }`;
       this.#updateTestUi(testIndex);
     } catch(err) {
@@ -128,5 +141,6 @@ export class TestRunner {
       await this.runOne(i);
   }
 }
+
 
 export default new TestRunner();
