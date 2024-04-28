@@ -60,9 +60,6 @@ https://www.redblobgames.com/blog/2024-04-17-draggable-examples/
     - will no longer receive events
   - disabling text selection: 
 
-## Tests needed:
- - textSelectionEnabled
-
 ### Initial API
 Gesture library
 - there are two APIs.
@@ -81,12 +78,6 @@ pointerenter
 pointerleave
 pointercancel
 pointerover
-
-2. Utilities
-  - prevent context menu during gesture
-      `contextmenu event preventDefault()`
-  - prevent scrolling during gesture
-      `touchmove event preventDefault()`
 
 #### User API
 1. add/remove gestures, mirrors `addEventListener` API
@@ -145,6 +136,9 @@ gesturability
 
 Also, if ever doing a video, introduce some fun hand gestures: middle finger, etc 
 
+Interesting CSS properties:
+[-webkit-touch-callout](https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-touch-callout)
+[-webkit-user-drag](https://caniuse.com/webkit-user-drag)
 ## Brainstorming
 
 Initial idea: Accessibility as [Gesture Toolbox](https://docs.google.com/document/d/1-ptDjG1yDTsGYcRsG-raieqpq8seACmtMMUb5gFLisQ/edit#heading=h.g739nyt99zt6) 
@@ -196,6 +190,9 @@ Why not just use hammer.js:
 - not a fan of the API, demos. I am a fan of gesture composability
 
 ## Related work
+https://shoelace.style/ cool library of web components, about to
+become Web Awesome
+
 [Svelte gestures](https://github.com/Rezi/svelte-gestures)
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 

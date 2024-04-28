@@ -15,6 +15,8 @@ TestRunner.test(test2,  "Install menu with default" );
 TestRunner.runAll() 
 
 TestRunner also integrates with Selenium by runAutomatedTests
+Selenium clicks on a hidden runAutomatedTests button,
+and receives results as encoded JSON from #seleniumTestReport textContent
 */
 
 let singleton;
@@ -181,8 +183,10 @@ export class TestRunner {
   }
 
   async runAll() {
+    console.time("Run all tests");
     for (let i=0; i<this.tests.length; ++i)
       await this.runOne(i);
+    console.timeEnd("Run all tests");
   }
 }
 
