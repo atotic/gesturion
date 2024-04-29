@@ -1,11 +1,14 @@
 /**
- * Script that runs all the tests in this directory
+ * Script that runs all the tests in current directory)
+ 
+TODO run all tests, not just one!
+// https://www.npmjs.com/package/fast-glob
+// https://www.selenium.dev/documentation/webdriver/
  */
 const {By, Builder, Browser} = require('selenium-webdriver');
 const { colorize } = require('colorize-node');
 
 const assert = require("assert");
-// https://www.npmjs.com/package/fast-glob
 (async function firstTest() {
   let driver;
   

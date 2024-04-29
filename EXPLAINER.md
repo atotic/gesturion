@@ -7,4 +7,6 @@ hammer.js was close to what I needed, but the event-base API
 did not click for me, and it was missing a couple 
 of my requirements.
 
-# REQUIREMENTS
+# DESIGN OBJECTIVES
+
+#

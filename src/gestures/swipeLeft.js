@@ -79,9 +79,9 @@ export default class SwipeLeft extends GestureHandler {
   
   handleWaitEvent(ev) {
     if (ev.type == 'pointermove') {
-      let delta = this.pageStart.x - ev.pageX;
+      let delta = ev.pageX - this.pageStart.x;
       this.options.effect.moved( this, ev,this.getState(), delta, this.#updateSpeed(ev));
-      if (delta > this.threshold) {
+      if (delta < -this.threshold) {
         return 'active';
       }
       return;
@@ -100,8 +100,8 @@ export default class SwipeLeft extends GestureHandler {
     }
     if (ev.type == 'pointermove') {
       this.#updateSpeed(ev);
-      if (this.options.effect.moved) 
-       this.options.effect.moved(this, ev, this.getState(), this.pageStart.x - ev.pageX);
+      if (this.options.effect.moved)
+       this.options.effect.moved(this, ev, this.getState(), ev.pageX - this.pageStart.x);
       return;
     }
     if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {

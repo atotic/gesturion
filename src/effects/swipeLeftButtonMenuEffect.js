@@ -181,7 +181,7 @@ export default class SwipeLeftButtonMenuEffect extends GestureEffect {
       return;
     if (this.leftMenu) {
       this.hasMoved = true;
-      let newWidth = Math.max(0, delta + this.initialWidth);
+      let newWidth = Math.max(0, -delta + this.initialWidth);
       // If there is no default button, do not grow bigger than maximum width.
       if (!this.defaultButton)
         newWidth = Math.min(newWidth, this.maxWidth);

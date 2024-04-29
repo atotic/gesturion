@@ -1,11 +1,13 @@
 # js-gestures
 gesture recognition library
 ## TODO
-Selenium: run multiple tests, basically glob + run and total tests
-
+swipeLeft -> swipeHorizontal
+swipeLeftButtonMenuEffect -> swipeHorizontalButtonMenuEffect
+testSwipeLeft -> testSwipeRight
 Next: more gestures
 SwipeLeft becomes 
 SwipeHorizontal + Left/Right variants
+Selenium: run multiple tests, basically glob + run and total tests
 SwipeVertical -- needs to deal with scrollbars, spinner effect on top,
 Drag
 Press
