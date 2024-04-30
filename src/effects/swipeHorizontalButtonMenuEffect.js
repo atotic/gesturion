@@ -46,12 +46,14 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     return null;
   }
   animateMenuToWidth(finalWidth, duration=GestureEffect.ANIM_TIME) {
+    finalWidth = finalWidth.toFixed();
+    // console.log("animateMenuToWidth", finalWidth);
     let animOptions = {
       duration: duration,
       easing: 'ease-out'
     };
     // Animate menu
-    let menuAnimation =  this.menu.animate(
+    let menuAnimation = this.menu.animate(
       [
         {width: `${this.menu.offsetWidth}px`},
         {width: `${finalWidth}px`}
@@ -194,7 +196,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       return;
     if (this.menu) {
       this.hasMoved = true;
-      let newWidth = Math.max(0, Math.abs(delta) + this.initialWidth);
+      let newWidth = Math.max(0, this.initialWidth + (this.direction == 'ltr' ? delta : -delta));
       // If there is no default button, do not grow bigger than maximum width.
       if (!this.defaultButton)
         newWidth = Math.min(newWidth, this.maxWidth);

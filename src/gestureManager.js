@@ -108,8 +108,11 @@ Implementation:
   }
 
   removeGesture(gesture) {
+    if (!gesture)
+      return;
     this.#removeFromActive(gesture);
     this.#removeAllEventSpecs(gesture);
+    gesture.options.effect.clear();
   }
 
   #addToActive(gesture) {

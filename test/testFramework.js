@@ -6,6 +6,17 @@ Usage:
 
 import TestRunner from "./testFramework.js";
 
+async function test1 {
+  if (bad)
+    throw `test1 has failed because ${bad}`;
+  await goodNews();
+  await moreGoodNews();
+}
+// Test description is:
+// - function name or function.description, or description passed in at registration
+
+test1.description = "Set test description on function, or when registering"
+
 // Register tests
 TestRunner.test(test1,  "Install menu on item 1" );
 TestRunner.test(test2,  "Install menu with default" );
@@ -29,7 +40,7 @@ window.addEventListener("error", (event) => {
 
 export class TestRunner {
 
-  static HTML = `<button id="runAllTests">Run all</button>
+  static HTML = `<button id="runAllTests">Run all <span id="timeTaken"></span></button>
   <button id="runAllTestsAutomated" style="width:1px;opacity:0"></button>
   <table>
     <col style="min-width:50px">
@@ -151,7 +162,11 @@ export class TestRunner {
 
   // Returns test number.
   test(fn, name) {
-    this.tests.push({test: fn, name: name, status: "-"});
+    this.tests.push({
+      test: fn, 
+      name: name || fn.description || fn.name,
+      status: "-"
+    });
     this.#updateTestUi(this.tests.length - 1);
     return this.tests.length - 1;
   }
@@ -184,11 +199,13 @@ export class TestRunner {
 
   async runAll() {
     console.time("Run all tests");
+    let start = Date.now();
     for (let i=0; i<this.tests.length; ++i)
       await this.runOne(i);
+    let taken = Date.now() - start;
+    document.querySelector("#timeTaken").textContent = `${taken.toFixed()}ms`;
     console.timeEnd("Run all tests");
   }
 }
-
 
 export default new TestRunner();

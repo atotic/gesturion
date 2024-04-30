@@ -200,6 +200,8 @@ become Web Awesome
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+Apr-30 test.description can be used as name
+Apr-30 testSwipeLtr fully featured
 Apr-26 npm run test will run Selenium, and display results
 Apr-26 Add window.onerror to testFramework to catch uncaught errors
 Apr-26 GestureEffect.ANIM_TIME

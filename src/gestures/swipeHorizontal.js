@@ -60,6 +60,8 @@ export default class SwipeHorizontal extends GestureHandler {
       let xDelta = ev.pageX - this.lastPointer.x;
       speed = xDelta/timeDelta * 100;
     }
+    if (GestureHandler.TEST_DEFAULT_SPEED)
+      speed = GestureHandler.TEST_DEFAULT_SPEED;
     this.lastPointer = {
       x: ev.pageX, timeStamp: ev.timeStamp, speed: speed
     }

@@ -7,6 +7,12 @@
 import GestureEffect from "../effects/gestureEffect.js";
 
 export default class GestureHandler {
+  // Used by tests to test default speed
+  // If your gesture reports speed, use this value for speed if set.
+  // Why: speed is computed from timestamps, 
+  // which cannot be set on synthetic events
+  static TEST_DEFAULT_SPEED;
+
   /**
    * @typedef {Object} EventSpecVerbose - Listen for an event on element
    * @property {String} eventType - event name

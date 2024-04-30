@@ -26,7 +26,7 @@ body {
 <h1>SwipeLtr => </h1>
 <pre>Tested:
 - gestures/swipeHorizontal.js
-- effects/SwipeHorizontalButtonMenuEffect.js
+- effects/swipeHorizontalButtonMenuEffect.js
 - effects/buttonMenu.js
 </pre>
 <div id="list1" class="list">
@@ -46,13 +46,15 @@ body {
 </script>
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
+  import GestureHandler from "../src/gestures/gestureHandler.js";
+  import GestureEffect from "../src/effects/gestureEffect.js";
   import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
   import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
   import createButtonMenu from  "../src/effects/buttonMenu.js";
   import TestRunner from "./testFramework.js";
   import {LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating} from "./testUtils.js";
 
-  function getDefaultMailMenu(container) {
+  function getDefaultLtrMenu(container) {
     let nullClickHandler = _ => {};
     return {
       container: container,
@@ -69,231 +71,234 @@ body {
     };
   }
 
-  async function test1() {
+  async function installOnItem() {
     // Permanently install menu
-    let container, effect, gesture;
+    let el, effect, gesture;
     let itemIndex = 1;
     try {
       const COLOR = "yellow";
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      if (container.style.backgroundColor != COLOR) {
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      if (el.style.backgroundColor != COLOR) {
         // Only install once
-        container.querySelector(".listItemContent").textContent = "ltr menu installed";
-        let effectOptions = getDefaultMailMenu(container);
+        el.querySelector(".listItemContent").textContent = "ltr menu installed";
+        let effectOptions = getDefaultLtrMenu(el);
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-        effect = new LoggerEffect(effect);
-        gesture = new SwipeHorizontal(container, { effect: effect, direction: "ltr"});
-        GestureManager.addGesture(container, gesture);
-        container.style.backgroundColor = COLOR;
+        // effect = new LoggerEffect(effect);
+        gesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr"});
+        GestureManager.addGesture(el, gesture);
+        el.style.backgroundColor = COLOR;
       }
       // Swipe left to open the menu
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {left: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 10})
-      );
-      container.dispatchEvent(
-        createEvent("pointerup", container, {left: 200})
-      );
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
+      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
     } catch(err) {
       GestureManager.removeGesture(gesture);
-      container.style.backgroundColor = "";
+      el.style.backgroundColor = "";
       throw err;
     }
   }
+  // installOnItem.description = "Install ltr menu on item 1";
 
-  async function test2() {
+  async function installWithDefault() {
     // Permanently install menu
-    let container, effect, gesture;
+    let el, effect, gesture;
     let itemIndex = 2;
     try {
       const COLOR = "yellow";
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      if (container.style.backgroundColor != COLOR) {
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      if (el.style.backgroundColor != COLOR) {
         // Only install once
-        container.querySelector(".listItemContent").textContent = "ltr menu with default";
-        let effectOptions = getDefaultMailMenu(container);
+        el.querySelector(".listItemContent").textContent = "ltr menu with default";
+        let effectOptions = getDefaultLtrMenu(el);
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-        gesture = new SwipeHorizontal(container, { effect: effect});
-        GestureManager.addGesture(container, gesture);
-        container.style.backgroundColor = COLOR;
+        gesture = new SwipeHorizontal(el, { effect: effect});
+        GestureManager.addGesture(el, gesture);
+        el.style.backgroundColor = COLOR;
       }
       // Swipe ltr to open the menu
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {right: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {right: 10})
-      );
-      container.dispatchEvent(
-        createEvent("pointerup", container, {right: 200})
-      );
+      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
+      el.dispatchEvent(createEvent("pointerup", el, {right: 200}));
     } catch(err) {
       GestureManager.removeGesture(gesture);
-      container.style.backgroundColor = "";
+      el.style.backgroundColor = "";
       throw err;
     }
   }
+  // installWithDefault.description = "Install menu with default Trash button";
 
-  async function test3() {
+  async function ltrFastShortSwipeRight() {
+    let el, effect, gesture;
+    let itemIndex = 3;
+    try {
+      el = document.querySelector(
+        `.list .listItemContainer:nth-child(${itemIndex})`);
+      effect = new SwipeHorizontalButtonMenuEffect(getDefaultLtrMenu(el));
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr'});
+      GestureManager.addGesture(el, gesture);
+
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 30}));
+      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      el.dispatchEvent(createEvent("pointerup", el, {left: 30}));
+      await awaitSizeStopAnimating(menuItem);
+      if (menuItem.offsetWidth == 0)
+        throw "Menu should be visible after short quick swipe";
+    } finally {
+      GestureManager.removeGesture(gesture);
+    }
+  }
+
+  async function ltrSlowShortSwipeRight() {
+    let el, effect, gesture;
+    let itemIndex = 4;
+    try {
+      el = document.querySelector(
+        `.list .listItemContainer:nth-child(${itemIndex})`);
+      effect = new SwipeHorizontalButtonMenuEffect(getDefaultLtrMenu(el));
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr'});
+      GestureManager.addGesture(el, gesture);
+
+      GestureHandler.TEST_DEFAULT_SPEED = 1;
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
+      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      el.dispatchEvent(createEvent("pointermove", el, {left: 30}));
+      await awaitSizeStopAnimating(menuItem);
+      el.dispatchEvent(createEvent("pointerup", el, {left: 30}));
+      await awaitTimeout(GestureEffect.ANIM_TIME);
+      await awaitSizeStopAnimating(menuItem);
+      if (menuItem.offsetWidth != 0)
+        throw "Menu should be hidden after short slow swipe";
+   } finally {
+      GestureHandler.TEST_DEFAULT_SPEED = null;
+      GestureManager.removeGesture(gesture);
+    }
+  }
+
+  async function openButtonClick() {
     // 1. swipe left so that menu remains visible
     // 2. click on the menu button
-    let container, effect, gesture;
-    let itemIndex = 3;
+    let el, effect, gesture;
+    let itemIndex = 5;
     let buttonClicked = false;
     try {
       let action = ev => {
         buttonClicked = ev.currentTarget.textContent;
         effect.clear(); // close the menu
       }
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      let effectOptions = getDefaultMailMenu(container);
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      let effectOptions = getDefaultLtrMenu(el);
       for (let item of effectOptions.menuBuilderOptions.items) {
         item.action = action;
         item.preventClickAutoClose = true;
       }
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(container, 
+      gesture = new SwipeHorizontal(el, 
         { effect: effect});
-      GestureManager.addGesture(container, gesture);
+      GestureManager.addGesture(el, gesture);
 
-      // Swipe ltr
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {left: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 10})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 200})
-      );
-      container.dispatchEvent(
-        createEvent("pointerup", container, {left: 200})
-      );
+      // Swipe ltr, open menu
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 200}));
+      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
       // Wait till end of animation
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem"));
+      let menuItem = el.querySelector(".swipeHorizontalMenuItem")
+      await awaitSizeStopAnimating(menuItem);
       // Click on the button
-      let button = container.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
-      button.dispatchEvent(
-        createEvent("click", button, {y: 5, x: 5})
-      );
+      let button = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      button.dispatchEvent(createEvent("click", button, {y: 5, x: 5}));
       if (buttonClicked == false)
         throw "Did not click on the button";
       if (buttonClicked != "Trash")
         throw "Clicked on wrong button:" + buttonClicked;
-    } catch(err) {
+      if (menuItem.offsetWidth != 0)
+        throw "Menu should be closed after button click";
+    } finally {
       GestureManager.removeGesture(gesture);
-      throw err;
     }
-    // Cleanup
-    GestureManager.removeGesture(gesture);
   }
+  // openButtonClick.description = "open + button click";
 
-  async function test4() {
-    // 1. swipe left so that menu remains visible
-    // 2. click in empty area, so that menu goes away
-    // Setup
-    let container, effect, gesture;
-    let itemIndex = 4;
+  async function openBlankClick() {
+    let el, effect, gesture;
+    let itemIndex = 6;
     try {
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      let effectOptions = getDefaultMailMenu(container);
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      let effectOptions = getDefaultLtrMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(container, 
-        { effect: effect});
-      GestureManager.addGesture(container, gesture);
+      gesture = new SwipeHorizontal(el, { effect: effect});
+      GestureManager.addGesture(el, gesture);
 
-      // Test
-      // Gesture 1: swipe ltr.
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {left: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 10})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 200})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem"));
-      container.dispatchEvent(
-        createEvent("pointerup", container, {right: 5})
-      );
+      // Open menu
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 200}));
+      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
+      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      await awaitSizeStopAnimating(menuItem);
       // Click outside of the button
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {right: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointerup", container, {right: 5})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem"));
-    } catch(err) {
+      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
+      el.dispatchEvent(createEvent("pointerup", el, {right: 5}));
+      await awaitSizeStopAnimating(menuItem);
+      if (menuItem.offsetWidth != 0)
+        throw "Menu should close when click is in the empty area";
+    } finally {
       GestureManager.removeGesture(gesture);
-      throw err;
     }
-    // Cleanup
-    GestureManager.removeGesture(gesture);
   }
+  // openBlankClick.description = "open + blank click";
 
-  async function test5() {
+  async function defaultButtonExpansion() {
     // Default button that expands
-    let container, effect, gesture;
-    let itemIndex = 5;
+    let el, effect, gesture;
+    let itemIndex = 7;
     try {
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      let effectOptions = getDefaultMailMenu(container);
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      let effectOptions = getDefaultLtrMenu(el);
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(container, 
+      gesture = new SwipeHorizontal(el, 
         { effect: effect});
-      GestureManager.addGesture(container, gesture);
+      GestureManager.addGesture(el, gesture);
        // swipe ltr.
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {left: 5})
-      );
-      // first pointermove activates the gesture
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 50})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 50})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 200})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
+      let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      await awaitSizeStopAnimating(menuItem);
+      el.dispatchEvent(createEvent("pointermove", el, {left: 200}));
+      await awaitSizeStopAnimating(menuItem);
       // pointermove all the way to the left expands default button
-      container.dispatchEvent(
-        createEvent("pointermove", container, {right:5})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
+      el.dispatchEvent(createEvent("pointermove", el, {right:20}));
+      await awaitSizeStopAnimating(menuItem);
+      if (menuItem.offsetWidth < 200)
+        throw "Default button should expand to entire width";
       // pointermove to the middle shrinks default button
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 200})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
-      container.dispatchEvent(
-        createEvent("pointerup", container, {left: 100})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
-    } catch(err) {
+      el.dispatchEvent(createEvent("pointermove", el, {left: 100}));
+      await awaitSizeStopAnimating(menuItem);
+      el.dispatchEvent(createEvent("pointerup", el, {left: 100}));
+      await awaitSizeStopAnimating(menuItem);
+      if (menuItem.offsetWidth > 200)
+        throw "Default button should shrink when swiped back";
+    } finally {
       GestureManager.removeGesture(gesture);
-      throw err;
     }
-    // Cleanup
-    GestureManager.removeGesture(gesture);
   }
+  // defaultButtonExpansion.description = "swipe + default button";
 
-  async function test6() {
+  async function defaultButtonAction() {
     // Default button with action that removes the item
-    let container, effect, gesture;
-    let itemIndex = 6;
+    let el, effect, gesture;
+    let itemIndex = 8;
     try {
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      let effectOptions = getDefaultMailMenu(container);
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      let effectOptions = getDefaultLtrMenu(el);
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
       effectOptions.menuBuilderOptions.items[2].preventClickAutoClose = true;
@@ -315,40 +320,33 @@ body {
           });
       };
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(container, 
-        { effect: effect});
-      GestureManager.addGesture(container, gesture);
-       // swipe left.
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {left: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 50})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 50})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
-      container.dispatchEvent(
-        createEvent("pointermove", container, {right: 5})
-      );
-      await awaitSizeStopAnimating(container.querySelector(".swipeHorizontalMenuItem:nth-child(3)"));
-      container.dispatchEvent(
-        createEvent("pointerup", container, {right: 5})
-      );
-    } catch(err) {
-      GestureManager.removeGesture(gesture);
-      throw err;
-    }
-    // Cleanup
-    GestureManager.removeGesture(gesture);
-  }
+      gesture = new SwipeHorizontal(el, { effect: effect});
+      GestureManager.addGesture(el, gesture);
 
-  TestRunner.test(test1,  "Right menu on item 1" );
-  TestRunner.test(test2,  "Install menu with default" );
-  TestRunner.test(test3, "swipe + menu click");
-  TestRunner.test(test4, "swipe + blank click");
-  TestRunner.test(test5, "swipe + default button");
-  TestRunner.test(test6, "swipe + default button deletes");
+      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
+      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
+      let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      await awaitSizeStopAnimating(menuItem);
+      el.dispatchEvent(createEvent("pointermove", el, {right: 5}));
+      await awaitSizeStopAnimating(menuItem);
+      el.dispatchEvent(createEvent("pointerup", el, {right: 5}));
+      await awaitSizeStopAnimating(menuItem);
+      if (menuItem.offsetWidth != 0)
+        throw "Menu should be deleted after button action";
+    } finally {
+      GestureManager.removeGesture(gesture);
+    }
+  }
+  // defaultButtonAction.description = "swipe + default button deletes";
+
+  TestRunner.test(installOnItem);
+  TestRunner.test(installWithDefault);
+  TestRunner.test(ltrFastShortSwipeRight);
+  TestRunner.test(ltrSlowShortSwipeRight);
+  TestRunner.test(openButtonClick);
+  TestRunner.test(openBlankClick);
+  TestRunner.test(defaultButtonExpansion);
+  TestRunner.test(defaultButtonAction);
 
 </script>
