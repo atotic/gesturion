@@ -58,7 +58,7 @@ export class TestRunner {
   .testPanel {
     position: fixed;
     right: 10px;
-    top: 10px;
+    bottom: 10px;
     max-width: 400px;
     border: 2px dotted #888;
     padding:4px;
