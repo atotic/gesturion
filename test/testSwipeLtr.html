@@ -1,7 +1,7 @@
 <!doctype html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SwipeRight</title>
+<title>SwipeLtr =></title>
 <style>
 body {
   min-height: 100vh;
@@ -23,7 +23,7 @@ body {
   padding: 4px;
 }
 </style>
-<h1>SwipeRight test  <====</h1>
+<h1>SwipeLtr => </h1>
 <pre>Tested:
 - gestures/swipeHorizontal.js
 - effects/SwipeHorizontalButtonMenuEffect.js
@@ -78,46 +78,11 @@ body {
       container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       if (container.style.backgroundColor != COLOR) {
         // Only install once
-        container.querySelector(".listItemContent").textContent = "Right menu installed";
+        container.querySelector(".listItemContent").textContent = "ltr menu installed";
         let effectOptions = getDefaultMailMenu(container);
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         effect = new LoggerEffect(effect);
         gesture = new SwipeHorizontal(container, { effect: effect, direction: "ltr"});
-        GestureManager.addGesture(container, gesture);
-        container.style.backgroundColor = COLOR;
-      }
-      // Swipe left to open the menu
-      container.dispatchEvent(
-        createEvent("pointerdown", container, {left: 5})
-      );
-      container.dispatchEvent(
-        createEvent("pointermove", container, {left: 10})
-      );
-      container.dispatchEvent(
-        createEvent("pointerup", container, {left: 200})
-      );
-    } catch(err) {
-      GestureManager.removeGesture(gesture);
-      container.style.backgroundColor = "";
-      throw err;
-    }
-  }
-
-  async function test1left() {
-    // Permanently install menu
-    let container, effect, gesture;
-    let itemIndex = 2;
-    try {
-      const COLOR = "yellow";
-      container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      if (container.style.backgroundColor != COLOR) {
-        // Only install once
-        container.querySelector(".listItemContent").textContent = "Right menu installed";
-        let effectOptions = getDefaultMailMenu(container);
-        effectOptions.direction = "rtl";
-        effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-        effect = new LoggerEffect(effect);
-        gesture = new SwipeHorizontal(container, { effect: effect, direction: "rtl"});
         GestureManager.addGesture(container, gesture);
         container.style.backgroundColor = COLOR;
       }
@@ -147,7 +112,7 @@ body {
       container = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       if (container.style.backgroundColor != COLOR) {
         // Only install once
-        container.querySelector(".listItemContent").textContent = "Right menu with default";
+        container.querySelector(".listItemContent").textContent = "ltr menu with default";
         let effectOptions = getDefaultMailMenu(container);
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
@@ -155,7 +120,7 @@ body {
         GestureManager.addGesture(container, gesture);
         container.style.backgroundColor = COLOR;
       }
-      // Swipe left to open the menu
+      // Swipe ltr to open the menu
       container.dispatchEvent(
         createEvent("pointerdown", container, {right: 5})
       );
@@ -194,7 +159,7 @@ body {
         { effect: effect});
       GestureManager.addGesture(container, gesture);
 
-      // Swipe left
+      // Swipe ltr
       container.dispatchEvent(
         createEvent("pointerdown", container, {left: 5})
       );
@@ -241,7 +206,7 @@ body {
       GestureManager.addGesture(container, gesture);
 
       // Test
-      // Gesture 1: swipe left.
+      // Gesture 1: swipe ltr.
       container.dispatchEvent(
         createEvent("pointerdown", container, {left: 5})
       );
@@ -284,7 +249,7 @@ body {
       gesture = new SwipeHorizontal(container, 
         { effect: effect});
       GestureManager.addGesture(container, gesture);
-       // swipe left.
+       // swipe ltr.
       container.dispatchEvent(
         createEvent("pointerdown", container, {left: 5})
       );
@@ -380,7 +345,6 @@ body {
   }
 
   TestRunner.test(test1,  "Right menu on item 1" );
-  // TestRunner.test(test1left,  "Left menu" );
   TestRunner.test(test2,  "Install menu with default" );
   TestRunner.test(test3, "swipe + menu click");
   TestRunner.test(test4, "swipe + blank click");

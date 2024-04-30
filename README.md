@@ -5,10 +5,11 @@ swipeLeft -> swipeHorizontal
 swipeLeftButtonMenuEffect -> swipeHorizontalButtonMenuEffect
 testSwipeLeft -> testSwipeRight
 Next: more gestures
-SwipeLeft becomes 
-SwipeHorizontal + Left/Right variants
+SwipeLeft becomes SwipeRtl
+SwipeHorizontal + ltr/rtl variants
 Selenium: run multiple tests, basically glob + run and total tests
 SwipeVertical -- needs to deal with scrollbars, spinner effect on top,
+
 Drag
 Press
 
