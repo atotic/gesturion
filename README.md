@@ -1,21 +1,14 @@
 # js-gestures
 gesture recognition library
 ## TODO
-swipeLeft -> swipeHorizontal
-swipeLeftButtonMenuEffect -> swipeHorizontalButtonMenuEffect
-testSwipeLeft -> testSwipeRight
-Next: more gestures
-SwipeLeft becomes SwipeRtl
-SwipeHorizontal + ltr/rtl variants
 Selenium: run multiple tests, basically glob + run and total tests
-SwipeVertical -- needs to deal with scrollbars, spinner effect on top,
+SwipeVertical -- needs to deal with scrollbars, spinner effect on top
 
 Drag
-Press
-
-swipe tap pinch rotation pan screenEdgePan longPress hover dragNdrop
-doubleTap
-
+Press, LongPress
+Tap, DoubleTap
+Pinch, Rotation
+pan screenEdgePan hover 
 
 Probably there will be a general swipe class that I slowly evolve towards.
 
