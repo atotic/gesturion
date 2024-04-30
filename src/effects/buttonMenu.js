@@ -13,9 +13,8 @@
    * @param {string} options.itemClass - CSS class to assign to button
    * @returns menu element
    */
-let CONTAINER_CLASS = "swipeLeftMenuContainer";
+let CONTAINER_CLASS = "swipeHorizontalButtonMenuContainer";
 let ITEM_CLASS = "swipeHorizontalMenuItem";
-
 
 export default function createButtonMenu(effect, container, options) {
   let menu = document.createElement("div");
