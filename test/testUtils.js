@@ -149,6 +149,8 @@ async function awaitSizeStopAnimating(el, timeout=1000) {
   let lastHeight;
   let endMillis = Date.now() + timeout;
   return new Promise((resolve, reject) => {
+    let millis = 40; // If this is too low, 
+    // scrollIntoView causes iPhone sizes to change too slowly and tests fail
     let interval = window.setInterval( () => {
       if (el.offsetWidth == lastWidth && el.offsetHeight == lastHeight) {
         window.clearInterval(interval);
@@ -160,7 +162,7 @@ async function awaitSizeStopAnimating(el, timeout=1000) {
       }
       lastWidth = el.offsetWidth;
       lastHeight = el.offsetHeight;
-    }, 20);
+    }, millis); 
   });
 }
 

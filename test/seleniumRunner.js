@@ -14,7 +14,7 @@ const assert = require("assert");
   
   try {
     driver = await new Builder().forBrowser(Browser.CHROME).build();
-    await driver.get('http://127.0.0.1:8082/test/testSwipeLeft.html');
+    await driver.get('http://127.0.0.1:8082/test/testSwipeHorizontal.html');
     let title = await driver.getTitle();
     await driver.manage().setTimeouts({implicit: 10000});
     let runAllButton = await driver.findElement(By.id('runAllTestsAutomated'));

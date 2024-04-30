@@ -33,6 +33,19 @@ Simple cleanup strategy:
   it skips elements that have currently active gesture
 */
 class EffectCleaner {
+  init() {
+    if (this.initialized)
+      return;
+    gestureManager.addEventListener(gestureManager.ACTIVE_GESTURE_EVENT, ev => {
+      singleton.cleanup(ev.detail);
+    });
+    document.body.addEventListener('pointerdown', ev => {
+      singleton.cleanup(gestureManager.activeGestures());
+      // console.warn("EffectCleaner click");
+    });
+    this.initialized = true;
+  }
+  
   register(element, effect) {
     element.setAttribute(cleanupDataMarker, 1);
     element[cleanupSym] = effect;
@@ -65,15 +78,5 @@ class EffectCleaner {
 }
 
 let singleton = new EffectCleaner();
-
-gestureManager.addEventListener(gestureManager.ACTIVE_GESTURE_EVENT, ev => {
-  singleton.cleanup(ev.detail);
-});
-
-// 
-document.body.addEventListener('pointerdown', ev => {
-  singleton.cleanup(gestureManager.activeGestures());
-  // console.warn("EffectCleaner click");
-});
 
 export default singleton;

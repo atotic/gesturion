@@ -1,7 +1,7 @@
 /**
  * SwipeLeft gesture.
  * 
- * handle multitouch swipes?
+ * TODO handle multitouch swipes?
  */
 import GestureHandler from "./gestureHandler.js"
 
@@ -68,7 +68,7 @@ export default class SwipeHorizontal extends GestureHandler {
     return speed;
   }
   name() {
-    return "SwipeHorizontal";
+    return "SwipeH";
   }
 
   eventSpecs(state) {

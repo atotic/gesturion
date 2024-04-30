@@ -3,25 +3,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SwipeLtr =></title>
 <style>
-body {
-  min-height: 100vh;
-  margin: 0px;
-}
-.list {
-  width: 100%;
-  max-width: 500px;
-}
-.listItemContainer {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-.listItemContent {
-  font-size: 36px;
-  border: 4px solid gray;
-  border-bottom-color: #DDD;
-  padding: 4px;
-}
+  body {
+    min-height: 100vh;
+    margin: 0px;
+  }
+
+  .list {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .listItemContainer {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .listItemContent {
+    font-size: 36px;
+    border: 4px solid gray;
+    border-bottom-color: #DDD;
+    padding: 4px;
+  }
 </style>
 <h1>SwipeHorizontal (ltr+rtl) </h1>
 <pre>Tested:
@@ -33,7 +36,7 @@ body {
 </div>
 <script type="module">
   // Setup
-  for (let i=1;i<=40;++i) {
+  for (let i = 1; i <= 40; ++i) {
     // Create list items
     let container = document.createElement("div");
     let content = document.createElement("div");
@@ -50,12 +53,12 @@ body {
   import GestureEffect from "../src/effects/gestureEffect.js";
   import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
   import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
-  import createButtonMenu from  "../src/effects/buttonMenu.js";
+  import createButtonMenu from "../src/effects/buttonMenu.js";
   import TestRunner from "./testFramework.js";
-  import {LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating} from "./testUtils.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 
   function ltrGetDefaultMenu(container) {
-    let nullClickHandler = _ => {};
+    let nullClickHandler = _ => { };
     return {
       container: container,
       contentSelector: ".listItemContent",
@@ -63,16 +66,16 @@ body {
       menuBuilder: createButtonMenu,
       menuBuilderOptions: {
         items: [
-          {title: "Unread", color: "rgb(10 132 255)", action: nullClickHandler},
-          {title: "Remind Me", color: "rgb(94 92 230)", action: nullClickHandler},
-          {title: "Trash", color: "#898943",  action: nullClickHandler}
+          { title: "Unread", color: "rgb(10 132 255)", action: nullClickHandler },
+          { title: "Remind Me", color: "rgb(94 92 230)", action: nullClickHandler },
+          { title: "Trash", color: "#898943", action: nullClickHandler }
         ]
       }
     };
   }
 
   function rtlGetDefaultMenu(container) {
-    let nullClickHandler = _ => {};
+    let nullClickHandler = _ => { };
     return {
       container: container,
       contentSelector: ".listItemContent",
@@ -80,14 +83,18 @@ body {
       menuBuilder: createButtonMenu,
       menuBuilderOptions: {
         items: [
-          {title: "More…", color: "#c8c7ce", action: nullClickHandler},
-          {title: "Flag", color: "#ff9503", action: nullClickHandler},
-          {title: "Trash", color: "#ff3a2e",  action: nullClickHandler}
+          { title: "More…", color: "#c8c7ce", action: nullClickHandler },
+          { title: "Flag", color: "#ff9503", action: nullClickHandler },
+          { title: "Trash", color: "#ff3a2e", action: nullClickHandler }
         ]
       }
     };
   }
 
+  let scrollIntoViewOptions = {
+    behavior: "smooth",
+    block: "nearest"
+  }
   async function ltrInstallOnItem() {
     // Permanently install menu
     let el, effect, gesture;
@@ -95,22 +102,22 @@ body {
     try {
       const COLOR = "yellow";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       if (el.style.backgroundColor != COLOR) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "ltr menu installed";
         let effectOptions = ltrGetDefaultMenu(el);
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         // effect = new LoggerEffect(effect);
-        gesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr"});
+        gesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr" });
         GestureManager.addGesture(el, gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe left to open the menu
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
-      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
-    } catch(err) {
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
+    } catch (err) {
       GestureManager.removeGesture(gesture);
       el.style.backgroundColor = "";
       throw err;
@@ -124,22 +131,22 @@ body {
     try {
       const COLOR = "orange";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       if (el.style.backgroundColor != COLOR) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "rtl menu installed";
         let effectOptions = rtlGetDefaultMenu(el);
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         // effect = new LoggerEffect(effect);
-        gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl"});
+        gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
         GestureManager.addGesture(el, gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe left to open the menu
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
-      el.dispatchEvent(createEvent("pointerup", el, {right: 200}));
-    } catch(err) {
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 200 }));
+    } catch (err) {
       GestureManager.removeGesture(gesture);
       el.style.backgroundColor = "";
       throw err;
@@ -159,15 +166,15 @@ body {
         let effectOptions = ltrGetDefaultMenu(el);
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-        gesture = new SwipeHorizontal(el, { effect: effect});
+        gesture = new SwipeHorizontal(el, { effect: effect });
         GestureManager.addGesture(el, gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe ltr to open the menu
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
-      el.dispatchEvent(createEvent("pointerup", el, {right: 200}));
-    } catch(err) {
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 200 }));
+    } catch (err) {
       GestureManager.removeGesture(gesture);
       el.style.backgroundColor = "";
       throw err;
@@ -181,22 +188,22 @@ body {
     try {
       const COLOR = "orange";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       if (el.style.backgroundColor != COLOR) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "rtl menu with default";
         let effectOptions = rtlGetDefaultMenu(el);
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-        gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl"});
+        gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
         GestureManager.addGesture(el, gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe ltr to open the menu
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
-      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
-    } catch(err) {
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
+    } catch (err) {
       GestureManager.removeGesture(gesture);
       el.style.backgroundColor = "";
       throw err;
@@ -210,16 +217,16 @@ body {
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
       GestureManager.addGesture(el, gesture);
 
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 30}));
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 30 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem");
-      el.dispatchEvent(createEvent("pointerup", el, {left: 30}));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 30 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth == 0)
         throw "Menu should be visible after short quick swipe";
@@ -234,16 +241,16 @@ body {
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(el, gesture);
 
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 30}));
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 30 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem");
-      el.dispatchEvent(createEvent("pointerup", el, {right: 30}));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 30 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth == 0)
         throw "Menu should be visible after short quick swipe";
@@ -258,23 +265,23 @@ body {
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
       GestureManager.addGesture(el, gesture);
 
       GestureHandler.TEST_DEFAULT_SPEED = 1;
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem");
-      el.dispatchEvent(createEvent("pointermove", el, {left: 30}));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 30 }));
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointerup", el, {left: 30}));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 30 }));
       await awaitTimeout(GestureEffect.ANIM_TIME);
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth != 0)
         throw "Menu should be hidden after short slow swipe";
-   } finally {
+    } finally {
       GestureHandler.TEST_DEFAULT_SPEED = null;
       GestureManager.removeGesture(gesture);
     }
@@ -286,23 +293,23 @@ body {
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(el, gesture);
 
       GestureHandler.TEST_DEFAULT_SPEED = 1;
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem");
-      el.dispatchEvent(createEvent("pointermove", el, {right: 30}));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 30 }));
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointerup", el, {right: 30}));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 30 }));
       await awaitTimeout(GestureEffect.ANIM_TIME);
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth != 0)
         throw "Menu should be hidden after short slow swipe";
-   } finally {
+    } finally {
       GestureHandler.TEST_DEFAULT_SPEED = null;
       GestureManager.removeGesture(gesture);
     }
@@ -320,28 +327,28 @@ body {
         effect.clear(); // close the menu
       }
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       for (let item of effectOptions.menuBuilderOptions.items) {
         item.action = action;
         item.preventClickAutoClose = true;
       }
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, 
-        { effect: effect});
+      gesture = new SwipeHorizontal(el,
+        { effect: effect });
       GestureManager.addGesture(el, gesture);
 
       // Swipe ltr, open menu
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 200}));
-      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 200 }));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
       // Wait till end of animation
       let menuItem = el.querySelector(".swipeHorizontalMenuItem")
       await awaitSizeStopAnimating(menuItem);
       // Click on the button
       let button = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
-      button.dispatchEvent(createEvent("click", button, {y: 5, x: 5}));
+      button.dispatchEvent(createEvent("click", button, { y: 5, x: 5 }));
       if (buttonClicked == false)
         throw "Did not click on the button";
       if (buttonClicked != "Trash")
@@ -365,28 +372,28 @@ body {
         effect.clear(); // close the menu
       }
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = rtlGetDefaultMenu(el);
       for (let item of effectOptions.menuBuilderOptions.items) {
         item.action = action;
         item.preventClickAutoClose = true;
       }
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, 
-        { effect: effect, direction: 'rtl'});
+      gesture = new SwipeHorizontal(el,
+        { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(el, gesture);
 
       // Swipe ltr, open menu
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 200}));
-      el.dispatchEvent(createEvent("pointerup", el, {right: 200}));
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 200 }));
       // Wait till end of animation
       let menuItem = el.querySelector(".swipeHorizontalMenuItem")
       await awaitSizeStopAnimating(menuItem);
       // Click on the button
       let button = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
-      button.dispatchEvent(createEvent("click", button, {y: 5,right: 5}));
+      button.dispatchEvent(createEvent("click", button, { y: 5, right: 5 }));
       if (buttonClicked == false)
         throw "Did not click on the button";
       if (buttonClicked != "Trash")
@@ -404,25 +411,25 @@ body {
     let itemIndex = 11;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
       GestureManager.addGesture(el, gesture);
 
       // Open menu
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 10}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 200}));
-      el.dispatchEvent(createEvent("pointerup", el, {left: 200}));
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 200 }));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem");
       await awaitSizeStopAnimating(menuItem);
       // Click outside of the button
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointerup", el, {right: 5}));
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 5 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth != 0)
-        throw "Menu should close when click is in the empty area";
+        throw "Menu should close when click is in the empty area" + menuItem.offsetWidth;
     } finally {
       GestureManager.removeGesture(gesture);
     }
@@ -433,22 +440,22 @@ body {
     let itemIndex = 12;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(el, gesture);
 
       // Open menu
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 10}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 200}));
-      el.dispatchEvent(createEvent("pointerup", el, {right: 200}));
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 200 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem");
       await awaitSizeStopAnimating(menuItem);
       // Click outside of the button
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointerup", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 5 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth != 0)
         throw "Menu should close when click is in the empty area";
@@ -463,31 +470,31 @@ body {
     let itemIndex = 13;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, 
-        { effect: effect, direction: 'ltr'});
+      gesture = new SwipeHorizontal(el,
+        { effect: effect, direction: 'ltr' });
       GestureManager.addGesture(el, gesture);
-       // swipe ltr.
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
+      // swipe ltr.
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointermove", el, {left: 200}));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 200 }));
       await awaitSizeStopAnimating(menuItem);
       // pointermove all the way to the left expands default button
-      el.dispatchEvent(createEvent("pointermove", el, {right:20}));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 20 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth < 200)
         throw "Default button should expand to entire width";
       // pointermove to the middle shrinks default button
-      el.dispatchEvent(createEvent("pointermove", el, {left: 100}));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 100 }));
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointerup", el, {left: 100}));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 100 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth > 200)
         throw "Default button should shrink when swiped back";
@@ -501,31 +508,31 @@ body {
     let itemIndex = 14;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView(false);
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = rtlGetDefaultMenu(el);
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, 
-        { effect: effect, direction: 'rtl'});
+      gesture = new SwipeHorizontal(el,
+        { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(el, gesture);
-       // swipe ltr.
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 50}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 50}));
+      // swipe ltr.
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointermove", el, {right: 200}));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
       await awaitSizeStopAnimating(menuItem);
       // pointermove all the way to the left expands default button
-      el.dispatchEvent(createEvent("pointermove", el, {left:20}));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 20 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth < 200)
         throw "Default button should expand to entire width";
       // pointermove to the middle shrinks default button
-      el.dispatchEvent(createEvent("pointermove", el, {right: 100}));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 100 }));
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointerup", el, {right: 100}));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 100 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth > 200)
         throw "Default button should shrink when swiped back";
@@ -540,7 +547,7 @@ body {
     let itemIndex = 15;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView();
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
@@ -553,27 +560,27 @@ body {
         if (!deleteMe)
           throw "Could not find container to delete";
         deleteMe.animate([
-            {height: `${deleteMe.offsetHeight}px`},
-            {height: "0"}
-          ], 
-          {duration: 200})
-          .finished.then( _ => {
+          { height: `${deleteMe.offsetHeight}px` },
+          { height: "0" }
+        ],
+          { duration: 200 })
+          .finished.then(_ => {
             deleteMe.remove();
-            effect.clear(); 
+            effect.clear();
           });
       };
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect});
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(el, gesture);
 
-      el.dispatchEvent(createEvent("pointerdown", el, {left: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
-      el.dispatchEvent(createEvent("pointermove", el, {left: 50}));
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointermove", el, {right: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 5 }));
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointerup", el, {right: 5}));
+      el.dispatchEvent(createEvent("pointerup", el, { right: 5 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth != 0)
         throw "Menu should be deleted after button action";
@@ -588,7 +595,7 @@ body {
     let itemIndex = 16;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      el.scrollIntoView();
+      el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = rtlGetDefaultMenu(el);
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
@@ -601,27 +608,27 @@ body {
         if (!deleteMe)
           throw "Could not find container to delete";
         deleteMe.animate([
-            {height: `${deleteMe.offsetHeight}px`},
-            {height: "0"}
-          ], 
-          {duration: 200})
-          .finished.then( _ => {
+          { height: `${deleteMe.offsetHeight}px` },
+          { height: "0" }
+        ],
+          { duration: 200 })
+          .finished.then(_ => {
             deleteMe.remove();
-            effect.clear(); 
+            effect.clear();
           });
       };
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl'});
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(el, gesture);
 
-      el.dispatchEvent(createEvent("pointerdown", el, {right: 5}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 50}));
-      el.dispatchEvent(createEvent("pointermove", el, {right: 50}));
+      el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
+      el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointermove", el, {screenLeft: 5}));
+      el.dispatchEvent(createEvent("pointermove", el, { screenLeft: 5 }));
       await awaitSizeStopAnimating(menuItem);
-      el.dispatchEvent(createEvent("pointerup", el, {left: 5}));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 5 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth != 0)
         throw "Menu should be deleted after button action";
@@ -629,7 +636,6 @@ body {
       GestureManager.removeGesture(gesture);
     }
   }
-  // defaultButtonAction.description = "swipe + default button deletes";
 
   TestRunner.test(ltrInstallOnItem);
   TestRunner.test(rtlInstallOnItem);

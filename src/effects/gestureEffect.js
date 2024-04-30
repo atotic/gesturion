@@ -5,9 +5,17 @@
  * GestureEffect can be used to implement visual gesture feedback.
  */
 
+import EffectCleaner from "./effectCleaner.js";
+
 export default class GestureEffect {
   // Animation time for effects (ms)
   static ANIM_TIME = 300; 
+  static EffectCleaner = EffectCleaner;
+  
+  constructor() {
+    if (GestureEffect.EffectCleaner && GestureEffect.EffectCleaner.init)
+      GestureEffect.EffectCleaner.init();
+  }
 
   idleStart(gesture)  {
     console.warn("idleStart not handled");

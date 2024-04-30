@@ -1,11 +1,3 @@
-import appendStyleRule from "./gestureStyles.js";
-
-function log(...args) {
-  if (debug)
-    console.log(...args);
-}
-
-
 /**
  GestureManager - main gesture handling API
 
@@ -13,15 +5,17 @@ function log(...args) {
   - add/remove gestures to DOM elements (add/removeGesture)
   
   Usage, Gesture Developer:
-  - 
+  - TODO
 
   Usage, Other:
   - broadcasts 'gestureActivated' event when new gesture becomes active
     CustomEvent(detail: gesture | [gesture])
 
 */
-const GMSym = Symbol("GestureManagerSymbol");
 
+import appendStyleRule from "./gestureStyles.js";
+
+const GMSym = Symbol("GestureManagerSymbol");
 let SelectNoneCSSClass = "ableGestureSelectNone";
 
 class GestureManager extends EventTarget {
@@ -81,6 +75,7 @@ Implementation:
     super();
     this.boundHandleGHEvent = this.handleGHEvent.bind(this);
   }
+
   /**
    * Register a gesture. Registered gestures can be used to addGesture() by gesture name.
    * @arg {GestureHandler} handler - handler class definition
