@@ -95,10 +95,43 @@
     behavior: "smooth",
     block: "nearest"
   }
+
+  async function installBoth() {
+     // Permanently install menu
+    let el, effect, ltrGesture, rtlGesture;
+    let itemIndex = 1;
+    try {
+      const COLOR = "color-mix(in srgb, yellow, orange)";
+      el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
+      el.scrollIntoView(scrollIntoViewOptions);
+      if (el.style.backgroundColor != COLOR) {
+        // Only install once
+        el.querySelector(".listItemContent").textContent = "both menus installed";
+        effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
+        // effect = new LoggerEffect(effect);
+        ltrGesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr" });
+        GestureManager.addGesture(ltrGesture);
+        effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
+        rtlGesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
+        GestureManager.addGesture(rtlGesture);
+        el.style.backgroundColor = COLOR;
+      }
+      // Swipe left to open the menu
+      el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+      el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
+      el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
+    } catch (err) {
+      GestureManager.removeGesture(ltrGesture);
+      GestureManager.removeGesture(rtlGesture);
+      el.style.backgroundColor = "";
+      throw err;
+    }
+  }
+
   async function ltrInstallOnItem() {
     // Permanently install menu
     let el, effect, gesture;
-    let itemIndex = 1;
+    let itemIndex = 2;
     try {
       const COLOR = "yellow";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
@@ -110,7 +143,7 @@
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         // effect = new LoggerEffect(effect);
         gesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr" });
-        GestureManager.addGesture(el, gesture);
+        GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe left to open the menu
@@ -127,7 +160,7 @@
   async function rtlInstallOnItem() {
     // Permanently install menu
     let el, effect, gesture;
-    let itemIndex = 2;
+    let itemIndex = 3;
     try {
       const COLOR = "orange";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
@@ -139,7 +172,7 @@
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         // effect = new LoggerEffect(effect);
         gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
-        GestureManager.addGesture(el, gesture);
+        GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe left to open the menu
@@ -156,7 +189,7 @@
   async function ltrInstallWithDefault() {
     // Permanently install menu
     let el, effect, gesture;
-    let itemIndex = 3;
+    let itemIndex = 4;
     try {
       const COLOR = "yellow";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
@@ -167,7 +200,7 @@
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         gesture = new SwipeHorizontal(el, { effect: effect });
-        GestureManager.addGesture(el, gesture);
+        GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe ltr to open the menu
@@ -184,7 +217,7 @@
   async function rtlInstallWithDefault() {
     // Permanently install menu
     let el, effect, gesture;
-    let itemIndex = 4;
+    let itemIndex = 5;
     try {
       const COLOR = "orange";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
@@ -196,7 +229,7 @@
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
-        GestureManager.addGesture(el, gesture);
+        GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
       // Swipe ltr to open the menu
@@ -213,14 +246,14 @@
 
   async function ltrFastShortSwipeRight() {
     let el, effect, gesture;
-    let itemIndex = 5;
+    let itemIndex = 6;
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
@@ -237,14 +270,14 @@
 
   async function rtlFastShortSwipeRight() {
     let el, effect, gesture;
-    let itemIndex = 6;
+    let itemIndex = 7;
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
@@ -261,14 +294,14 @@
 
   async function ltrSlowShortSwipeRight() {
     let el, effect, gesture;
-    let itemIndex = 7;
+    let itemIndex = 8;
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       GestureHandler.TEST_DEFAULT_SPEED = 1;
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
@@ -289,14 +322,14 @@
 
   async function rtlSlowShortSwipeRight() {
     let el, effect, gesture;
-    let itemIndex = 8;
+    let itemIndex = 9;
     try {
       el = document.querySelector(
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       GestureHandler.TEST_DEFAULT_SPEED = 1;
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
@@ -319,7 +352,7 @@
     // 1. swipe left so that menu remains visible
     // 2. click on the menu button
     let el, effect, gesture;
-    let itemIndex = 9;
+    let itemIndex = 10;
     let buttonClicked = false;
     try {
       let action = ev => {
@@ -336,7 +369,7 @@
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el,
         { effect: effect });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       // Swipe ltr, open menu
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
@@ -364,7 +397,7 @@
     // 1. swipe left so that menu remains visible
     // 2. click on the menu button
     let el, effect, gesture;
-    let itemIndex = 10;
+    let itemIndex = 11;
     let buttonClicked = false;
     try {
       let action = ev => {
@@ -381,7 +414,7 @@
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el,
         { effect: effect, direction: 'rtl' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       // Swipe ltr, open menu
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
@@ -408,14 +441,14 @@
 
   async function ltrOpenBlankClick() {
     let el, effect, gesture;
-    let itemIndex = 11;
+    let itemIndex = 12;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       // Open menu
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
@@ -437,14 +470,14 @@
 
   async function rtlOpenBlankClick() {
     let el, effect, gesture;
-    let itemIndex = 12;
+    let itemIndex = 13;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       // Open menu
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
@@ -467,7 +500,7 @@
   async function ltrDefaultButtonExpansion() {
     // Default button that expands
     let el, effect, gesture;
-    let itemIndex = 13;
+    let itemIndex = 14;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
@@ -477,7 +510,7 @@
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el,
         { effect: effect, direction: 'ltr' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
       // swipe ltr.
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
@@ -505,7 +538,7 @@
   async function rtlDefaultButtonExpansion() {
     // Default button that expands
     let el, effect, gesture;
-    let itemIndex = 14;
+    let itemIndex = 15;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
@@ -515,7 +548,7 @@
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el,
         { effect: effect, direction: 'rtl' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
       // swipe ltr.
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
@@ -544,7 +577,7 @@
   async function ltrDefaultButtonAction() {
     // Default button with action that removes the item
     let el, effect, gesture;
-    let itemIndex = 15;
+    let itemIndex = 16;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
@@ -571,7 +604,7 @@
       };
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el, { effect: effect });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
@@ -592,7 +625,7 @@
   async function rtlDefaultButtonAction() {
     // Default button with action that removes the item
     let el, effect, gesture;
-    let itemIndex = 16;
+    let itemIndex = 17;
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
@@ -619,7 +652,7 @@
       };
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
-      GestureManager.addGesture(el, gesture);
+      GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
@@ -637,6 +670,7 @@
     }
   }
 
+  TestRunner.test(installBoth);
   TestRunner.test(ltrInstallOnItem);
   TestRunner.test(rtlInstallOnItem);
   TestRunner.test(ltrInstallWithDefault);

@@ -1,13 +1,28 @@
 /**
  GestureManager - main gesture handling API
 
-  Usage, Web Developer:
-  - add/remove gestures to DOM elements (add/removeGesture)
-  
-  Usage, Gesture Developer:
-  - TODO
+Usage, Web Developer:
 
-  Usage, Other:
+1) add/remove gestures to DOM elements with addGesture/removeGesture
+
+```javascript
+import gestureManager from "../gestureManager.js";
+import RotateGesture from "../src/gestures/rotate.js";
+import RotateEffect from "../src/effects/rotateEffect.js";
+
+let element = document.querySelector("YOUR GESTURE TARGET SELECTOR");
+let effect = new RotateEffect(element);
+let gesture = new RotateGesture(element, {effect: effect});
+gestureManager.addGesture(gesture);
+// .....
+// You do not have to remove gestures on element deletion, there will
+// be no memory leaks.
+gestureManager.removeGesture(gesture);
+```
+
+Usage, Gesture Developer:
+
+Usage, Other:
   - broadcasts 'gestureActivated' event when new gesture becomes active
     CustomEvent(detail: gesture | [gesture])
 
@@ -77,7 +92,7 @@ Implementation:
   }
 
   /**
-   * Register a gesture. Registered gestures can be used to addGesture() by gesture name.
+   * Register a gesture. Registered gestures can be used to addNamedGesture()
    * @arg {GestureHandler} handler - handler class definition
    */
   registerGestureHandler(handler) {
@@ -91,7 +106,11 @@ Implementation:
     this.HandlerTypes.set(name, handler);
   }
 
-  addGesture(el, gesture, gestureOptions) {
+  /**
+   * 
+   * @param {GestureHandler} gesture 
+   */
+  addGesture(gesture) {
     if ((typeof gesture) == 'string') {
       let handler = this.HandlerTypes.get(gesture);
       if (handler === undefined) 
@@ -99,7 +118,6 @@ Implementation:
       gesture = new handler(el, gestureOptions);
     }
     this.#setGestureState(gesture, 'idle');
-    return gesture;
   }
 
   removeGesture(gesture) {
@@ -281,7 +299,7 @@ Implementation:
   }
 
   // handles events intented for gesture handlers
-  handleGHEvent(event) {
+  handleGHEvent(event, only) {
     let allGestureHandlers = event.currentTarget[GMSym];
     if (!allGestureHandlers) {
       console.warn("No GestureHanders of any type for ", ev.currentTarget, ev);
@@ -310,13 +328,45 @@ Implementation:
         console.error("Uncaught exception inside a gesture event handler", err, event, gh);
       }
     }
+  // TODO: special case for active state handling: conflict resolution, etc    for (let r of newStateRequests)
     for (let r of newStateRequests)
       this.#setGestureState(r.gesture, r.state, event);
   }
-  // TODO: special case for active state handling: conflict resolution, etc.
+
+  // TODO, experimental, enable registration of gestures in onevent handlers
+  // Usage:
+  // <div onpointerdown="GestureHandler.onhandler.bind({gesture: 'RotateGesture', effect: 'RotateEffect'})">
+  // Ugly, but might be useful
+  static onhandler(ev) {
+    // this contains our options because of bind
+    if (!this.gesture)
+      throw "GestureName is undefined";
+    if (!this.effect)
+      throw "Effect name is undefined";
+    let target = ev.currentTarget;
+
+    let gestureHandlerType = singleton.HandlerTypes.get(this.gesture);
+    if (gestureHandlerType === undefined) 
+      throw `Unrecognized gesture type "${this.gesture}". Did you forget to register it?`;
+    let effectHandlerType = singleton.EffectTypes.get(this.effect);
+    if (effectHandlerType === undefined) 
+      throw `Unrecognized effect type "${this.effect}". Did you forget to register it?`;
+
+    let effect = new effectHandlerType();
+    let gesture = new gestureHandlerType(target, {effect: effect});
+    singleton.#setGestureState(gesture, 'idle');
+    try {
+      // TODO, really need to pass this to GestureManager.handleGHEvent
+      gesture.handleEvent(ev);
+    } catch(err) {
+      console.error("Unexpected error handing instant registration event");
+    }
+  }
 }
 
-export default new GestureManager();
+let singleton = new GestureManager();
+
+export default singleton;
 
 // style for preventTextSelection
 appendStyleRule(`.${SelectNoneCSSClass}`, "{user-select: none;}");
