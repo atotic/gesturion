@@ -106,7 +106,8 @@ class GestureLogger extends HTMLElement {
         <span>${gesture.name()}</span>`;
       },
       clear: () => {},
-      hasVisibleEffect: () => { return false; }
+      hasVisibleEffect: () => { return false; },
+      element: () => {return me}
     }
   }
 }
@@ -168,14 +169,16 @@ async function awaitSizeStopAnimating(el, timeout=1000) {
 
 export {LoggerEffect, GestureLogger, createEvent, awaitTimeout, awaitSizeStopAnimating}
 
-appendStyleRule("gesture-logger",`
+appendStyleRule("gesture-logger",`{
   font-family:monospace;
   font-size: 10px;
   display:block;
-`);
+  border:1px solid black;
+  max-width:300px;
+}`);
 appendStyleRule("gesture-logger[data-gesture-state=idle]",`
-  background-color:#ffeaea;`);
+{background-color:#ffeaea;}`);
 appendStyleRule("gesture-logger[data-gesture-state=waiting]",`
-  background-color:#fbff4e;`);
+  {background-color:#fbff4e;}`);
 appendStyleRule("gesture-logger[data-gesture-state=active]",`
-  background-color:#bdebd3;`);
+  {background-color:#bdebd3;}`);

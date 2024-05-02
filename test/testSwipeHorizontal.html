@@ -48,12 +48,12 @@
   }
 </script>
 <script type="module">
+  import createButtonMenu from "../src/effects/buttonMenu.js";
   import GestureManager from "../src/gestureManager.js";
   import GestureHandler from "../src/gestures/gestureHandler.js";
   import GestureEffect from "../src/effects/gestureEffect.js";
   import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
   import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
-  import createButtonMenu from "../src/effects/buttonMenu.js";
   import TestRunner from "./testFramework.js";
   import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 

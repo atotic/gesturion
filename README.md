@@ -194,6 +194,7 @@ become Web Awesome
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+May-2 Started SwipeVertical
 May-1 Collapse for testFramework so I can see tests on iOS
 May-1 Multiple gestures on same element are now exclusive
 Apr-30 EffectCleaner is now configurable. It gests initialized in gestureEffect constructor.

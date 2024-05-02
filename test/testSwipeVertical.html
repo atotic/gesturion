@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SwipeVertical</title>
+<style>
+  body {
+    margin: 0px;
+  }
+</style>
+<h1>SwipeVertical</h1>
+<pre>Tested:
+- gestures/swipeVertical.js
+</pre>
+<div id="d1" style="height:50vh; background-color:#ddd">
+  <gesture-logger></gesture-logger>
+  A div
+</div>
+<div style="height:50vh; background-color:#aaa">A div</div>
+<div style="height:50vh; background-color:#999">A div</div>
+
+<script type="module">
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+
+  import GestureManager from "../src/gestureManager.js";
+  import GestureHandler from "../src/gestures/gestureHandler.js";
+  import GestureEffect from "../src/effects/gestureEffect.js";
+  import SwipeVertical from "../src/gestures/swipeVertical.js";
+
+  async function installVerticalOnD1() {
+    let el = document.querySelector("#d1");
+    let effect = el.querySelector("gesture-logger").gestureEffect;
+    let gesture = new SwipeVertical(el, {effect: effect});
+    GestureManager.addGesture(gesture);
+  }
+
+  TestRunner.test(installVerticalOnD1);
+</script>

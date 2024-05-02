@@ -1,7 +1,20 @@
 /**
- * SwipeLeft gesture.
+ * SwipeHorizontal gesture
  * 
- * TODO handle multitouch swipes?
+ * Detects horizontal swipes.
+ * 
+ * Additional arguments passed to effect:
+ * speed is reported in pixels/100ms
+ * effect.moved() gets speed and delta from start point
+ * effect.completed() gets speed
+ * 
+ * Configuration options
+ * threshold=3 {pixels} - how far to move before swipe activates
+ * direction=both {ltr|rtl|both}- restrict movement to 
+ *    left to right | right to left |allow both
+ * 
+ * Demo effects:
+ * SwipeHorizontalButtonMenuEffect
  */
 import GestureHandler from "./gestureHandler.js"
 
@@ -24,14 +37,14 @@ export default class SwipeHorizontal extends GestureHandler {
     ]]);
 
   threshold = 3; // travel at least this much before activation
-  direction = "ltr"; // swipe direction
+  direction = "both"; // ltr|rtl|all swiping left,right, or both?
 
   pageStart = { x: -1, y: -1}
   lastPointer = { // used to compute pointer speed
     x: -1, 
     timeStamp: 0, 
     speed: 0  // last computed speed, pixels/100ms. More than 4 seems fast
-  }
+  };
 
   /**
    * @param {Object} options 
@@ -45,7 +58,7 @@ export default class SwipeHorizontal extends GestureHandler {
     if ('threshold' in options)
       this.threshold = parseInt(options.threshold);
     if ('direction' in options) {
-      if (['ltr', 'rtl'].indexOf(options.direction) == -1)
+      if (['ltr', 'rtl', 'both'].indexOf(options.direction) == -1)
         throw `Invalid options.direction "${options.direction}"`;
       this.direction = options.direction;
     }
@@ -90,8 +103,10 @@ export default class SwipeHorizontal extends GestureHandler {
   #aboveThreshold(delta) {
     if (this.direction == 'ltr')
       return delta >= this.threshold;
-    // direction == 'rtl'
-    return delta <= -this.threshold;
+    if (this.direction == 'rtl')
+      return delta <= -this.threshold;
+    // direction == 'both'
+    return delta >= this.threshold || delta <= -this.threshold;
   }
   handleWaitEvent(ev) {
     if (ev.type == 'pointermove') {
@@ -115,13 +130,11 @@ export default class SwipeHorizontal extends GestureHandler {
     }
     if (ev.type == 'pointermove') {
       this.#updateSpeed(ev);
-      if (this.options.effect.moved)
-       this.options.effect.moved(this, ev, this.getState(), ev.pageX - this.pageStart.x);
+      this.options.effect.moved(this, ev, this.getState(), ev.pageX - this.pageStart.x);
       return;
     }
     if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {
-      if (this.options.effect.cancelled)
-        this.options.effect.cancelled(this, ev);
+      this.options.effect.cancelled(this, ev);
       return "idle";
     }
     console.warn("unexpected active event", ev.type);
