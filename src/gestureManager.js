@@ -22,6 +22,7 @@ gestureManager.removeGesture(gesture);
 
 Usage, Gesture Developer:
 
+
 Usage, Other:
   - broadcasts 'gestureActivated' event when new gesture becomes active
     CustomEvent(detail: gesture | [gesture])
@@ -136,6 +137,7 @@ Implementation:
     }
     this.#activeGestures.push(gesture);
     this.#updateTextSelectionPrevention();
+    this.#updateScrollPrevention();
     this.dispatchEvent(new CustomEvent(this.ACTIVE_GESTURE_EVENT, {
       detail: this.#activeGestures
     } ));
@@ -146,6 +148,7 @@ Implementation:
     if (activeIdx != -1) {
       this.#activeGestures.splice(activeIdx, 1);
       this.#updateTextSelectionPrevention();
+      this.#updateScrollPrevention();
     }
   }
 
@@ -192,10 +195,6 @@ Implementation:
       // First handler, start listening for events
       handlerList = [];
       allGestureHandlers.set(eventSpec.eventType, handlerList);
-      if (gesture.preventDefaultScroll(eventSpec.eventType) 
-          && gesture.getState() == 'active') {
-        this.#preventScrolling(true, eventSpec.element);
-      }
       eventSpec.element.addEventListener(eventSpec.eventType, this.boundHandleGHEvent);
     }
     handlerList.push(gesture);
@@ -214,11 +213,6 @@ Implementation:
       if (handlerList.length == 0) {
         // No more gestures listening.
         allGestureHandlers.delete(eventSpec.eventType);
-        // TODO: this only really works with a single gesture
-        // multiple gestures could be interacting with scrolling.
-        // what we really want is to preventScroll after examining entire gesture set
-        if (gesture.preventDefaultScroll(eventSpec.eventType))
-          this.#preventScrolling(false, eventSpec.element);
         eventSpec.element.removeEventListener(eventSpec.eventType, this.boundHandleGHEvent);
       }
     }
@@ -265,7 +259,7 @@ Implementation:
     // console.log("preventTextSelection", prevent);
     let prevent = false;
     for (let g of this.#activeGestures) {
-      prevent ||= g.preventTextSelection() 
+      prevent ||= g.preventTextSelection();
     }
     if (prevent) 
       document.body.classList.add(SelectNoneCSSClass);
@@ -273,27 +267,40 @@ Implementation:
       document.body.classList.remove(SelectNoneCSSClass);
   }
 
-  #preventScrolling(prevent, element) {
-    // setPointerCapture does not seem to prevent default scroll on iOS
-    // 
-    // eventSpec.element.setPointerCapture(event.pointerId);
+  #updateScrollPrevention() {
+    let prevent = false;
+    let gestureElements = [];
+    for (let g of this.#activeGestures) {
+      if (g.preventDefaultScroll()) {
+        prevent = true;
+        gestureElements.push(g.element());
+      }
+    }
     if (prevent) {
       if (this.preventScrollingListener)
         return;
+      // console.log("scroll prevented");
+      // Unsure where to add the listener that prevents scrolling?
+      // document.body prevents body scroll, catches all events
+      // gesture.element() prevents all scrolling, but might not catch body events.
+      // lets do both!
       this.preventScrollingListener = {
-        element: element,
+        elements: [document.body, ...gestureElements], 
         callback: ev => {
           // console.log("preventing touchMove")
           ev.preventDefault()
         }
       };
-      element.addEventListener('touchmove', this.preventScrollingListener.callback,  
+      for (let el of this.preventScrollingListener.elements) {
+        el.addEventListener('touchmove', this.preventScrollingListener.callback,  
         { passive: false });
+      }
     } else {
       if (!this.preventScrollingListener)
         return;
-      this.preventScrollingListener.element.removeEventListener('touchmove', this.preventScrollingListener.callback,  
-        { passive: false })
+      // console.log("scroll activated");
+      for (let el of this.preventScrollingListener.elements)
+        el.removeEventListener('touchmove', this.preventScrollingListener.callback);
       delete this.preventScrollingListener;
     }
   }
@@ -310,27 +317,54 @@ Implementation:
       console.warn("No GestureHanders of type ", ev.type, " for ", ev.currentTarget, ev);
       return;
     }
-    let newStateRequests = [];
-    for (let gh of eventGestureHandlers) {
+    let stateRequests = [];
+    let activeRequests = [];
+    for (let gesture of eventGestureHandlers) {
       try {
-        let newState = gh.handleEvent(event);
+        let newState = gesture.handleEvent(event);
         // Active gestures stop propagation of their events.
-        // EffectCleaner depends on this 
-        if (gh.getState() == 'active' || newState == 'active') {
+        // EffectCleaner depends on this
+        if (gesture.getState() == 'active' || newState == 'active') {
           // console.log("stopPropagation", event.type);
           event.stopPropagation();
         }
         // Process new states later. Doing it now is not safe because
         // it can modify eventGestureHandlers array.
-        if (newState)
-          newStateRequests.push({gesture: gh, state:newState});
+        if (newState) {
+          if (newState == 'active')
+            activeRequests.push(gesture);
+          else
+            stateRequests.push({gesture: gesture, state:newState});
+        }
       } catch(err) {
-        console.error("Uncaught exception inside a gesture event handler", err, event, gh);
+        console.error("Uncaught exception inside a gesture event handler", err, event, gesture);
       }
     }
-  // TODO: special case for active state handling: conflict resolution, etc    for (let r of newStateRequests)
-    for (let r of newStateRequests)
+    // Activation algorithm:
+    // There can be only 1 active gesture at a time 
+    // TODO This might expand to a group of related gestures in the future.
+    // Requests to activate if another gesture is already active will
+    // be rejected.
+
+    // Process non-active state requests first,
+    // because active gesture might become inactive)
+    for (let r of stateRequests)
       this.#setGestureState(r.gesture, r.state, event);
+    // Discard active requests that cannot be fullfilled
+    let deletedActiveRequests = [];
+    if (this.#activeGestures.length > 0) {
+      deletedActiveRequests = activeRequests.splice(0);
+    }
+    if (activeRequests.length > 1)
+      deletedActiveRequests.push(...activeRequests.splice(1));
+    for (let g of deletedActiveRequests) {
+      // Should unfullfilled active requests go to idle? 
+      // Makes sense for swipeHorizontal, others?
+      this.#setGestureState(g, 'idle', event);
+      // console.log("Gesture not activated ", g.name());
+    }
+    for (let g of activeRequests)
+      this.#setGestureState(g, 'active', event);
   }
 
   // TODO, experimental, enable registration of gestures in onevent handlers

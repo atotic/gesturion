@@ -4,6 +4,7 @@ gesture recognition library
 Selenium: run multiple tests, basically glob + run and total tests
 SwipeVertical -- needs to deal with scrollbars, spinner effect on top
 
+Rotate
 Drag
 Press, LongPress
 Tap, DoubleTap
@@ -193,6 +194,8 @@ become Web Awesome
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+May-1 Collapse for testFramework so I can see tests on iOS
+May-1 Multiple gestures on same element are now exclusive
 Apr-30 EffectCleaner is now configurable. It gests initialized in gestureEffect constructor.
 Apr-30 SwipeLeft/Right unify to SwipeHorizontal
 Apr-30 test.description can be used as name

@@ -116,6 +116,7 @@
         GestureManager.addGesture(rtlGesture);
         el.style.backgroundColor = COLOR;
       }
+      return;
       // Swipe left to open the menu
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));

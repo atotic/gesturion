@@ -60,7 +60,7 @@ export default class GestureHandler {
   /* OVERRIDES START - you can override following methods in your subclasses */
 
   /** @returns string */
-  name() { return ""; }
+  name() { return "GestureHandler"; }
 
   /**
    * @return {Element} - element created by gestureEffect
@@ -71,8 +71,8 @@ export default class GestureHandler {
 
   preventTextSelection() { return this.options.preventTextSelection};
 
-  preventDefaultScroll(eventType) {
-    return eventType == 'pointermove' && this.options.preventScrollOnMove;
+  preventDefaultScroll() {
+    return this.options.preventScrollOnMove;
   }
 
   /**

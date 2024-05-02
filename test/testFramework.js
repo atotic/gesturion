@@ -42,6 +42,7 @@ export class TestRunner {
 
   static HTML = `<button id="runAllTests">Run all <span id="timeTaken"></span></button>
   <button id="runAllTestsAutomated" style="width:1px;opacity:0"></button>
+  <button id="collapse" style="float:right">^</button>
   <table>
     <col style="min-width:50px">
     <col style="min-width:100px">
@@ -80,6 +81,9 @@ export class TestRunner {
   .testPanel td {
     border: 0.5px solid #888;
     padding: 4px;
+  }
+  .hidden {
+    display: none;
   }
   `;
 
@@ -129,6 +133,10 @@ export class TestRunner {
         .addEventListener("click" , _ => singleton.runAll());
       ui.querySelector("#runAllTestsAutomated")
         .addEventListener("click", _ => singleton.runAutomatedTests());
+      ui.querySelector("#collapse")
+        .addEventListener("click", _ => {
+            ui.querySelector("table").classList.toggle("hidden")
+          });
       document.body.append(ui);
       let styleElement = document.createElement("style");
       styleElement.setAttribute("id", `${TEST_PANEL_ID}Style`);
