@@ -6,16 +6,31 @@
   body {
     margin: 0px;
   }
+  gesture-logger {
+    font-size: large;
+  }
 </style>
 <h1>SwipeVertical</h1>
 <pre>Tested:
 - gestures/swipeVertical.js
 </pre>
-<div id="d1" style="height:50vh; background-color:#ddd">
+<!-- <div style="height:100px;background-color:rgba(253, 255, 226, 0.8);overflow:hidden;">
+  <div id="spinner" style="margin-left:45%;margin-top:24px;font-size:36px;width:1em;height:1em;line-height:1em">🌼</div>
+</div> 
+<script>
+let s = document.querySelector("#spinner");
+s.animate([
+  {transform:"rotate(360deg)"}
+], {duration: 1000, iterations: Infinity});
+</script>-->
+<div id="d1" style="height:30vh; background-color:#ddd">
+Test 1: displays effect state during vertical swipe
   <gesture-logger></gesture-logger>
-  A div
 </div>
-<div style="height:50vh; background-color:#aaa">A div</div>
+<div id="d2" style="height:50vh; background-color:#aaa">
+  <div>Test 2: displays spinner on top</div>
+  <div id="d2timer"></div>
+</div>
 <div style="height:50vh; background-color:#999">A div</div>
 
 <script type="module">
@@ -26,6 +41,7 @@
   import GestureHandler from "../src/gestures/gestureHandler.js";
   import GestureEffect from "../src/effects/gestureEffect.js";
   import SwipeVertical from "../src/gestures/swipeVertical.js";
+  import PullToRefreshEffect from "../src/effects/pullToRefresh.js";
 
   async function installVerticalOnD1() {
     let el = document.querySelector("#d1");
@@ -34,5 +50,20 @@
     GestureManager.addGesture(gesture);
   }
 
+  async function pullToReferesh() {
+    let el = document.querySelector("#d2");
+    let effect = new PullToRefreshEffect({container: el, testTimerSelector: "#d2timer"});
+    let gesture = new SwipeVertical(el, {effect: effect, direction:'utd'});
+    GestureManager.addGesture(gesture);
+  }
+
   TestRunner.test(installVerticalOnD1);
+  TestRunner.test(pullToReferesh);
+  TestRunner.runAll();
+  // document.addEventListener("touchmove", 
+  //   ev => { 
+  //     console.log("touchmove body");
+  //     ev.preventDefault();
+  //   },
+  //   { passive: false });
 </script>

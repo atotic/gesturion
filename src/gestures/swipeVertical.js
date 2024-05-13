@@ -4,7 +4,8 @@
  * Detects horizontal swipes.
  * Reports swipe speed to effect.moved(), effect.completed() 
  * in pixels/100ms. 
- * Deals with scrolling
+ * Handles scrolling correctly. Unlike
+ * 
  * 
  * Configuration options
  * threshold=3 {pixels} - how far to move before swipe activates
@@ -30,12 +31,12 @@ export default class SwipeVertical extends GestureHandler {
     ['active', [
       { eventType: 'pointermove', element: 'body' },
       { eventType: 'pointerleave', element: 'body' },
-      { eventType: 'pointercancel', element: 'body' },
+     { eventType: 'pointercancel', element: 'body' },
       { eventType: 'pointerup', element: 'body' }
       ]
     ]]);
     threshold = 3; // travel at least this much before activation
-    direction = "both"; // ltr|rtl|all swiping left,right, or both?
+    direction = "both"; // utd|dtu|both swiping upToDown, downToUp, or both?
   
     pageStart = { x: -1, y: -1}
     lastPointer = { // used to compute pointer speed
@@ -47,6 +48,7 @@ export default class SwipeVertical extends GestureHandler {
     constructor(element, options) {
       // Options: callbacks for start, move, cancel, complete, threshold
       super(element, options);
+      this.options.preventScrollOnMove = true;
       if ('threshold' in options)
         this.threshold = parseInt(options.threshold);
       if ('direction' in options) {

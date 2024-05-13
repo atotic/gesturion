@@ -8,8 +8,9 @@
 import EffectCleaner from "./effectCleaner.js";
 
 export default class GestureEffect {
-  // Animation time for effects (ms)
-  static ANIM_TIME = 300; 
+  // Default animation time for effects (ms)
+  static ANIM_TIME = 300;
+  static flickSpeed = 4;  // pixels/100ms; movement faster than this is considered a "flick"
   static EffectCleaner = EffectCleaner;
   
   constructor() {

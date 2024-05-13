@@ -1,0 +1,246 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prevent VScroll</title>
+<style>
+  .notouch {
+    touch-action: none;
+  }
+  </style>
+<div style="font-size:large;position:fixsed;background:#DDD;">
+<select id="preventionMethod">
+  <option value="touchmove">touchmove.preventDefault</option>
+  <option value="touchAction" selected>touch-action:none</option>
+</select> Prevent method <br>
+ <select id="installStrategy"> 
+  <option>none</option>
+  <option>immediate</option>
+  <option value="permanent">permanent pointermove</option>
+  <option>pointermove</option>
+  <option>pointerdown</option>
+  <option>touchstart</option>
+</select>Installation
+<br>
+install: <span id="installStatus" style="font-weight:bold">not installed</span><br>
+browser scrolled while preventing scroll 
+<span id="cancelWhilePreventing" style="font-weight:bold">no</span>
+</div>
+<pre style="min-height:200vh;border:2px dotted black;white-space:pre-wrap;padding-top:16ex;">
+How to prevent default scroll on touch devices? 
+
+Two ways of previending default actions:
+1. call preventDefault() inside 'touchmove' active event handler
+2. CSS touch-action:none on &lt;body&gt;
+
+When Safari starts handling default scroll events, it sends 
+body.'pointercancel' event.
+
+
+Either methods work when set when document is loaded. 
+The document does not scroll.
+
+Gestures event sequence:
+pointerdown - starts gesture
+pointermove - processes gesture, this is where we should prevent scroll
+pointercancel - cancels gesture, Safari taking over by scrolling
+pointerup, pointerleave - regular gesture endings
+
+Obvious implementation is to start preventing scroll when
+gesture starts handling pointermove. But this does not work.
+Either prevention methods do not prevent scrolling if set
+in pointermove event handler.
+
+touchmove.preventDefault
+
+Install at\     type  touchmove.preventDefault          touch-action
+
+pointermove           fail (unless move is horizontal)   
+pointerdown           pass                              fail
+touchstart            pass                              fail
+always                pass                              pass
+early, stop after 0   pass                              fail
+early, stop after 1   sometimes (pull down triggers scroll!)  fail
+early, stop after 2   fail                              fail
+
+Conclusions:
+- touchmove.preventDefault can prevent scroll on late registration
+
+To stop scrolling, you can:
+A) install stopper on pointerdown, touchstart
+B) install permanent stopper, gives you wiggle room to process 
+   1st pointermove before deciding to cancel or not.
+
+https://github.com/lazd/iNoBounce/blob/master/README.md
+intersting options to prevent bouncing
+
+</pre>
+<div style="background-color: #ddd">
+  End div
+</div>
+<script>
+
+
+  var activeMethod;
+  
+  function touchMoveCallback(ev) {
+    ev.preventDefault();
+    console.log("touchMode.preventDefault!", Date.now());
+    return false;
+  }
+
+  function installPrevention() {
+    let method = document.querySelector("#preventionMethod").value;
+    if (activeMethod == method)
+      return;
+    console.log("installPrevention", method);
+    if (method == 'touchmove') {
+      document.body.addEventListener("touchmove", touchMoveCallback,
+        {passive:false} 
+      );
+    }
+    if (method == 'touchAction') {
+      document.body.classList.add("notouch");
+    }
+    activeMethod = method;
+    document.querySelector('#installStatus').textContent = activeMethod;
+  }
+
+  function removePrevention() {
+    console.log("removePrevention", activeMethod);
+    if (activeMethod == 'touchmove') {
+      document.body.removeEventListener("touchmove", touchMoveCallback);
+    }
+    if (activeMethod == 'touchAction') {
+      document.body.classList.remove("notouch");
+    }
+    activeMethod = '';
+    document.querySelector('#installStatus').textContent = "no";
+    document.querySelector('#cancelWhilePreventing').textContent = "";
+  }
+
+  var activeHandler = {
+    callback: null,
+    eventType: null
+  };
+
+  function installEventHandler(install) {
+    removeEventHandler();
+    let handler = {
+      eventType: install,
+      callback: (ev) => {
+        console.warn("installingPrevention on ", ev.type);
+        installPrevention();
+      }
+    }
+    document.body.addEventListener(handler.eventType, handler.callback, {passive:false});
+    activeHandler = handler;
+  }
+
+  function removeEventHandler() {
+    if (activeHandler.callback) {
+      document.body.removeEventListener(activeHandler.eventType, 
+        activeHandler.callback, {passive:false});
+    }
+    activeHandler = { callback: null, eventType: null};
+  }
+
+  var pointerIsDown = 0;
+  var skipNMoveEvents = 0;
+  function installPersistentPrevention() {
+    document.body.addEventListener("pointerdown", () => {
+      console.log("pointerIsDown", true);
+      pointerIsDown = true;
+      skipNMoveEvents = 1;  // Anything more than 1 fails
+    })
+    document.body.addEventListener("pointerup", () => {
+      console.log("pointerIsDown", false);
+      pointerIsDown = false;
+    });
+    document.querySelector('#installStatus').textContent = 'permanent';
+    activeMethod = document.querySelector("#preventionMethod").value;
+
+    let listener = (ev) => {
+      
+      if (activeMethod == 'touchmove') {
+        if (!pointerIsDown)
+          return;
+        if (skipNMoveEvents-- > 0) {
+          console.warn("Not preventing touch move", skipNMoveEvents);
+          return;
+        }
+        console.log("touchmove scroll prevention");
+        ev.preventDefault();
+      } else if (activeMethod == "touchAction") {
+        if (pointerIsDown) {
+          if (!document.body.classList.contains("notouch"))
+            console.log(".notouch scroll prevention");
+          document.body.classList.add("notouch");
+        }
+        else  {
+          if (document.body.classList.contains("notouch"))
+            console.log(".notouch scroll prevention removed");
+          document.body.classList.remove("notouch");
+        }
+      } else
+        console.warn("no active method for permanent prevention");
+    };
+    activeHandler = {
+      callback: listener,
+      eventType: "touchmove"
+    };
+    document.body.addEventListener("touchmove", listener, 
+      {passive: false});
+  }
+
+  function sync() {
+    let install = document.querySelector("#installStrategy").value;
+    removePrevention();
+    
+    switch(install) {
+      case 'none':
+        removeEventHandler();
+        console.warn('prevention not installed');
+        break;
+      case 'immediate':
+        removeEventHandler();
+        installPrevention();
+        break;
+      case 'permanent':
+        removeEventHandler();
+        installPersistentPrevention();
+        break;
+      case 'pointermove':
+      case 'pointerdown':
+      case 'touchstart':
+        installEventHandler(install);
+        break;
+      default:
+        throw "unexpected install " + install;
+    }
+  }
+
+ 
+
+  function init() {
+    document.querySelector("#preventionMethod").addEventListener("change", sync);
+    document.querySelector("#installStrategy").addEventListener("change", sync);
+    
+    document.body.addEventListener("pointercancel", ev => {
+      let el = document.querySelector('#cancelWhilePreventing');
+      if (activeHandler.callback) {
+        el.textContent = "YES!!, bad";
+        el.style.backgroundColor = "#F88";
+      } else {
+        el.textContent = "No";
+        el.style.backgroundColor = "";
+      }
+    });
+
+    document.addEventListener("scroll", ev => {
+      console.log("scroll");
+    });
+  }
+  init();
+  /* If you add touchmove handler inside pointermove event,
+  the touchmove.preventDefault();
+  */
+</script>

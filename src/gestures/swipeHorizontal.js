@@ -3,12 +3,12 @@
  * 
  * Detects horizontal swipes.
  * 
- * Additional arguments passed to effect:
+ * Additional arguments passed to effect callbacks:
+ * - effect.moved() gets speed and delta from start point
+ * - effect.completed() gets speed
  * speed is reported in pixels/100ms
- * effect.moved() gets speed and delta from start point
- * effect.completed() gets speed
  * 
- * Configuration options
+ * Options:
  * threshold=3 {pixels} - how far to move before swipe activates
  * direction=both {ltr|rtl|both}- restrict movement to 
  *    left to right | right to left |allow both

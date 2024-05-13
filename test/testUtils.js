@@ -174,7 +174,7 @@ appendStyleRule("gesture-logger",`{
   font-size: 10px;
   display:block;
   border:1px solid black;
-  max-width:300px;
+  max-width:30em;
 }`);
 appendStyleRule("gesture-logger[data-gesture-state=idle]",`
 {background-color:#ffeaea;}`);

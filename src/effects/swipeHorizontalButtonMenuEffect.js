@@ -1,5 +1,23 @@
-/*
-Implements menu that displays when you swipe left
+/** 
+ * SwipeHorizontalButtonMenuEffect 
+ * 
+ * Button menu that displays when you swipe.
+ * Inspired by message button menus in mail apps.
+ * It can scroll content as you swipe (looks nice)
+ * Can have a default button that fires on full swipe.
+ * Menu can stay open until user clicks somewhere else.
+ * 
+ * Options:
+ * direction {ltr|rtl} - menu side, left or right
+ * container {Element} - containing element for the menu.
+ *    Must be "absolute positioning containing block" (ex: position:relative)
+ * contentSelector {string}
+ *    CSS selector for content that should scroll as menu is revealed.
+ *    If empty, content will not scroll
+ * menuBuilder {function(effect, container, menuBuilderOptions)}
+ *    Function that creates the menu element
+ * menuBuilderOptions - options passed to menu builder
+ * 
  */
 import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
@@ -8,12 +26,12 @@ let POSITION_RELATIVE_CLASS="swipePositionRelative";
 
 export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
 
-  // Effect state
   menu; // Menu being displayed.
   defaultButton;  // Default button, if specified as data-gesture-default
   defaultModeOn; // True if default mode is active
   hasMoved; // True if pointer has moved since activated
   dismissOnPointerUp; // If user clicks outside of the already open menu, menu should be dismissed
+
   // Options:
   // Menu container. Needs to be an "absolute positioning containing block"
   // https://drafts.csswg.org/css-position/#ref-for-absolute-positioning-containing-block%E2%91%A0
@@ -24,6 +42,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
   menuBuilder;  // Callback fn(effect, container, menuBuilderOptions)
   menuBuilderOptions;
   direction = "ltr";  // 'ltr'|'rtl'
+
   constructor(options) {
     super(options);
     for (let p of ['container', 'menuBuilder'])
@@ -188,30 +207,29 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     this.maxWidth = parseInt(window.getComputedStyle(this.menu).width);
     this.menu.style.width = "0";
     this.initialWidth = 0;
+    // Button menu should close if another gesture starts
     if (GestureEffect.EffectCleaner)
       GestureEffect.EffectCleaner.register(this.menu, this);
   }
   moved(gesture, ev, state, delta, speed) {
-    if (gesture.getState() != 'active')
+    if (gesture.getState() != 'active' || this.menu == null)
       return;
-    if (this.menu) {
-      this.hasMoved = true;
-      let newWidth = Math.max(0, this.initialWidth + (this.direction == 'ltr' ? delta : -delta));
-      // If there is no default button, do not grow bigger than maximum width.
-      if (!this.defaultButton)
-        newWidth = Math.min(newWidth, this.maxWidth);
-      
-      if (this.defaultButton) {
-        // slow down the growth near the edge.
-        const boundary = 16;
-        let oversize = newWidth - this.container.offsetWidth + boundary;
-        if (oversize > 0)
-          newWidth = this.container.offsetWidth - boundary + oversize / 8;
-        let defaultOn = newWidth / this.container.offsetWidth > 0.8;
-        this.setDefaultMode(defaultOn);
-      }
-      this.animateMenuToWidth(newWidth, 0);
+    this.hasMoved = true;
+    let newWidth = Math.max(0, this.initialWidth + (this.direction == 'ltr' ? delta : -delta));
+    // If there is no default button, do not grow bigger than maximum width.
+    if (!this.defaultButton)
+      newWidth = Math.min(newWidth, this.maxWidth);
+    
+    if (this.defaultButton) {
+      // slow down the growth near the edge.
+      const boundary = 16;
+      let oversize = newWidth - this.container.offsetWidth + boundary;
+      if (oversize > 0)
+        newWidth = this.container.offsetWidth - boundary + oversize / 8;
+      let defaultOn = newWidth / this.container.offsetWidth > 0.8;
+      this.setDefaultMode(defaultOn);
     }
+    this.animateMenuToWidth(newWidth, 0);
   }
   completed(gesture, ev, speed) {
     if (!this.menu)
@@ -226,9 +244,8 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     // - width < 50% of menu width, or:
     // - dismissOnPointerUp && pointer has not moved
     let dismissMenu = false;
-    const speedThreshold = 4;
-    let quickRtlFlick = speed < -speedThreshold;
-    let quickLtrFlick = speed > speedThreshold;
+    let quickRtlFlick = speed < -GestureEffect.flickSpeed;
+    let quickLtrFlick = speed > GestureEffect.flickSpeed;
     dismissMenu ||= this.direction == "rtl" ? quickLtrFlick : quickRtlFlick;
     // Menu is narrow, slow flick
     dismissMenu ||=  (this.menu.offsetWidth < this.maxWidth / 3) && (this.direction == "ltr" ? !quickLtrFlick : !quickRtlFlick);

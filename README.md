@@ -1,8 +1,14 @@
 # js-gestures
 gesture recognition library
 ## TODO
+PullToRefresh: integrate with scrollers
+PullToBounce: reveal bottom empty space
+
 Selenium: run multiple tests, basically glob + run and total tests
-SwipeVertical -- needs to deal with scrollbars, spinner effect on top
+SwipeVertical 
+  - needs to deal with scrollbars
+  - refersh spinner effect on top
+  - bottom bounce effect on bottom
 
 Rotate
 Drag
@@ -194,6 +200,9 @@ become Web Awesome
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
 ## DONE
+```
+May-12 Initial pullToRefresh done. Still needs scroll integration
+May-12 Long investigation of vertical swipes on mobile in test/investigation/preventScroll.html
 May-2 Started SwipeVertical
 May-1 Collapse for testFramework so I can see tests on iOS
 May-1 Multiple gestures on same element are now exclusive
@@ -236,3 +245,4 @@ Mar-22 Initial gesture API
          use jsdoc to document public API and interesting types
 Mar-19 Implemented partial callbacks
 Mar-?? https://bestofjs.org/projects?tags=test&sort=monthly-downloads
+```

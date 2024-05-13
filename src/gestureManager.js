@@ -261,6 +261,7 @@ Implementation:
     for (let g of this.#activeGestures) {
       prevent ||= g.preventTextSelection();
     }
+    console.log("updateTextSelectionPrevention", prevent);
     if (prevent) 
       document.body.classList.add(SelectNoneCSSClass);
     else
@@ -276,6 +277,7 @@ Implementation:
         gestureElements.push(g.element());
       }
     }
+    console.log("updateScrollPrevention", prevent);
     if (prevent) {
       if (this.preventScrollingListener)
         return;
@@ -287,8 +289,9 @@ Implementation:
       this.preventScrollingListener = {
         elements: [document.body, ...gestureElements], 
         callback: ev => {
-          // console.log("preventing touchMove")
-          ev.preventDefault()
+          console.log("preventing touchMove", ev.currentTarget);
+          ev.preventDefault();
+          ev.stopPropagation();
         }
       };
       for (let el of this.preventScrollingListener.elements) {
@@ -306,7 +309,7 @@ Implementation:
   }
 
   // handles events intented for gesture handlers
-  handleGHEvent(event, only) {
+  handleGHEvent(event) {
     let allGestureHandlers = event.currentTarget[GMSym];
     if (!allGestureHandlers) {
       console.warn("No GestureHanders of any type for ", ev.currentTarget, ev);
@@ -321,6 +324,7 @@ Implementation:
     let activeRequests = [];
     for (let gesture of eventGestureHandlers) {
       try {
+          // console.log(event.type);
         let newState = gesture.handleEvent(event);
         // Active gestures stop propagation of their events.
         // EffectCleaner depends on this
@@ -403,7 +407,7 @@ let singleton = new GestureManager();
 export default singleton;
 
 // style for preventTextSelection
-appendStyleRule(`.${SelectNoneCSSClass}`, "{user-select: none;}");
+appendStyleRule(`.${SelectNoneCSSClass}`, "{user-select: none;-webkit-user-select:none}");
 
 /*
 Implementation:
