@@ -9,26 +9,30 @@
   gesture-logger {
     font-size: large;
   }
+  .tall {
+    height: 20vh;
+    border:1px dotted black;
+  }
 </style>
 <h1>SwipeVertical</h1>
 <pre>Tested:
 - gestures/swipeVertical.js
+- effects/pullToRefresh.js
+
+The most challenging parts of testing vertical swipes are on mobile,
+the interaction with built-in scroll gesture handlers.
+Unfortunatelly, there is no way to write automated tests for this.
 </pre>
-<!-- <div style="height:100px;background-color:rgba(253, 255, 226, 0.8);overflow:hidden;">
-  <div id="spinner" style="margin-left:45%;margin-top:24px;font-size:36px;width:1em;height:1em;line-height:1em">🌼</div>
-</div> 
-<script>
-let s = document.querySelector("#spinner");
-s.animate([
-  {transform:"rotate(360deg)"}
-], {duration: 1000, iterations: Infinity});
-</script>-->
-<div id="d1" style="height:30vh; background-color:#ddd">
-Test 1: displays effect state during vertical swipe
-  <gesture-logger></gesture-logger>
+
+<div id="d1" style="height:20vh; background-color:#ddd">
+Test 1: manual, displays gesture status.<br>
+<gesture-logger></gesture-logger>
+Drag up and down<br>
+On mobile, you can get a feel on how gesture interacts
+with browser scroll gestures. 
 </div>
-<div id="d2" style="height:50vh; background-color:#aaa">
-  <div>Test 2: displays spinner on top</div>
+<div id="d2" style="height:50vh; background-color:#aaa;overflow:auto;border:1px solid green">
+  <div>Test 2: manual, displays spinner on top</div>
   <div id="d2timer"></div>
 </div>
 <div style="height:50vh; background-color:#999">A div</div>
@@ -50,16 +54,30 @@ Test 1: displays effect state during vertical swipe
     GestureManager.addGesture(gesture);
   }
 
-  async function pullToReferesh() {
+  async function installVerticalOnD2() {
     let el = document.querySelector("#d2");
     let effect = new PullToRefreshEffect({container: el, testTimerSelector: "#d2timer"});
     let gesture = new SwipeVertical(el, {effect: effect, direction:'utd'});
     GestureManager.addGesture(gesture);
   }
 
+  async function test2auto() {
+    let el = document.querySelector(`#d2`);
+    el.dispatchEvent(createEvent("pointerdown", el, { top: 5 }));
+    el.dispatchEvent(createEvent("pointermove", el, { top: 30 }));
+    el.dispatchEvent(createEvent("pointermove", el, { top: 35 }));
+    await awaitTimeout(5);  // For initial animation to complete
+    el.dispatchEvent(createEvent("pointerup", el, { top: 30 }));
+    let spinner = el.querySelector(".defaultPullDownSpinner");
+    await awaitSizeStopAnimating(spinner);
+    if (spinner.offsetHeight == 0)
+      throw "Spinner should be visible after a swipe";
+  }
+
   TestRunner.test(installVerticalOnD1);
-  TestRunner.test(pullToReferesh);
-  TestRunner.runAll();
+  TestRunner.test(installVerticalOnD2);
+  TestRunner.test(test2auto);
+  // TestRunner.runAll();
   // document.addEventListener("touchmove", 
   //   ev => { 
   //     console.log("touchmove body");

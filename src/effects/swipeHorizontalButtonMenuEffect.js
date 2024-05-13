@@ -212,7 +212,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       GestureEffect.EffectCleaner.register(this.menu, this);
   }
   moved(gesture, ev, state, delta, speed) {
-    if (gesture.getState() != 'active' || this.menu == null)
+    if (gesture.getState() != 'active' || !this.menu)
       return;
     this.hasMoved = true;
     let newWidth = Math.max(0, this.initialWidth + (this.direction == 'ltr' ? delta : -delta));

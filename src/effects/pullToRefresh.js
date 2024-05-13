@@ -9,6 +9,7 @@ import GestureEffect from "./gestureEffect.js";
 // Default spinner panel builder
 function defaultPanelBuilder(effect, container) {
   let panel = document.createElement('div');
+  panel.classList.add("defaultPullDownSpinner");
   panel.setAttribute("style", "height:100px;background-color:rgba(253, 255, 226, 0.8);overflow:hidden;");
   let spinner = document.createElement('div');
   spinner.setAttribute("style", "margin-left:45%;margin-top:24px;font-size:36px;width:1em;height:1em;line-height:1em" );
@@ -48,6 +49,7 @@ export default class PullToRefreshEffect extends GestureEffect {
   }
 
   animatePanelToHeight(finalHeight, duration=GestureEffect.ANIM_TIME) {
+    // console.log("animate", finalHeight, duration, rthis.panel.offsetHeight);
     if (!this.panel) {
       console.error("No panel to animate!");
       return;
@@ -56,13 +58,20 @@ export default class PullToRefreshEffect extends GestureEffect {
       duration: duration,
       easing: 'ease-out'
     };
+    for (let a of this.panel.getAnimations()) {
+      console.log("cancelling animations!");
+      a.cancel();
+    }
     let animation = this.panel.animate([
       {height: `${this.panel.offsetHeight}px`},
       {height: `${finalHeight}px`}
     ], animOptions);
-    animation.finished.then( _ => {
+    animation.finished.finally( _ => {
       if (this.panel)
         this.panel.style.height = `${finalHeight}px`;
+    }).catch( err => {
+      // console.log("Animation cancelled");
+      // error gets thrown if animation is cancelled
     });
     return animation;
   }
@@ -78,7 +87,7 @@ export default class PullToRefreshEffect extends GestureEffect {
       let timeLeft = this.testTimerInfo.endTime - Date.now();
       el.textContent = timeLeft;
       if (timeLeft < 0)
-        this.clearTestTimer();
+        this.clearTestTimeleftLogger();
     }).bind(this);
     this.testTimerInfo = {
       intervalCb: intervalCb,
@@ -173,7 +182,7 @@ export default class PullToRefreshEffect extends GestureEffect {
   }
 
   moved(gesture, ev, state, delta, speed) {
-    if (gesture.getState() != 'active')
+    if (gesture.getState() != 'active' || !this.panel)
       return;
     let newHeight = Math.max(0, this.initialHeight + delta / 2);
     // console.log(newHeight);

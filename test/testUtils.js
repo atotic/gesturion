@@ -127,6 +127,10 @@ function createEvent(type, element, location) {
       pageX += location.left;
     if (location.right)
       pageX += elRect.width - location.right;
+    if (location.top)
+      pageY += location.top;
+    if (location.bottom)
+      pageY += elRect.height - location.bottom;
   }
   let ev = new PointerEvent(type, {
     bubbles: true, 

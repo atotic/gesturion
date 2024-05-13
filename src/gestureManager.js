@@ -261,7 +261,7 @@ Implementation:
     for (let g of this.#activeGestures) {
       prevent ||= g.preventTextSelection();
     }
-    console.log("updateTextSelectionPrevention", prevent);
+    // console.log("updateTextSelectionPrevention", prevent);
     if (prevent) 
       document.body.classList.add(SelectNoneCSSClass);
     else
@@ -277,7 +277,7 @@ Implementation:
         gestureElements.push(g.element());
       }
     }
-    console.log("updateScrollPrevention", prevent);
+    // console.log("updateScrollPrevention", prevent);
     if (prevent) {
       if (this.preventScrollingListener)
         return;
@@ -289,7 +289,7 @@ Implementation:
       this.preventScrollingListener = {
         elements: [document.body, ...gestureElements], 
         callback: ev => {
-          console.log("preventing touchMove", ev.currentTarget);
+          // console.log("preventing touchMove", ev.currentTarget);
           ev.preventDefault();
           ev.stopPropagation();
         }

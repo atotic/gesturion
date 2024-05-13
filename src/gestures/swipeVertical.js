@@ -31,7 +31,7 @@ export default class SwipeVertical extends GestureHandler {
     ['active', [
       { eventType: 'pointermove', element: 'body' },
       { eventType: 'pointerleave', element: 'body' },
-     { eventType: 'pointercancel', element: 'body' },
+      { eventType: 'pointercancel', element: 'body' },
       { eventType: 'pointerup', element: 'body' }
       ]
     ]]);
@@ -84,9 +84,15 @@ export default class SwipeVertical extends GestureHandler {
       if (ev.type == 'pointerdown') {
         this.pageStart = { x: ev.pageX, y: ev.pageY };
         this.lastY = ev.pageY;
-        this.#updateSpeed(ev);
-        if (this.threshold == 0 || this.options.effect.hasVisibleEffect())
-          return "active";
+        let speed = this.#updateSpeed(ev);
+        if (this.threshold == 0 || this.options.effect.hasVisibleEffect()) {
+          // activate immediately if no threshold, and pointer is moving
+          // in desired direction
+          if ((this.direction == 'both')
+            || (this.direction == 'utd' && speed > 0)
+            || (this.direction == 'dtu' && speed < 0))
+            return "active";
+        }
         return 'waiting';
       }
       console.warn("Unexpected idle event", ev.type);
