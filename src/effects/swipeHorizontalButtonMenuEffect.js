@@ -70,27 +70,39 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       duration: duration,
       easing: 'ease-out'
     };
+    // Cancel existing animations
+    for (let a of this.menu.getAnimations()) {
+      // console.log("cancelling menu animations!");
+      a.cancel();
+    }
     // Animate menu
     let menuAnimation = this.menu.animate(
       [
         {width: `${this.menu.offsetWidth}px`},
         {width: `${finalWidth}px`}
       ], animOptions);
-    menuAnimation.finished.then( _ => {
-      if (this.menu)
-        this.menu.style.width = `${finalWidth}px`;
-    });
+    menuAnimation.finished
+      .catch( _ => { /* Cancelled animations throw an error */})
+      .finally( _ => {
+        if (this.menu)
+          this.menu.style.width = `${finalWidth}px`;
+      });
     // Animate content
     let content = this.contentElement();
     if (content) {
+      for (let a of content.getAnimations()) {
+        // console.log("cancelling content animations!");
+        a.cancel();
+      }
       content.classList.add(POSITION_RELATIVE_CLASS);
       let sign = this.direction == "ltr" ? "" : "-";
       let animation = [ 
         { left: `${content.offsetLeft}px`},
         { left: `${sign}${finalWidth}px`}
       ];
-      content.animate(
-        animation, animOptions).finished.then( _ => {
+      content.animate(animation, animOptions).finished
+        .catch( _ => {/* cancelled animation */})
+        .finally( _ => {
           content.style.left = `${sign}${finalWidth}px`;
         });
     } else {
@@ -157,10 +169,9 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
         }       
       }
       if (animate) {
-        this.animateMenuToWidth(0)
-        .finished.then( _ => {
-          cleanup();
-        });
+        this.animateMenuToWidth(0).finished
+          .then( _ => cleanup() )
+          .catch( _ => {/* no cleanup on abort */} );
       } else
         cleanup();
     }   

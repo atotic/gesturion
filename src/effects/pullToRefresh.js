@@ -59,7 +59,7 @@ export default class PullToRefreshEffect extends GestureEffect {
       easing: 'ease-out'
     };
     for (let a of this.panel.getAnimations()) {
-      console.log("cancelling animations!");
+      // console.log("cancelling animations!");
       a.cancel();
     }
     let animation = this.panel.animate([
@@ -143,8 +143,9 @@ export default class PullToRefreshEffect extends GestureEffect {
         delete this.initialHeight;
       }
       if (animate) {
-        this.animatePanelToHeight(0)
-          .finished.then( () => cleanup() );
+        this.animatePanelToHeight(0).finished
+          .then( () => cleanup() )
+          .catch( () => { /* no cleanup on abort, means new gesture has started */} )
       } else {
         cleanup();
       }

@@ -66,7 +66,7 @@ with browser scroll gestures.
     el.dispatchEvent(createEvent("pointerdown", el, { top: 5 }));
     el.dispatchEvent(createEvent("pointermove", el, { top: 30 }));
     el.dispatchEvent(createEvent("pointermove", el, { top: 35 }));
-    await awaitTimeout(5);  // For initial animation to complete
+    await awaitTimeout(5);  // For initial animation to start
     el.dispatchEvent(createEvent("pointerup", el, { top: 30 }));
     let spinner = el.querySelector(".defaultPullDownSpinner");
     await awaitSizeStopAnimating(spinner);
