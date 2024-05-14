@@ -58,6 +58,10 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       this.direction = options.direction;
     }
   }
+  gestureOptionOverrides() {
+    return {direction: this.direction};
+  }
+
   contentElement() {
     if (this.contentSelector)
       return this.container.querySelector(this.contentSelector);

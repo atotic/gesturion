@@ -1,7 +1,6 @@
 /** 
  * PullToRefresh 
  * 
- * 
  */
 import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
@@ -85,7 +84,7 @@ export default class PullToRefreshEffect extends GestureEffect {
       if (!el)
         return console.warn("Could not find ", this.testTimerSelector);
       let timeLeft = this.testTimerInfo.endTime - Date.now();
-      el.textContent = timeLeft;
+      el.textContent = (timeLeft / 100).toFixed(0);
       if (timeLeft < 0)
         this.clearTestTimeleftLogger();
     }).bind(this);
@@ -99,7 +98,7 @@ export default class PullToRefreshEffect extends GestureEffect {
   clearTestTimeleftLogger() {
     if (!this.testTimerInfo)
       return;
-    document.querySelector(this.testTimerSelector).textContent ='';
+    document.querySelector(this.testTimerSelector).textContent ='.';
     window.clearInterval(this.testTimerInfo.intervalId);
     delete this.testTimerInfo;
   }
@@ -162,13 +161,16 @@ export default class PullToRefreshEffect extends GestureEffect {
 
   idleStart() {
     this.state = "idle";
+    // console.log("idle");
   }
 
   waitStart() {
     this.state = "waiting";
+    // console.log("waiting");
   }
 
   activeStart(gesture, ev) {
+    // console.log("active");
     this.state = "active";
     if (!this.panel) {
       this.panel = this.panelBuilder(this, this.container);
@@ -185,6 +187,7 @@ export default class PullToRefreshEffect extends GestureEffect {
   moved(gesture, ev, state, delta, speed) {
     if (gesture.getState() != 'active' || !this.panel)
       return;
+    // console.log("moved");
     let newHeight = Math.max(0, this.initialHeight + delta / 2);
     // console.log(newHeight);
     this.animatePanelToHeight(newHeight, 0);
@@ -206,6 +209,7 @@ export default class PullToRefreshEffect extends GestureEffect {
   }
 
   cancelled(gesture, ev) {
+    console.log("cancelled");
     this.state = "idle";
     // No panel
     if (!this.panel) {

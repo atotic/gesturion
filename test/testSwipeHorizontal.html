@@ -109,10 +109,10 @@
         el.querySelector(".listItemContent").textContent = "both menus installed";
         effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
         // effect = new LoggerEffect(effect);
-        ltrGesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr" });
+        ltrGesture = new SwipeHorizontal(el, { effect: effect });
         GestureManager.addGesture(ltrGesture);
         effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
-        rtlGesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
+        rtlGesture = new SwipeHorizontal(el, { effect: effect });
         GestureManager.addGesture(rtlGesture);
         el.style.backgroundColor = COLOR;
       }
@@ -143,7 +143,7 @@
         let effectOptions = ltrGetDefaultMenu(el);
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         // effect = new LoggerEffect(effect);
-        gesture = new SwipeHorizontal(el, { effect: effect, direction: "ltr" });
+        gesture = new SwipeHorizontal(el, { effect: effect });
         GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
@@ -172,7 +172,7 @@
         let effectOptions = rtlGetDefaultMenu(el);
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
         // effect = new LoggerEffect(effect);
-        gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
+        gesture = new SwipeHorizontal(el, { effect: effect });
         GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
@@ -229,7 +229,7 @@
         let effectOptions = rtlGetDefaultMenu(el);
         effectOptions.menuBuilderOptions.items[2].default = true;
         effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-        gesture = new SwipeHorizontal(el, { effect: effect, direction: "rtl" });
+        gesture = new SwipeHorizontal(el, { effect: effect });
         GestureManager.addGesture(gesture);
         el.style.backgroundColor = COLOR;
       }
@@ -253,7 +253,7 @@
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
@@ -277,7 +277,7 @@
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
@@ -301,7 +301,7 @@
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       GestureHandler.TEST_DEFAULT_SPEED = 1;
@@ -329,7 +329,7 @@
         `.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
       effect = new SwipeHorizontalButtonMenuEffect(rtlGetDefaultMenu(el));
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       GestureHandler.TEST_DEFAULT_SPEED = 1;
@@ -413,8 +413,7 @@
         item.preventClickAutoClose = true;
       }
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el,
-        { effect: effect, direction: 'rtl' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       // Swipe ltr, open menu
@@ -448,7 +447,7 @@
       el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'ltr' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       // Open menu
@@ -477,7 +476,7 @@
       el.scrollIntoView(scrollIntoViewOptions);
       let effectOptions = ltrGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       // Open menu
@@ -509,8 +508,7 @@
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el,
-        { effect: effect, direction: 'ltr' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
       // swipe ltr.
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
@@ -547,8 +545,7 @@
       // Make trash the defult option
       effectOptions.menuBuilderOptions.items[2].default = true;
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el,
-        { effect: effect, direction: 'rtl' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
       // swipe ltr.
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
@@ -652,7 +649,7 @@
           });
       };
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
+      gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
 
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));

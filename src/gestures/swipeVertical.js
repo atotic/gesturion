@@ -4,16 +4,16 @@
  * Detects horizontal swipes.
  * Reports swipe speed to effect.moved(), effect.completed() 
  * in pixels/100ms. 
- * Handles scrolling correctly. Unlike
- * 
+ * Handles scrolling correctly.
  * 
  * Configuration options
- * threshold=3 {pixels} - how far to move before swipe activates
+ * threshold=3 {pixels} - how far to move before swipe activates. Surprisingly,
+ *                        setting it to 0 does not seem to help with preventing scroll.
  * direction=both {dtu|utd|both}- restrict movement to
  *    down to up|up to down|allow both
  * 
  * Demo effects:
- * 
+ * effects/pullToRefresh.js
  */
 
 import GestureHandler from "./gestureHandler.js"
@@ -58,6 +58,10 @@ export default class SwipeVertical extends GestureHandler {
       }
     }
 
+    gestureOptionOverrides() { 
+      return {direction:'utd'};
+    }
+
     #updateSpeed(ev) {
       let speed = null;
       if (this.lastPointer.x != -1) {
@@ -89,15 +93,14 @@ export default class SwipeVertical extends GestureHandler {
           // activate immediately if no threshold, and pointer is moving
           // in desired direction
           if ((this.direction == 'both')
-            || (this.direction == 'utd' && speed > 0)
-            || (this.direction == 'dtu' && speed < 0))
+            || (this.direction == 'utd' && speed >= 0)
+            || (this.direction == 'dtu' && speed <= 0))
             return "active";
         }
         return 'waiting';
       }
       console.warn("Unexpected idle event", ev.type);
     }
-
     #aboveThreshold(delta) {
       if (this.direction == 'utd')
         return delta >= this.threshold;

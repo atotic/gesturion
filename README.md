@@ -201,6 +201,7 @@ become Web Awesome
 
 ## DONE
 ```
+May-13 Allow GestureEffect to set default Gesture options gestureOptionOverrides()
 May-13 Started aborting animations, and found new edge cases
 May-12 Initial pullToRefresh done. Still needs scroll integration
 May-12 Long investigation of vertical swipes on mobile in test/investigation/preventScroll.html

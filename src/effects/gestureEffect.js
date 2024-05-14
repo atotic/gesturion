@@ -17,6 +17,21 @@ export default class GestureEffect {
     if (GestureEffect.EffectCleaner && GestureEffect.EffectCleaner.init)
       GestureEffect.EffectCleaner.init();
   }
+  // Effects can set gesture's defaults. 
+  gestureOptionOverrides() { return {};}
+
+  clear(animate) {
+    console.warn("clear not handled");
+  }
+  element() {
+    console.warn("element not handled");
+  }
+  // Return true if gesture should be activated immediately 
+  // on wait. Useful if effect is already displayed,
+  // and you do not want to miss events.
+  hasVisibleEffect() {
+    return this.element() != null;
+  }
 
   idleStart(gesture)  {
     console.warn("idleStart not handled");
@@ -35,17 +50,5 @@ export default class GestureEffect {
   }
   cancelled(gesture, ev) {
     console.warn("cancelled not handled");
-  }
-  clear(animate) {
-    console.warn("clear not handled");
-  }
-  element() {
-    console.warn("element not handled");
-  }
-  // Return true if gesture should be activated immediately 
-  // on wait. Useful if effect is already displayed,
-  // and you do not want to miss events.
-  hasVisibleEffect() {
-    return this.element() != null;
   }
 };
