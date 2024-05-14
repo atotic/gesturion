@@ -55,6 +55,8 @@ export default class SwipeHorizontal extends GestureHandler {
   constructor(element, options) {
     // Options: callbacks for start, move, cancel, complete, threshold
     super(element, options);
+    if ('effect' in options)
+      options = {...options, ...options.effect.gestureOptionOverrides()};
     if ('threshold' in options)
       this.threshold = parseInt(options.threshold);
     if ('direction' in options) {

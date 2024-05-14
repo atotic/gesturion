@@ -107,7 +107,8 @@ class GestureLogger extends HTMLElement {
       },
       clear: () => {},
       hasVisibleEffect: () => { return false; },
-      element: () => {return me}
+      element: () => {return me},
+      gestureOptionOverrides: () => {}
     }
   }
 }

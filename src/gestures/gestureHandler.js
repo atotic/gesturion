@@ -49,9 +49,8 @@ export default class GestureHandler {
     this.#element = element;
     if (options) {
       if ('effect' in options) {
+        options = {...options, ...options.effect.gestureOptionOverrides()};
         this.options.effect = options.effect;
-        if (this.options.effect.gestureOptionOverrides)
-         this.options = {...this.options, ...this.options.effect.gestureOptionOverrides()};
       }
       if ('preventTextSelection' in options)
         this.options.preventTextSelection = options.preventTextSelection;

@@ -47,6 +47,10 @@ export default class PullToRefreshEffect extends GestureEffect {
     }
   }
 
+  gestureOptionOverrides() { 
+    return {direction:'utd', waitForScrollBoundary: true };
+  }
+
   animatePanelToHeight(finalHeight, duration=GestureEffect.ANIM_TIME) {
     // console.log("animate", finalHeight, duration, rthis.panel.offsetHeight);
     if (!this.panel) {
@@ -209,7 +213,6 @@ export default class PullToRefreshEffect extends GestureEffect {
   }
 
   cancelled(gesture, ev) {
-    console.log("cancelled");
     this.state = "idle";
     // No panel
     if (!this.panel) {

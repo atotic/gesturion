@@ -11,6 +11,8 @@
  *                        setting it to 0 does not seem to help with preventing scroll.
  * direction=both {dtu|utd|both}- restrict movement to
  *    down to up|up to down|allow both
+ * scrollBoundaryOnly - if true, activate only when scrolling is no longer possible 
+ *                      element has been scrolled all the way up or all the way down
  * 
  * Demo effects:
  * effects/pullToRefresh.js
@@ -37,7 +39,8 @@ export default class SwipeVertical extends GestureHandler {
     ]]);
     threshold = 3; // travel at least this much before activation
     direction = "both"; // utd|dtu|both swiping upToDown, downToUp, or both?
-  
+    waitForScrollBoundary = false;
+
     pageStart = { x: -1, y: -1}
     lastPointer = { // used to compute pointer speed
       y: -1, 
@@ -46,9 +49,9 @@ export default class SwipeVertical extends GestureHandler {
     }
 
     constructor(element, options) {
-      // Options: callbacks for start, move, cancel, complete, threshold
       super(element, options);
-      this.options.preventScrollOnMove = true;
+      if ('effect' in options)
+        options = {...options, ...options.effect.gestureOptionOverrides()};
       if ('threshold' in options)
         this.threshold = parseInt(options.threshold);
       if ('direction' in options) {
@@ -56,10 +59,29 @@ export default class SwipeVertical extends GestureHandler {
           throw `Invalid options.direction "${options.direction}"`;
         this.direction = options.direction;
       }
+      if ('waitForScrollBoundary' in options) {
+        this.waitForScrollBoundary = options.waitForScrollBoundary;
+      }
     }
 
-    gestureOptionOverrides() { 
-      return {direction:'utd'};
+    // true if element should wait to be fully scrolled
+    #waitForScrollBoundary() {
+      if (!this.waitForScrollBoundary)
+        return false;
+      let el = this.element();
+      if (el.scrollHeight == el.clientHeight)
+        return false;
+      switch(this.direction) {
+      case 'both':
+        return false;
+      case 'utd':
+        return el.scrollTop != 0; // scrolled to the top
+      case 'dtu':
+        return el.clientHeight + el.scrollTop < el.scrollHeight;
+      default:
+        console.warn("Unknown swipeVertical direction ", this.direction);
+        return false;
+      }
     }
 
     #updateSpeed(ev) {
@@ -85,6 +107,8 @@ export default class SwipeVertical extends GestureHandler {
       return this.#myEventSpecs.get(state);
     }
     handleIdleEvent(ev) {
+      if (this.#waitForScrollBoundary())
+        return;
       if (ev.type == 'pointerdown') {
         this.pageStart = { x: ev.pageX, y: ev.pageY };
         this.lastY = ev.pageY;
