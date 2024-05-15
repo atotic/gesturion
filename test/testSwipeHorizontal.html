@@ -474,9 +474,9 @@
     try {
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
-      let effectOptions = ltrGetDefaultMenu(el);
+      let effectOptions = rtlGetDefaultMenu(el);
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
-      gesture = new SwipeHorizontal(el, { effect: effect });
+      gesture = new SwipeHorizontal(el, { effect: effect, direction: 'rtl' });
       GestureManager.addGesture(gesture);
 
       // Open menu

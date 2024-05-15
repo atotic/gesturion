@@ -9,29 +9,68 @@ const {By, Builder, Browser} = require('selenium-webdriver');
 const { colorize } = require('colorize-node');
 
 const assert = require("assert");
-(async function firstTest() {
-  let driver;
-  
+
+var driver;
+var failedTests = [];
+var testCount = 0;
+
+async function runTest(fileName, browser) {
+  let startTime = Date.now();
+  let url = `http://127.0.0.1:8082/test/${fileName}`;
+  await driver.get(url);
+  let title = await driver.getTitle();
+  let runAllButton = await driver.findElement(By.id('runAllTestsAutomated'));
+  await runAllButton.click();
+  let json = await driver.findElement(By.id("seleniumTestReport")).getText();
+  let result = JSON.parse(json);
+  let timeTaken = Date.now() - startTime;
+  console.log(colorize.white(`${result.title} ${result.tests.length} tests (${timeTaken}ms)`));
+  for (let i=0; i< result.tests.length; ++i) {
+    testCount++;
+    let out = `${result.tests[i].status}`;
+    if (result.tests[i].status.match(/^FAIL/)) {
+      result.tests[i].browser = browser;
+      result.tests[i].fileName = fileName;
+      failedTests.push(result.tests[i]);
+      out = colorize.redBright(out);
+    }
+    out += ` ${i} ${result.tests[i].name}`;
+    console.log(out)
+  } 
+}
+
+async function runAllTestsWithBrowser(browser) {
   try {
-    driver = await new Builder().forBrowser(Browser.CHROME).build();
-    await driver.get('http://127.0.0.1:8082/test/testSwipeHorizontal.html');
-    let title = await driver.getTitle();
+    console.log(colorize.white(browser));
+    driver = await new Builder().forBrowser(browser).build();
     await driver.manage().setTimeouts({implicit: 10000});
-    let runAllButton = await driver.findElement(By.id('runAllTestsAutomated'));
-    await runAllButton.click();
-    let json = await driver.findElement(By.id("seleniumTestReport")).getText();
-    let result = JSON.parse(json);
-    console.log(colorize.white(`${result.title} ${result.tests.length} tests`));
-    for (let i=0; i< result.tests.length; ++i) {
-      let out = `${result.tests[i].status}`;
-      if (result.tests[i].status.match(/^FAIL/))
-        out = colorize.redBright(out);
-      out += ` ${i} ${result.tests[i].name}`;
-      console.log(out)
-    } 
-  } catch (e) {
-    console.log(e)
+    let tests = ["testSwipeHorizontal.html", "testSwipeVertical.html"];
+    for (let t of tests)
+      await runTest(t, browser);
+  } catch(e) {
+    console.log(e);
   } finally {
     await driver.quit();
   }
-}())
+}
+
+(async function main() {
+  let startTime = Date.now();
+  try {
+    await runAllTestsWithBrowser(Browser.CHROME);
+    await runAllTestsWithBrowser(Browser.FIREFOX);
+    await runAllTestsWithBrowser(Browser.SAFARI);
+  } catch(e) {
+    console.log(e);
+  } finally {
+    let out = `${testCount} tests run in ${((Date.now() - startTime)/1000).toFixed(1)}s`;
+    console.log(colorize.white(out));
+    if (failedTests.length > 0) {
+      console.log(colorize.red(`${failedTests.length} FAILED TESTS`));
+      for (let t of failedTests) {
+        let out = `${t.browser} ${t.fileName} ${t.name} ${t.status}`;
+        console.log(colorize.red(out));
+      }
+    }
+  }
+})();

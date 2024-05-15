@@ -201,6 +201,7 @@ become Web Awesome
 
 ## DONE
 ```
+May-14 SwipeVertical gets waitForScrollBoundary
 May-13 Allow GestureEffect to set default Gesture options gestureOptionOverrides()
 May-13 Started aborting animations, and found new edge cases
 May-12 Initial pullToRefresh done. Still needs scroll integration
