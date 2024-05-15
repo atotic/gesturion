@@ -4,12 +4,6 @@ gesture recognition library
 PullToRefresh: integrate with scrollers
 PullToBounce: reveal bottom empty space
 
-Selenium: run multiple tests, basically glob + run and total tests
-SwipeVertical 
-  - needs to deal with scrollbars
-  - refersh spinner effect on top
-  - bottom bounce effect on bottom
-
 Rotate
 Drag
 Press, LongPress

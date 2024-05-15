@@ -10,11 +10,10 @@ const { colorize } = require('colorize-node');
 
 const assert = require("assert");
 
-var driver;
 var failedTests = [];
 var testCount = 0;
 
-async function runTest(fileName, browser) {
+async function runTest(fileName, driver, browser) {
   let startTime = Date.now();
   let url = `http://127.0.0.1:8082/test/${fileName}`;
   await driver.get(url);
@@ -24,7 +23,7 @@ async function runTest(fileName, browser) {
   let json = await driver.findElement(By.id("seleniumTestReport")).getText();
   let result = JSON.parse(json);
   let timeTaken = Date.now() - startTime;
-  console.log(colorize.white(`${result.title} ${result.tests.length} tests (${timeTaken}ms)`));
+  console.log(colorize.white(`${result.title} ${result.tests.length} ${browser} tests (${timeTaken}ms)`));
   for (let i=0; i< result.tests.length; ++i) {
     testCount++;
     let out = `${result.tests[i].status}`;
@@ -40,13 +39,14 @@ async function runTest(fileName, browser) {
 }
 
 async function runAllTestsWithBrowser(browser) {
+  let driver;
   try {
     console.log(colorize.white(browser));
     driver = await new Builder().forBrowser(browser).build();
     await driver.manage().setTimeouts({implicit: 10000});
     let tests = ["testSwipeHorizontal.html", "testSwipeVertical.html"];
     for (let t of tests)
-      await runTest(t, browser);
+      await runTest(t, driver, browser);
   } catch(e) {
     console.log(e);
   } finally {
@@ -57,9 +57,12 @@ async function runAllTestsWithBrowser(browser) {
 (async function main() {
   let startTime = Date.now();
   try {
-    await runAllTestsWithBrowser(Browser.CHROME);
-    await runAllTestsWithBrowser(Browser.FIREFOX);
-    await runAllTestsWithBrowser(Browser.SAFARI);
+    // Runs all browsers in parallel
+    let browserSuites = [];
+    browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
+    browserSuites.push( runAllTestsWithBrowser(Browser.FIREFOX));
+    browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
+    await Promise.all(browserSuites);
   } catch(e) {
     console.log(e);
   } finally {

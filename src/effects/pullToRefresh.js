@@ -219,11 +219,10 @@ export default class PullToRefreshEffect extends GestureEffect {
       this.clear();
       return;
     }
-    // If panel was mostly open, and we got cancelled by swipe,
-    // keep the panel open
+    // Hide immediately if less than half open
     let dismiss = !this.panel || this.panel.offsetHeight < this.defaultHeight / 2;
     if (dismiss) {
-      this.clear();
+      this.clear(true);
     } else {
       this.startHideTimeout();
       this.animatePanelToHeight(this.defaultHeight);
