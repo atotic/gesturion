@@ -15,7 +15,7 @@
  *                      element has been scrolled all the way up or all the way down
  * 
  * Demo effects:
- * effects/pullToRefresh.js
+ * effects/pullToRefreshEffect.js
  */
 
 import GestureHandler from "./gestureHandler.js"

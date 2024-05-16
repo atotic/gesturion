@@ -1,13 +1,10 @@
 /**
- * Rotate gesture
- *
- * Tracks two-finger rotational gesture.
- * Rotation angle passed to effect.moved
+ * Pinch gesture
  * 
- * Currently only works on touch devices.
- * Trackpad does not expose any multitouch events.
+ * Tracks two fingered zoom.
  * 
- * TODO: implement desktop variant, trigger on option key, UI a rotate cursor
+ * Demo effects:
+ * ../effects/zoom.js
  * 
  * References:
  * https://kenneth.io/post/detecting-multi-touch-trackpad-gestures-in-javascript
@@ -15,27 +12,36 @@
 
 import GestureHandler from "./gestureHandler.js"
 
-export default class RotateGesture extends GestureHandler {
+export default class PinchGesture extends GestureHandler {
   #myEventSpecs = new Map([
-    ['idle', ['touchstart']],
+    ['idle', ['touchstart', "wheel"]],
     ['waiting', [
+    	{ eventType: 'wheel' },
       { eventType: 'touchmove'},
       { eventType: 'touchend'},
       { eventType: 'touchcancel' }
       ]
     ],
     ['active', [
+    	{ eventType: 'wheel' },
      	{ eventType: 'touchmove'},
       { eventType: 'touchend'},
       { eventType: 'touchcancel'}
       ]
     ]]);
-  threshold = 2;
+
+  threshold = 0.1;	// TouchEvent.scale units (0.1 means scale between 1.1 and 0.9 works
+  minScale = 0.1;
+  maxScale = 2;
 
   constructor(element, options) {
   	super(element, options);
   	if ('threshold' in options)
-  		this.threshold = threshold;
+			this.threshold = threshold;
+		if ('minScale' in options)
+			this.minScale = parseFloat(options.minScale);
+		if ('maxScale' in options)
+			this.maxScale = parseFloat(options.maxScale);
   }
   name() {
   	return "Rotate";
@@ -43,31 +49,30 @@ export default class RotateGesture extends GestureHandler {
 	eventSpecs(state) {
 	  return this.#myEventSpecs.get(state);
 	}
-
-	#aboveThreshold(ev) {
-		return this.threshold == 0 || (Math.abs(ev.rotation) > this.threshold);
+	#aboveThreshold(scale) {
+		return this.threshold == 0 || (Math.abs(scale -1) > this.threshold);
 	}
-
+	#clamp(scale) {
+		return Math.min(Math.max(this.minScale, scale), this.maxScale);
+	}
 	handleIdleEvent(ev) {
-		// logEvent(ev);
 		if (ev.type == 'touchstart') {
 			if (ev.touches.length == 2) {
-				if (this.#aboveThreshold(ev))
+				if (this.#aboveThreshold(ev.scale))
 					return "active";
 				else
 					return "waiting";
 			}
 		}
 	}
-
 	handleWaitEvent(ev) {
 		// logEvent(ev);
 		if (ev.type == 'touchmove') {
 			if (ev.touches.length != 2)
-				console.warn("LESS THAN 2 TOUCHES ", ev.touches.length);
-						ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), ev.rotation);
-			if (this.#aboveThreshold(ev))
+				return console.warn("LESS THAN 2 TOUCHES ", ev.touches.length);
+			ev.preventDefault();
+			this.options.effect.moved(this, ev, this.getState(), this.#clamp(ev.scale));
+			if (this.#aboveThreshold(ev.scale))
 				return "active";
 			return;
 		}
@@ -77,17 +82,16 @@ export default class RotateGesture extends GestureHandler {
 		}
 		console.warn("Unexpected wait event ", ev.type);
 	}
-
 	handleActiveEvent(ev) {
 		if (ev.type == "touchmove") {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.type, ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), ev.rotation);
+			this.options.effect.moved(this, ev, this.getState(), this.#clamp(ev.scale));
 			return;
 		}
 		if (ev.type == "touchend") {
-			this.options.effect.completed(this,ev, ev.rotation);
+			this.options.effect.completed(this,ev, this.#clamp(ev.scale));
 			return "idle";
 		}
 		if (ev.type == "touchcancel") {

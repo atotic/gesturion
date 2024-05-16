@@ -61,7 +61,7 @@ accessibility.
 
 import GestureManager from "../src/gestureManager.js";
 import SwipeVertical from "../src/gestures/swipeVertical.js";
-import PullToRefreshEffect from "../src/effects/pullToRefresh.js";
+import PullToRefreshEffect from "../src/effects/pullToRefreshEffect.js";
 
 let el = document.querySelector("#swipeDown");
 let effect = new PullToRefreshEffect({container: el});

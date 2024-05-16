@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pinch</title>
+<style>
+</style>
+<h1>Pinch </h1>
+<pre>Tested:
+- gestures/pinch.js
+- effects/zoomEffect.js
+</pre>
+<div id="d1" style="width:200px;height:200px;border:5px solid green;background:#ddd">
+	<gesture-logger></gesture-logger>
+	Pinch me!
+</div>
+
+<script type="module">
+  import GestureManager from "../src/gestureManager.js";
+  import GestureHandler from "../src/gestures/gestureHandler.js";
+  import GestureEffect from "../src/effects/gestureEffect.js";
+  import PinchGesture from "../src/gestures/pinch.js";
+  import ZoomEffect from "../src/effects/zoomEffect.js";
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+
+  async function installRotateGesture() {
+  	let el = document.querySelector("#d1");
+  	let logger = el.querySelector("gesture-logger");
+    let effect = new ZoomEffect({zoomTarget: el});
+  	let gesture = new PinchGesture(el, {effect: effect});
+  	GestureManager.addGesture(gesture);
+  }
+
+  TestRunner.test(installRotateGesture);
+</script>

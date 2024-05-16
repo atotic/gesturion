@@ -14,7 +14,7 @@
  *    left to right | right to left |allow both
  * 
  * Demo effects:
- * SwipeHorizontalButtonMenuEffect
+ * ../effects/swipeHorizontalButtonMenuEffect.js
  */
 import GestureHandler from "./gestureHandler.js"
 

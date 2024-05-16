@@ -21,7 +21,7 @@
 <h1>SwipeVertical</h1>
 <pre style="white-space: pre-wrap;width:100vw">Tested:
 - gestures/swipeVertical.js
-- effects/pullToRefresh.js
+- effects/pullToRefreshEffect.js
 
 The most challenging parts of testing vertical swipes are on mobile,
 the interaction with built-in scroll gesture handlers.
@@ -71,7 +71,7 @@ with browser scroll gestures.
   import GestureHandler from "../src/gestures/gestureHandler.js";
   import GestureEffect from "../src/effects/gestureEffect.js";
   import SwipeVertical from "../src/gestures/swipeVertical.js";
-  import PullToRefreshEffect from "../src/effects/pullToRefresh.js";
+  import PullToRefreshEffect from "../src/effects/pullToRefreshEffect.js";
 
   async function installVerticalOnD1() {
     let el = document.querySelector("#d1");

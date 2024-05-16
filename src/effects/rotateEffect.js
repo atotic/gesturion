@@ -43,9 +43,10 @@ export default class RotateEffect extends GestureEffect {
     let preT = this.parseTransform();
     let animation = this.rotateTarget.animate([
     		{transform: `${preT.prefix}rotate(${preT.currentDeg}deg)${preT.postfix}`},
-    		{transform: `rotate(${finalRotation}deg)`}
+    		{transform: `${preT.prefix}rotate(${finalRotation}deg)${preT.postfix}`}
   		], animOptions);
     animation.finished.finally( _ => {
+    	// Reparse transform, in case someone else changed it
     	let postT = this.parseTransform();
     	this.rotateTarget.style.transform = `${postT.prefix}rotate(${finalRotation}deg)${postT.postfix}`;
     }).catch(err => {
@@ -81,7 +82,7 @@ export default class RotateEffect extends GestureEffect {
 	}
 
 	completed(gesture, ev) {
-		this.clear();
+		this.clear(true);
 	}
 	cancelled(gesture, ev) {
 		this.clear();
