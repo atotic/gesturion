@@ -53,7 +53,7 @@ async function runAllTestsWithBrowser(browser) {
     for (t of TESTS)
       await runTest(t, driver, browser);
   } catch(e) {
-    console.log(t, e);
+    console.log(browser, t, e);
   } finally {
     await driver.quit();
   }

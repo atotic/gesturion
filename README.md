@@ -2,15 +2,14 @@
 gesture recognition library
 ## TODO
 
-Rotate, Pinch
+Pinch
 PullToBounce: reveal bottom empty space
 Drag
 Press, LongPress
-Tap, DoubleTap
-pan screenEdgePan hover 
+DoubleTap
 
-Probably there will be a general swipe class that I slowly evolve towards.
-
+Nice to have:
+Rotate - add desktop support with option+cursor
 
 Corner cases
 - memory leak test (add 400K array to objects we are trying to not leak)
@@ -124,9 +123,10 @@ GestureHandler API:
   handleEvent(event);
 }
 ## IDEAS
-- js-gestures describes it, but a bit too generic.
+Naming:
+js-gestures describes it, but a bit too generic.
 able-gestures (has a11y angle in the name)
-gesturability
+gesturability - too clever?
 
 Also, if ever doing a video, introduce some fun hand gestures: middle finger, etc 
 

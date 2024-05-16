@@ -1,19 +1,19 @@
 /**
  * Rotate gesture
  *
- * Rotate currently only works for touch screens,
+ * Tracks two-finger rotational gesture.
+ * Rotation angle passed to effect.moved
+ * 
+ * Currently only works on touch devices.
  * Trackpad does not expose any multitouch events.
  * 
- * To make it work with mouse, effect would have to display 
- * rotation UI. 
- * TODO: implement desktop variant, maybe a rotate cursor with cmd key down
+ * TODO: implement desktop variant, trigger on option key, UI a rotate cursor
  * 
  * References:
  * https://kenneth.io/post/detecting-multi-touch-trackpad-gestures-in-javascript
  */
 
 import GestureHandler from "./gestureHandler.js"
-import {logEvent} from "../../test/testUtils.js"
 
 export default class RotateGesture extends GestureHandler {
   #myEventSpecs = new Map([

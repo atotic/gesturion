@@ -3,7 +3,7 @@
  * 
  * Rotates an element.
  * 
- * Use Rotate gesture
+ * 
  */
 
 import GestureEffect from "./gestureEffect.js";
