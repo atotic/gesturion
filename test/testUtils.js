@@ -172,11 +172,30 @@ async function awaitSizeStopAnimating(el, timeout=1000) {
   });
 }
 
-export {LoggerEffect, GestureLogger, createEvent, awaitTimeout, awaitSizeStopAnimating}
+function logEvent(ev) {
+  let out = `${ev.type} `;
+  if (ev.type.match(/pointer*/))
+    out += `pid ${ev.pointerId} `;
+  if (ev.type == 'wheel')
+    out += `x: ${ev.deltaX} y: ${ev.deltaY} z: ${ev.deltaZ}`;
+  if (ev.type.match(/touch*/)) { 
+    out += `rotation: ${ev.rotation} scale: ${ev.scale}`;
+  }
+  console.log(out);
+}
+
+export {
+  LoggerEffect, 
+  GestureLogger, 
+  createEvent, 
+  awaitTimeout, 
+  awaitSizeStopAnimating, 
+  logEvent
+}
 
 appendStyleRule("gesture-logger",`{
   font-family:monospace;
-  font-size: 10px;
+  font-size: 20px;
   display:block;
   border:1px solid black;
   max-width:30em;

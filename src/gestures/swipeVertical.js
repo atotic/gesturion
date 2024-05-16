@@ -136,7 +136,7 @@ export default class SwipeVertical extends GestureHandler {
     handleWaitEvent(ev) {
       if (ev.type == 'pointermove') {
         let delta = ev.pageY - this.pageStart.y;
-        this.options.effect.moved( this, ev,this.getState(), delta, this.#updateSpeed(ev));
+        this.options.effect.moved( this, ev, this.getState(), delta, this.#updateSpeed(ev));
         if (this.#aboveThreshold(delta))
           return 'active';
         return;

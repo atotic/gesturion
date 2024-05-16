@@ -1,6 +1,10 @@
 /** 
  * PullToRefresh 
  * 
+ * Reveals a panel with a spinner on top-to-bottom swipe.
+ * Panel can be fully custom.
+ * 
+ * Use SwipeVertical gesture.
  */
 import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
@@ -23,14 +27,16 @@ function defaultPanelBuilder(effect, container) {
 
 export default class PullToRefreshEffect extends GestureEffect {
   panel;  // Pane being displayed
-  state;  // Gesture state
+  // Gesture state. We have to keep track, because timeout 
+  // callback does not have access to gesture object.
+  state; 
 
   hideTimeoutId; 
+  // TESTING ONLY: CSS selector for element that will display remaining time to hide
+  testTimerSelector;  
   testTimerInfo; 
-  testTimerSelector;  // test only; if set, will display time to hide
 
   container;  // container where panel will be added to the top
-  scrollContainer;  // container that might scroll. Default value matches contaier
   hideTimeout = 1000; // automatically hide after timeout
   panelBuilder = defaultPanelBuilder;
   panelBuilderOptions;
@@ -40,7 +46,6 @@ export default class PullToRefreshEffect extends GestureEffect {
     if (!options.container)
       throw "PullToRefreshEffect options.container not set";
     this.container = options.container;
-    this.scrollContainer = 'scrollContainer' in options ? options.scrollContainer : this.container;
     for (let p of ['panelBuilder', 'panelBuilderOptions', 'hideTimeout', 'testTimerSelector']) {
       if (p in options)
         this[p] = options[p];

@@ -8,6 +8,11 @@ TODO run all tests, not just one!
 const {By, Builder, Browser} = require('selenium-webdriver');
 const { colorize } = require('colorize-node');
 
+var TESTS = [
+  "testSwipeHorizontal.html", 
+  "testSwipeVertical.html",
+  "testRotate.html"
+];
 const assert = require("assert");
 
 var failedTests = [];
@@ -40,15 +45,15 @@ async function runTest(fileName, driver, browser) {
 
 async function runAllTestsWithBrowser(browser) {
   let driver;
+  let t;
   try {
     console.log(colorize.white(browser));
     driver = await new Builder().forBrowser(browser).build();
     await driver.manage().setTimeouts({implicit: 10000});
-    let tests = ["testSwipeHorizontal.html", "testSwipeVertical.html"];
-    for (let t of tests)
+    for (t of TESTS)
       await runTest(t, driver, browser);
   } catch(e) {
-    console.log(e);
+    console.log(t, e);
   } finally {
     await driver.quit();
   }

@@ -162,13 +162,20 @@ Implementation:
   #canonicalEventSpec(eventSpec, gesture) {
     if ((typeof eventSpec) == 'string')
       eventSpec = { eventType: eventSpec, element: gesture.element()};
-    if ((typeof eventSpec.element) === 'string') {
-      // Special case: treat 'body' as document.body becuase it is so common.
-      if (eventSpec.element == 'body')
-        eventSpec.element = document.body;
-    }
+
+    // Resolve the element if needed
+    let resolvedElement;
+    if ((typeof eventSpec.element) === 'string')
+      resolvedElement = document.body;
+    else if (!eventSpec.element)
+      resolvedElement = gesture.element();
+
+    if (resolvedElement)  // Clone because original is const
+      eventSpec = {eventType: eventSpec.eventType, element: resolvedElement};
+
     if (!eventSpec.eventType || !eventSpec.element)
       throw "Bad eventSpec " + eventSpec.eventType + " " + eventSpec.element;
+
     return eventSpec;
   }
   /**
@@ -194,6 +201,7 @@ Implementation:
     } else {
       // First handler, start listening for events
       handlerList = [];
+      // console.log("installing ", eventSpec.eventType);
       allGestureHandlers.set(eventSpec.eventType, handlerList);
       eventSpec.element.addEventListener(eventSpec.eventType, this.boundHandleGHEvent);
     }
@@ -213,6 +221,7 @@ Implementation:
       if (handlerList.length == 0) {
         // No more gestures listening.
         allGestureHandlers.delete(eventSpec.eventType);
+        // console.log("removing ", eventSpec.eventType);
         eventSpec.element.removeEventListener(eventSpec.eventType, this.boundHandleGHEvent);
       }
     }
@@ -290,8 +299,8 @@ Implementation:
         elements: [document.body, ...gestureElements], 
         callback: ev => {
           // console.log("preventing touchMove", ev.currentTarget);
+          // stopPropagation() breaks gestures that depend on touchmove
           ev.preventDefault();
-          ev.stopPropagation();
         }
       };
       for (let el of this.preventScrollingListener.elements) {

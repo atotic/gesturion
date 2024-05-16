@@ -1,26 +1,23 @@
 # js-gestures
 gesture recognition library
 ## TODO
-PullToRefresh: integrate with scrollers
-PullToBounce: reveal bottom empty space
 
-Rotate
+Rotate, Pinch
+PullToBounce: reveal bottom empty space
 Drag
 Press, LongPress
 Tap, DoubleTap
-Pinch, Rotation
 pan screenEdgePan hover 
 
 Probably there will be a general swipe class that I slowly evolve towards.
 
 
+Corner cases
+- memory leak test (add 400K array to objects we are trying to not leak)
+- 
+
 - GestureManager
   - handling gestures nested inside DOM (stopPropagation, but for DOM?)
-- GestureHandler
-- GestureEffect
-- SwipeLeft
-- SwipeLeftMenuEffect
-- start wrinting basic documentation for gesture users, gesture authors
 
 - make some nice looking gestures!
   https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
@@ -193,8 +190,12 @@ become Web Awesome
 [Svelte gestures](https://github.com/Rezi/svelte-gestures)
   Serious implementation. Covers most of the usual gestures. I am having a hard time navigating TS/Svelte code. Gestures are dispatched as events. I am curious how they do memory management. Not using pointercapture. 
 
+https://m3.material.io/foundations/interaction/gestures
+
+
 ## DONE
 ```
+May-15 Implemented Rotate gesture+effect for touch (trackpad does not work?)
 May-14 SwipeVertical gets waitForScrollBoundary
 May-13 Allow GestureEffect to set default Gesture options gestureOptionOverrides()
 May-13 Started aborting animations, and found new edge cases

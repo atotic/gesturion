@@ -14,6 +14,7 @@ export default class GestureEffect {
   static EffectCleaner = EffectCleaner;
   
   constructor() {
+    // Not a great place for this initializer.
     if (GestureEffect.EffectCleaner && GestureEffect.EffectCleaner.init)
       GestureEffect.EffectCleaner.init();
   }
@@ -23,6 +24,7 @@ export default class GestureEffect {
   clear(animate) {
     console.warn("clear not handled");
   }
+  // Any elements created by this gesture
   element() {
     console.warn("element not handled");
   }
