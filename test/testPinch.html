@@ -23,7 +23,7 @@
   import TestRunner from "./testFramework.js";
   import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 
-  async function installRotateGesture() {
+  async function installPinchGesture() {
   	let el = document.querySelector("#d1");
   	let logger = el.querySelector("gesture-logger");
     let effect = new ZoomEffect({zoomTarget: el});
@@ -31,5 +31,6 @@
   	GestureManager.addGesture(gesture);
   }
 
-  TestRunner.test(installRotateGesture);
+  TestRunner.test(installPinchGesture);
+  TestRunner.runAll();
 </script>

@@ -2,9 +2,6 @@
 gesture recognition library
 ## TODO
 
-Pinch
-- touch only
-- wheel!
 
 PullToBounce: reveal bottom empty space
 Drag
@@ -198,6 +195,7 @@ https://m3.material.io/foundations/interaction/gestures
 
 ## DONE
 ```
+May-16 Pinch completed on desktop via wheel event
 May-16 Pinch+zoom completed on touch
 May-15 Implemented Rotate gesture+effect for touch (trackpad does not work?)
 May-14 SwipeVertical gets waitForScrollBoundary

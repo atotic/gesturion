@@ -1,10 +1,17 @@
 /**
  * Pinch gesture
  * 
- * Tracks two fingered zoom.
+ * Tracks two fingered pinch
+ * 
+ * Pinch on desktop is interesting. Since there is no trackpad support,
+ * desktop "pinches" with a scroll swipe that gets reported as a 'wheel' event.
+ * Unlike pointer events, wheel does not have start/end events. 
+ * I've picked mouseleave as the gesture end event for wheel.
+ * Open to idea, it could be an option.
  * 
  * Demo effects:
  * ../effects/zoom.js
+ * 
  * 
  * References:
  * https://kenneth.io/post/detecting-multi-touch-trackpad-gestures-in-javascript
@@ -16,7 +23,8 @@ export default class PinchGesture extends GestureHandler {
   #myEventSpecs = new Map([
     ['idle', ['touchstart', "wheel"]],
     ['waiting', [
-    	{ eventType: 'wheel' },
+    	{ eventType: 'wheel'},
+      { eventType: 'mouseleave' },
       { eventType: 'touchmove'},
       { eventType: 'touchend'},
       { eventType: 'touchcancel' }
@@ -24,11 +32,14 @@ export default class PinchGesture extends GestureHandler {
     ],
     ['active', [
     	{ eventType: 'wheel' },
+      { eventType: 'mouseleave' },
      	{ eventType: 'touchmove'},
       { eventType: 'touchend'},
       { eventType: 'touchcancel'}
       ]
     ]]);
+
+ 	wheelTotalY = 0;
 
   threshold = 0.1;	// TouchEvent.scale units (0.1 means scale between 1.1 and 0.9 works
   minScale = 0.1;
@@ -55,6 +66,24 @@ export default class PinchGesture extends GestureHandler {
 	#clamp(scale) {
 		return Math.min(Math.max(this.minScale, scale), this.maxScale);
 	}
+	#wheelPixelsToScale() {
+		const pixelScaleFactor = 3000;
+		let scale = 1+this.wheelTotalY / pixelScaleFactor;
+		// Need to keep wheelTotalY bounded by scale, because scale
+		// should change visually when direction changes.
+		if (scale < this.minScale) {
+			this.wheelTotalY = parseInt((this.minScale - 1) * pixelScaleFactor);
+		}
+		if (scale > this.maxScale) {
+			this.wheelTotalY = parseInt((this.maxScale - 1) * pixelScaleFactor);
+		}
+		return 1+this.wheelTotalY / pixelScaleFactor;
+	}
+	setState(newState, event) {
+		super.setState(newState, event);
+		if (newState == 'idle')
+			this.wheelTotalY = 0;
+	}
 	handleIdleEvent(ev) {
 		if (ev.type == 'touchstart') {
 			if (ev.touches.length == 2) {
@@ -64,7 +93,16 @@ export default class PinchGesture extends GestureHandler {
 					return "waiting";
 			}
 		}
+		if (ev.type == 'wheel') {
+			if (ev.deltaMode != WheelEvent.DOM_DELTA_PIXEL)
+				return console.warn("why is wheel event not in pixels, but in ", ev.deltaMode);
+			ev.preventDefault();
+			this.wheelTotalY += event.wheelDeltaY;
+			return 'waiting';
+		}
+		console.log("wheee");
 	}
+
 	handleWaitEvent(ev) {
 		// logEvent(ev);
 		if (ev.type == 'touchmove') {
@@ -76,12 +114,19 @@ export default class PinchGesture extends GestureHandler {
 				return "active";
 			return;
 		}
-		if (ev.type == "touchend" || ev.type == "touchcancel") {
+		if (ev.type == "touchend" || ev.type == "touchcancel" || ev.type == "mouseleave") {
 			this.options.effect.cancelled(this, ev);
 			return "idle";
 		}
+		if (ev.type == 'wheel') {
+			ev.preventDefault();
+			this.wheelTotalY += event.wheelDeltaY;
+			this.options.effect.moved(this, ev, this.getState(), this.#clamp(this.#wheelPixelsToScale()));
+			return "active";
+		}
 		console.warn("Unexpected wait event ", ev.type);
 	}
+
 	handleActiveEvent(ev) {
 		if (ev.type == "touchmove") {
 			if (ev.touches.length != 2)
@@ -98,5 +143,16 @@ export default class PinchGesture extends GestureHandler {
 			this.options.effect.cancelled(this, ev);
 			return "idle";
 		}
+		if (ev.type == "wheel") {
+			this.wheelTotalY += event.wheelDeltaY;
+			this.options.effect.moved(this, ev, this.getState(), this.#clamp(this.#wheelPixelsToScale()));
+			ev.preventDefault();
+			return;
+		}
+		if (ev.type == "mouseleave") {
+			this.options.effect.completed(this,ev, this.#clamp(this.#wheelPixelsToScale()));
+			return "idle";
+		}
+
 	}
 }
