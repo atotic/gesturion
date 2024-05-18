@@ -109,6 +109,15 @@ export default class GestureHandler {
 
   element() { return this.#element; }
 
+  waitExtras(ev) {
+    // override to provide additional arguments to GestureEffect.waitStart()
+    return null;
+  }
+  activeExtras(ev) {
+    // override to provide additional arguments to GestureEffect.activeStart()
+    return null;
+  }
+
   setState(newState, event) {
     if (this.myState == newState) {
       console.warn("setState noop", newState);

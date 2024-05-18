@@ -24,9 +24,10 @@ export default class GestureEffect {
   clear(animate) {
     console.warn("clear not handled");
   }
-  // Any elements created by this gesture
+  // Any elements created by this gesture. Only used by EffectCleaner to 
+  // exclude elements from cleanup
   element() {
-    console.warn("element not handled");
+    return null;
   }
   // Return true if gesture should be activated immediately 
   // on wait. Useful if effect is already displayed,
@@ -34,7 +35,6 @@ export default class GestureEffect {
   hasVisibleEffect() {
     return this.element() != null;
   }
-
   idleStart(gesture)  {
     console.warn("idleStart not handled");
   }
@@ -44,13 +44,13 @@ export default class GestureEffect {
   activeStart (gesture, ev) {
     console.warn("activeStart not handled");
   }
-  moved(gesture, ev, state, delta) {
+  moved(gesture, ev, state, moveExtras) {
     console.warn("moved not handled");
   }
-  completed(gesture, ev) {
+  completed(gesture, ev, completedExtras) {
     console.warn("completed not handled");
   }
-  cancelled(gesture, ev) {
+  cancelled(gesture, ev, cancelledExtras) {
     console.warn("cancelled not handled");
   }
 };

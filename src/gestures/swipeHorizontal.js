@@ -69,11 +69,8 @@ export default class SwipeHorizontal extends GestureHandler {
   #updateSpeed(ev) {
     let speed = null;
     if (this.lastPointer.x != -1) {
-      let timeDelta = ev.timeStamp - this.lastPointer.timeStamp;
-      if (timeDelta < 1)
-        timeDelta = 1;
-      let xDelta = ev.pageX - this.lastPointer.x;
-      speed = xDelta/timeDelta * 100;
+      let timeDelta = Math.max(ev.timeStamp - this.lastPointer.timeStamp, 1);
+      speed = (ev.pageX - this.lastPointer.x)/timeDelta * 100;
     }
     if (GestureHandler.TEST_DEFAULT_SPEED)
       speed = GestureHandler.TEST_DEFAULT_SPEED;
@@ -93,7 +90,6 @@ export default class SwipeHorizontal extends GestureHandler {
   handleIdleEvent(ev) {
     if (ev.type == 'pointerdown') {
       this.pageStart = { x: ev.pageX, y: ev.pageY };
-      this.lastX = ev.pageX;
       this.#updateSpeed(ev);
       if (this.threshold == 0 || this.options.effect.hasVisibleEffect())
         return "active";

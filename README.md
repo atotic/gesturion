@@ -1,26 +1,31 @@
 # js-gestures
 gesture recognition library
 ## TODO
-
-
-PullToBounce: reveal bottom empty space
 Drag
+- constraints:
+  vertical/horizontal, pageRectangle
+  very much like swipe, but without scroll mechanism
+  also has speed
+- effects:
+  dragFreely
+  drag and drop, will need drop effect
+
+- standardize callback additional arguments as an "options" object
+
 Press, LongPress
 DoubleTap
+On effect registration
+Demo pages
 
-Nice to have:
+PullToBounce: reveal bottom empty space
+
+Later:
 Rotate - add desktop support with option+cursor
 
 Corner cases
 - memory leak test (add 400K array to objects we are trying to not leak)
-- 
+- handle removal of element with an active gesture
 
-- GestureManager
-  - handling gestures nested inside DOM (stopPropagation, but for DOM?)
-
-- make some nice looking gestures!
-  https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
-- https://bestofjs.org/projects?tags=test&sort=monthly-downloads
 
 Contact Red Blob games about what I've done. He might be interested
 in using it.
@@ -183,7 +188,7 @@ pointerdown on drag source:
 Why not just use hammer.js:
 - not a fan of the API, demos. I am a fan of gesture composability
 
-## Related work
+## References
 https://shoelace.style/ cool library of web components, about to
 become Web Awesome
 
@@ -192,9 +197,13 @@ become Web Awesome
 
 https://m3.material.io/foundations/interaction/gestures
 
+- make some nice looking gestures!
+  https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
+- https://bestofjs.org/projects?tags=test&sort=monthly-downloads
 
 ## DONE
 ```
+May-17 Starter drag gesture implementation
 May-16 Pinch completed on desktop via wheel event
 May-16 Pinch+zoom completed on touch
 May-15 Implemented Rotate gesture+effect for touch (trackpad does not work?)
