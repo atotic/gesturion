@@ -1,6 +1,8 @@
 # js-gestures
 gesture recognition library
 ## TODO
+rtlDefaultButtonExpansion test is flaky everywhere!
+
 Observing arrays: async iterables with instructions (move, etc)
 Drag
 - constraints:

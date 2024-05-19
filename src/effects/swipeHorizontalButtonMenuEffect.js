@@ -226,11 +226,12 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     if (GestureEffect.EffectCleaner)
       GestureEffect.EffectCleaner.register(this.menu, this);
   }
-  moved(gesture, ev, state, delta, speed) {
+  moved(gesture, ev, state, extras) {
     if (gesture.getState() != 'active' || !this.menu)
       return;
     this.hasMoved = true;
-    let newWidth = Math.max(0, this.initialWidth + (this.direction == 'ltr' ? delta : -delta));
+    let newWidth = Math.max(0, 
+      this.initialWidth + (this.direction == 'ltr' ? extras.delta : -extras.delta));
     // If there is no default button, do not grow bigger than maximum width.
     if (!this.defaultButton)
       newWidth = Math.min(newWidth, this.maxWidth);
@@ -246,7 +247,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     }
     this.animateMenuToWidth(newWidth, 0);
   }
-  completed(gesture, ev, speed) {
+  completed(gesture, ev, extras) {
     if (!this.menu)
       return;
     // In default mode, the large button receives a click on completion
@@ -259,8 +260,8 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     // - width < 50% of menu width, or:
     // - dismissOnPointerUp && pointer has not moved
     let dismissMenu = false;
-    let quickRtlFlick = speed < -GestureEffect.flickSpeed;
-    let quickLtrFlick = speed > GestureEffect.flickSpeed;
+    let quickRtlFlick = extras.speed < -GestureEffect.flickSpeed;
+    let quickLtrFlick = extras.speed > GestureEffect.flickSpeed;
     dismissMenu ||= this.direction == "rtl" ? quickLtrFlick : quickRtlFlick;
     // Menu is narrow, slow flick
     dismissMenu ||=  (this.menu.offsetWidth < this.maxWidth / 3) && (this.direction == "ltr" ? !quickLtrFlick : !quickRtlFlick);

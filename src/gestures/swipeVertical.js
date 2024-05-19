@@ -127,6 +127,7 @@ export default class SwipeVertical extends GestureHandler {
       if (ev.type == 'pointerdown') {
         this.pageStart = { x: ev.pageX, y: ev.pageY };
         this.lastPointer =  { y: -1,  timeStamp: 0, speed: 0};
+        this.#computeExtras(ev);
         if (this.threshold == 0 || this.options.effect.hasVisibleEffect()) {
           // activate immediately if no threshold
           return "active";

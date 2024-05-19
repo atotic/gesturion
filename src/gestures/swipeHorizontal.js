@@ -3,10 +3,10 @@
  * 
  * Detects horizontal swipes.
  * 
- * Additional arguments passed to effect callbacks:
- * - effect.moved() gets speed and delta from start point
- * - effect.completed() gets speed
- * speed is reported in pixels/100ms
+ * completedExtras, moveExtras  {
+ *   delta: // how far X has the pointer moved from start point
+ *   speed: // how fast, px/100ms
+ * }
  * 
  * Options:
  * threshold=3 {pixels} - how far to move before swipe activates
@@ -66,19 +66,26 @@ export default class SwipeHorizontal extends GestureHandler {
     }
   }
 
-  #updateSpeed(ev) {
+  #computeExtras(ev) {
     let speed = null;
     if (this.lastPointer.x != -1) {
       let timeDelta = Math.max(ev.timeStamp - this.lastPointer.timeStamp, 1);
-      speed = (ev.pageX - this.lastPointer.x)/timeDelta * 100;
+      if (ev.type != 'pointerup') 
+        speed = (ev.pageX - this.lastPointer.x)/timeDelta * 100;
+      else
+        speed = this.lastPointer.speed;
     }
     if (GestureHandler.TEST_DEFAULT_SPEED)
       speed = GestureHandler.TEST_DEFAULT_SPEED;
     this.lastPointer = {
       x: ev.pageX, timeStamp: ev.timeStamp, speed: speed
     }
-    return speed;
+    return {
+      speed: speed,
+      delta: ev.pageX - this.pageStart.x
+    }
   }
+
   name() {
     return "SwipeH";
   }
@@ -90,7 +97,8 @@ export default class SwipeHorizontal extends GestureHandler {
   handleIdleEvent(ev) {
     if (ev.type == 'pointerdown') {
       this.pageStart = { x: ev.pageX, y: ev.pageY };
-      this.#updateSpeed(ev);
+      this.lastPointer =  { x: -1,  timeStamp: 0, speed: 0};
+      this.#computeExtras(ev);
       if (this.threshold == 0 || this.options.effect.hasVisibleEffect())
         return "active";
       return 'waiting';
@@ -108,9 +116,9 @@ export default class SwipeHorizontal extends GestureHandler {
   }
   handleWaitEvent(ev) {
     if (ev.type == 'pointermove') {
-      let delta = ev.pageX - this.pageStart.x;
-      this.options.effect.moved( this, ev,this.getState(), delta, this.#updateSpeed(ev));
-      if (this.#aboveThreshold(delta))
+      let extras = this.#computeExtras(ev);
+      this.options.effect.moved( this, ev,this.getState(), extras);
+      if (this.#aboveThreshold(extras.delta))
         return 'active';
       return;
     }
@@ -123,12 +131,11 @@ export default class SwipeHorizontal extends GestureHandler {
 
   handleActiveEvent(ev) {
     if (ev.type == 'pointerup') {
-      this.options.effect.completed(this, ev, this.lastPointer.speed);
+      this.options.effect.completed(this, ev, this.#computeExtras(ev));
       return "idle";
     }
     if (ev.type == 'pointermove') {
-      this.#updateSpeed(ev);
-      this.options.effect.moved(this, ev, this.getState(), ev.pageX - this.pageStart.x);
+      this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
       return;
     }
     if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {
