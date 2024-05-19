@@ -46,7 +46,7 @@ export class TestRunner {
   <table>
     <col style="min-width:50px">
     <col style="min-width:100px">
-    <col style="min-width:8em">
+    <col style="min-width:5em;width:5em">
     <thead>
       <tr>
         <td></td><td>Test</td><td>Status</td>
