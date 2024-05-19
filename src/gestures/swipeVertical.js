@@ -92,14 +92,12 @@ export default class SwipeVertical extends GestureHandler {
 
     #computeExtras(ev) {
       let speed = null;
-      let yDelta = 0;
-      if (this.lastPointer.x != -1) {
+      if (this.lastPointer.y != -1) {
         let timeDelta = Math.max(ev.timeStamp - this.lastPointer.timeStamp, 1);
-        yDelta = ev.pageY - this.lastPointer.y;
         if (ev.type != 'pointerup')
-          speed = yDelta * 100 / timeDelta;
+          speed = (ev.pageY - this.lastPointer.y) * 100 / timeDelta;
         else
-          speed = this.lastPointer.speed;
+          speed = this.lastPointer.speed; // Pointerup does not compute new speed
       }
       if (GestureHandler.TEST_DEFAULT_SPEED)
         speed = GestureHandler.TEST_DEFAULT_SPEED;
