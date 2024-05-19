@@ -4,6 +4,11 @@
  * Tracks two-finger rotational gesture.
  * Rotation angle passed to effect.moved
  * 
+ *  * completedExtras, moveExtras  {
+ *   rotation: deg // rotation since start
+ * }
+
+ * 
  * Currently only works on touch devices.
  * Trackpad does not expose any multitouch events.
  * 
@@ -44,6 +49,10 @@ export default class RotateGesture extends GestureHandler {
 	  return this.#myEventSpecs.get(state);
 	}
 
+	#computeExtras(ev) {
+		return { rotation: ev.rotation};
+	}
+
 	#aboveThreshold(ev) {
 		return this.threshold == 0 || (Math.abs(ev.rotation) > this.threshold);
 	}
@@ -66,7 +75,7 @@ export default class RotateGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.touches.length);
 						ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), ev.rotation);
+			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
 			if (this.#aboveThreshold(ev))
 				return "active";
 			return;
@@ -83,11 +92,11 @@ export default class RotateGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.type, ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), ev.rotation);
+			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
 			return;
 		}
 		if (ev.type == "touchend") {
-			this.options.effect.completed(this,ev, ev.rotation);
+			this.options.effect.completed(this, ev, this.#computeExtras(ev));
 			return "idle";
 		}
 		if (ev.type == "touchcancel") {

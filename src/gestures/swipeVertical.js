@@ -4,9 +4,10 @@
  * Detects horizontal swipes.
  * Handles scrolling correctly.
  * 
+ * Additional arguments reported:
  * completedExtras, moveExtras  {
- *   delta: // how far Y has the pointer moved from start point
- *   speed: // how fast, px/100ms
+ *   delta: px       // how far Y has the pointer moved from start point
+ *   speed: px/100ms // how fast, px/100ms
  * }
  * 
  * Configuration options
