@@ -3,15 +3,19 @@
  * 
  * Tracks two fingered pinch
  * 
+ * Additional arguments to effect:
+ * completedExtras, moveExtras  {
+ *   scale: float // scale since start
+ * }
+ *
+ * Demo effects:
+ * ../effects/zoom.js
+ *  
  * Pinch on desktop is interesting. Since there is no trackpad support,
  * desktop "pinches" with a scroll swipe that gets reported as a 'wheel' event.
  * Unlike pointer events, wheel does not have start/end events. 
  * I've picked mouseleave as the gesture end event for wheel.
  * Open to idea, it could be an option.
- * 
- * Demo effects:
- * ../effects/zoom.js
- * 
  * 
  * References:
  * https://kenneth.io/post/detecting-multi-touch-trackpad-gestures-in-javascript
@@ -63,9 +67,6 @@ export default class PinchGesture extends GestureHandler {
 	#aboveThreshold(scale) {
 		return this.threshold == 0 || (Math.abs(scale -1) > this.threshold);
 	}
-	#clamp(scale) {
-		return Math.min(Math.max(this.minScale, scale), this.maxScale);
-	}
 	#wheelPixelsToScale() {
 		const pixelScaleFactor = 3000;
 		let scale = 1+this.wheelTotalY / pixelScaleFactor;
@@ -79,6 +80,13 @@ export default class PinchGesture extends GestureHandler {
 		}
 		return 1+this.wheelTotalY / pixelScaleFactor;
 	}
+	#computeExtras(ev) {
+		let scale = ev.type == 'wheel' ? 
+			this.#wheelPixelsToScale() : ev.scale;
+		scale = Math.min(Math.max(this.minScale, scale), this.maxScale);
+		return { scale: scale};
+	}
+
 	setState(newState, event) {
 		super.setState(newState, event);
 		if (newState == 'idle')
@@ -109,7 +117,7 @@ export default class PinchGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				return console.warn("LESS THAN 2 TOUCHES ", ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), this.#clamp(ev.scale));
+			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
 			if (this.#aboveThreshold(ev.scale))
 				return "active";
 			return;
@@ -121,7 +129,7 @@ export default class PinchGesture extends GestureHandler {
 		if (ev.type == 'wheel') {
 			ev.preventDefault();
 			this.wheelTotalY += event.wheelDeltaY;
-			this.options.effect.moved(this, ev, this.getState(), this.#clamp(this.#wheelPixelsToScale()));
+			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
 			return "active";
 		}
 		console.warn("Unexpected wait event ", ev.type);
@@ -132,11 +140,11 @@ export default class PinchGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.type, ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), this.#clamp(ev.scale));
+			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
 			return;
 		}
 		if (ev.type == "touchend") {
-			this.options.effect.completed(this,ev, this.#clamp(ev.scale));
+			this.options.effect.completed(this,ev, this.#computeExtras(ev));
 			return "idle";
 		}
 		if (ev.type == "touchcancel") {
@@ -145,12 +153,12 @@ export default class PinchGesture extends GestureHandler {
 		}
 		if (ev.type == "wheel") {
 			this.wheelTotalY += event.wheelDeltaY;
-			this.options.effect.moved(this, ev, this.getState(), this.#clamp(this.#wheelPixelsToScale()));
+			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
 			ev.preventDefault();
 			return;
 		}
 		if (ev.type == "mouseleave") {
-			this.options.effect.completed(this,ev, this.#clamp(this.#wheelPixelsToScale()));
+			this.options.effect.completed(this,ev, this.#computeExtras(ev));
 			return "idle";
 		}
 

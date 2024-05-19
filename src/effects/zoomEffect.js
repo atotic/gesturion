@@ -71,10 +71,10 @@ export default class ZoomEffect extends GestureEffect {
 		this.initalScale = this.parseTransform().scale;
 	}
 
-	moved(gesture, ev, state, scale) {
+	moved(gesture, ev, state, extras) {
 		if (gesture.getState() != 'active')
 			return;
-		this.animateTargetToScale(scale, 0);
+		this.animateTargetToScale(extras.scale, 0);
 	}
 
 	completed(gesture, ev) {

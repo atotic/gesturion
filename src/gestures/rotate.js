@@ -2,12 +2,11 @@
  * Rotate gesture
  *
  * Tracks two-finger rotational gesture.
- * Rotation angle passed to effect.moved
  * 
- *  * completedExtras, moveExtras  {
+ * Additional arguments to effect:
+ * completedExtras, moveExtras  {
  *   rotation: deg // rotation since start
  * }
-
  * 
  * Currently only works on touch devices.
  * Trackpad does not expose any multitouch events.
