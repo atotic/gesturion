@@ -73,3 +73,5 @@ GestureManager.addGesture(gesture);
 
 ## ARCHITECTURE
 
+Speed is reported in px/100ms. More than 4 is like a quick flick.
+

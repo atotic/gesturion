@@ -1,6 +1,7 @@
 # js-gestures
 gesture recognition library
 ## TODO
+Observing arrays: async iterables with instructions (move, etc)
 Drag
 - constraints:
   vertical/horizontal, pageRectangle

@@ -193,22 +193,21 @@ export default class PullToRefreshEffect extends GestureEffect {
     this.startHideTimeout();
   }
 
-  moved(gesture, ev, state, delta, speed) {
+  moved(gesture, ev, state, extras) {
     if (gesture.getState() != 'active' || !this.panel)
       return;
-    // console.log("moved");
-    let newHeight = Math.max(0, this.initialHeight + delta / 2);
-    // console.log(newHeight);
+    let newHeight = Math.max(0, this.initialHeight + extras.delta / 2);
+    // console.log("moved", extras.delta, newHeight);
     this.animatePanelToHeight(newHeight, 0);
   }
   
-  completed(gesture, ev, speed) {
+  completed(gesture, ev, extras) {
     this.state = "idle";
-    let flickDown = speed > GestureEffect.flickSpeed;
+    let flickDown = extras.speed > GestureEffect.flickSpeed;
     let dismiss = !this.panel;
     // dismiss if short, and not flicked down
     dismiss ||= (this.panel.offsetHeight < this.defaultHeight / 2) && !flickDown;
-    dismiss ||= speed < -GestureEffect.flickSpeed;
+    dismiss ||= extras.speed < -GestureEffect.flickSpeed;
     if (dismiss) {
       this.clear(true);
     } else {

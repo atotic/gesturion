@@ -2,9 +2,12 @@
  * SwipeVertical gesture
  * 
  * Detects horizontal swipes.
- * Reports swipe speed to effect.moved(), effect.completed() 
- * in pixels/100ms. 
  * Handles scrolling correctly.
+ * 
+ * completedExtras, moveExtras  {
+ *   delta: // how far Y has the pointer moved from start point
+ *   speed: // how fast, px/100ms
+ * }
  * 
  * Configuration options
  * threshold=3 {pixels} - how far to move before swipe activates. Surprisingly,
@@ -41,11 +44,14 @@ export default class SwipeVertical extends GestureHandler {
     direction = "both"; // utd|dtu|both swiping upToDown, downToUp, or both?
     waitForScrollBoundary = false;
 
-    pageStart = { x: -1, y: -1}
+    pageStart = { 
+      x: -1, 
+      y: -1
+    }
     lastPointer = { // used to compute pointer speed
       y: -1, 
       timeStamp: 0, 
-      speed: 0  // last computed speed, pixels/100ms. More than 4 seems fast
+      speed: 0
     }
 
     constructor(element, options) {
@@ -84,47 +90,54 @@ export default class SwipeVertical extends GestureHandler {
       }
     }
 
-    #updateSpeed(ev) {
+    #computeExtras(ev) {
       let speed = null;
+      let yDelta = 0;
       if (this.lastPointer.x != -1) {
-        let timeDelta = ev.timeStamp - this.lastPointer.timeStamp;
-        if (timeDelta < 1)
-          timeDelta = 1;
-        let yDelta = ev.pageY - this.lastPointer.y;
-        speed = yDelta/timeDelta * 100;
+        let timeDelta = Math.max(ev.timeStamp - this.lastPointer.timeStamp, 1);
+        yDelta = ev.pageY - this.lastPointer.y;
+        if (ev.type != 'pointerup')
+          speed = yDelta * 100 / timeDelta;
+        else
+          speed = this.lastPointer.speed;
       }
       if (GestureHandler.TEST_DEFAULT_SPEED)
         speed = GestureHandler.TEST_DEFAULT_SPEED;
       this.lastPointer = {
-        y: ev.pageY, timeStamp: ev.timeStamp, speed: speed
+        y: ev.pageY, 
+        timeStamp: ev.timeStamp,
+        speed: speed
       }
-      return speed;
+      // console.log(speed, ev.pageY - this.pageStart.y);
+      return {
+        speed: speed,
+        delta: ev.pageY - this.pageStart.y
+      }
     }
+
     name() {
       return "SwipeV";
     }
+
     eventSpecs(state) {
       return this.#myEventSpecs.get(state);
     }
+
     handleIdleEvent(ev) {
       if (this.#waitForScrollBoundary())
         return;
       if (ev.type == 'pointerdown') {
         this.pageStart = { x: ev.pageX, y: ev.pageY };
-        this.lastY = ev.pageY;
-        let speed = this.#updateSpeed(ev);
+        this.lastPointer =  { y: -1,  timeStamp: 0, speed: 0};
         if (this.threshold == 0 || this.options.effect.hasVisibleEffect()) {
-          // activate immediately if no threshold, and pointer is moving
-          // in desired direction
-          if ((this.direction == 'both')
-            || (this.direction == 'utd' && speed >= 0)
-            || (this.direction == 'dtu' && speed <= 0))
-            return "active";
+          // activate immediately if no threshold
+          return "active";
         }
         return 'waiting';
       }
       console.warn("Unexpected idle event", ev.type);
     }
+
     #aboveThreshold(delta) {
       if (this.direction == 'utd')
         return delta >= this.threshold;
@@ -133,11 +146,12 @@ export default class SwipeVertical extends GestureHandler {
       // direction == 'both'
       return delta >= this.threshold || delta <= -this.threshold;
     }
+
     handleWaitEvent(ev) {
       if (ev.type == 'pointermove') {
-        let delta = ev.pageY - this.pageStart.y;
-        this.options.effect.moved( this, ev, this.getState(), delta, this.#updateSpeed(ev));
-        if (this.#aboveThreshold(delta))
+        let moveExtras = this.#computeExtras(ev);
+        this.options.effect.moved( this, ev, this.getState(), moveExtras);
+        if (this.#aboveThreshold(moveExtras.delta))
           return 'active';
         return;
       }
@@ -147,14 +161,14 @@ export default class SwipeVertical extends GestureHandler {
       }
       console.warn("Unexpected wait event", ev.type);
     }
+
     handleActiveEvent(ev) {
       if (ev.type == 'pointerup') {
-        this.options.effect.completed(this, ev, this.lastPointer.speed);
+        this.options.effect.completed(this, ev, this.#computeExtras(ev));
         return "idle";
       }
       if (ev.type == 'pointermove') {
-        this.#updateSpeed(ev);
-        this.options.effect.moved(this, ev, this.getState(), ev.pageY - this.pageStart.y);
+        this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
         return;
       }
       if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {

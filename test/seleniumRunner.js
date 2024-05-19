@@ -52,6 +52,7 @@ async function runAllTestsWithBrowser(browser) {
     await driver.manage().setTimeouts({implicit: 10000});
     for (t of TESTS)
       await runTest(t, driver, browser);
+    console.log(colorize.white(browser + " complete"));
   } catch(e) {
     console.log(browser, t, e);
   } finally {
@@ -66,8 +67,9 @@ async function runAllTestsWithBrowser(browser) {
     let browserSuites = [];
     browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
     browserSuites.push( runAllTestsWithBrowser(Browser.FIREFOX));
-    browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
     await Promise.all(browserSuites);
+    // Safari often fails if run in parallel with Chrome/Firefox
+    await runAllTestsWithBrowser(Browser.SAFARI);
   } catch(e) {
     console.log(e);
   } finally {

@@ -547,19 +547,22 @@
       effect = new SwipeHorizontalButtonMenuEffect(effectOptions);
       gesture = new SwipeHorizontal(el, { effect: effect });
       GestureManager.addGesture(gesture);
-      // swipe ltr.
+      // swipe rtl.
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      awaitTimeout(16);
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
+      awaitTimeout(16);
       await awaitSizeStopAnimating(menuItem);
       // pointermove all the way to the left expands default button
       el.dispatchEvent(createEvent("pointermove", el, { left: 20 }));
+      await awaitTimeout(16);
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth < 200)
-        throw "Default button should expand to entire width";
+        throw "Default button should expand to entire width, not " + menuItem.offsetWidth + "px";
       // pointermove to the middle shrinks default button
       el.dispatchEvent(createEvent("pointermove", el, { right: 100 }));
       await awaitSizeStopAnimating(menuItem);
