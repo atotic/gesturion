@@ -117,7 +117,7 @@ export default class PinchGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				return console.warn("LESS THAN 2 TOUCHES ", ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+			this.options.effect.moved(this, ev, this.#computeExtras(ev));
 			if (this.#aboveThreshold(ev.scale))
 				return "active";
 			return;
@@ -129,7 +129,7 @@ export default class PinchGesture extends GestureHandler {
 		if (ev.type == 'wheel') {
 			ev.preventDefault();
 			this.wheelTotalY += event.wheelDeltaY;
-			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+			this.options.effect.moved(this, ev, this.#computeExtras(ev));
 			return "active";
 		}
 		console.warn("Unexpected wait event ", ev.type);
@@ -140,7 +140,7 @@ export default class PinchGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.type, ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+			this.options.effect.moved(this, ev, this.#computeExtras(ev));
 			return;
 		}
 		if (ev.type == "touchend") {
@@ -153,7 +153,7 @@ export default class PinchGesture extends GestureHandler {
 		}
 		if (ev.type == "wheel") {
 			this.wheelTotalY += event.wheelDeltaY;
-			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+			this.options.effect.moved(this, ev, this.#computeExtras(ev));
 			ev.preventDefault();
 			return;
 		}

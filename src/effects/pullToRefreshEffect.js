@@ -193,7 +193,7 @@ export default class PullToRefreshEffect extends GestureEffect {
     this.startHideTimeout();
   }
 
-  moved(gesture, ev, state, extras) {
+  moved(gesture, ev, extras) {
     if (gesture.getState() != 'active' || !this.panel)
       return;
     let newHeight = Math.max(0, this.initialHeight + extras.delta / 2);

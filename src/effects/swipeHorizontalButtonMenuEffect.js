@@ -226,7 +226,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
     if (GestureEffect.EffectCleaner)
       GestureEffect.EffectCleaner.register(this.menu, this);
   }
-  moved(gesture, ev, state, extras) {
+  moved(gesture, ev, extras) {
     if (gesture.getState() != 'active' || !this.menu)
       return;
     this.hasMoved = true;

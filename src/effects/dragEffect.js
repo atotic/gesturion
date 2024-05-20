@@ -84,7 +84,7 @@ export default class DragEffect extends GestureEffect {
 	waitStart() {}
 	activeStart() {}
 
-	moved(gesture, ev, state, extras) {
+	moved(gesture, ev, extras) {
 		if (gesture.getState() != 'active')
 			return;
 		this.animateTargetToLocation(extras.deltaX, extras.deltaY, 0);

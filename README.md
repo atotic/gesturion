@@ -5,14 +5,11 @@ gesture recognition library
 Observing arrays: async iterables with instructions (move, etc)
 Drag
 - constraints:
-  vertical/horizontal, pageRectangle
+ BOUNDS
   very much like swipe, but without scroll mechanism
-  also has speed
 - effects:
   dragFreely
   drag and drop, will need drop effect
-
-- standardize callback additional arguments as an "options" object
 
 Press, LongPress
 DoubleTap
@@ -20,8 +17,6 @@ On effect registration
 Demo pages
 
 rtlDefaultButtonExpansion test is flaky everywhere!
-
-PullToBounce: reveal bottom empty space
 
 Later:
 Rotate - add desktop support with option+cursor

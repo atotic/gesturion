@@ -38,15 +38,15 @@ class LoggerEffect  extends GestureEffect {
     if (this.forwardTo)
       this.forwardTo.activeStart(gesture, ev);
   }
-  moved(gesture, ev, state, ...rest) {
-    console.log("moved", gesture.name(), ev.type, state /*delta*/);
+  moved(gesture, ev, extras) {
+    console.log("moved", gesture.name(), ev.type, /*delta*/);
     if (this.forwardTo)
-      this.forwardTo.moved(gesture, ev, state, ...rest);
+      this.forwardTo.moved(gesture, ev, state, extras);
   }
-  completed(gesture, ev, ...rest) {
+  completed(gesture, ev, extras) {
     console.log("completed", gesture.name(), ev.type);
     if (this.forwardTo)
-      this.forwardTo.completed(gesture, ev, ...rest);
+      this.forwardTo.completed(gesture, ev, extras);
   }
   cancelled(gesture, ev) {
     console.log("cancelled", gesture.name(), ev.type);

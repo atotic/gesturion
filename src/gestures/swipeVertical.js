@@ -150,7 +150,7 @@ export default class SwipeVertical extends GestureHandler {
     handleWaitEvent(ev) {
       if (ev.type == 'pointermove') {
         let moveExtras = this.#computeExtras(ev);
-        this.options.effect.moved( this, ev, this.getState(), moveExtras);
+        this.options.effect.moved( this, ev, moveExtras);
         if (this.#aboveThreshold(moveExtras.delta))
           return 'active';
         return;
@@ -168,7 +168,7 @@ export default class SwipeVertical extends GestureHandler {
         return "idle";
       }
       if (ev.type == 'pointermove') {
-        this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+        this.options.effect.moved(this, ev, this.#computeExtras(ev));
         return;
       }
       if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {

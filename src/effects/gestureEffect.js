@@ -44,7 +44,7 @@ export default class GestureEffect {
   activeStart (gesture, ev) {
     console.warn("activeStart not handled");
   }
-  moved(gesture, ev, state, moveExtras) {
+  moved(gesture, ev, moveExtras) {
     console.warn("moved not handled");
   }
   completed(gesture, ev, completedExtras) {

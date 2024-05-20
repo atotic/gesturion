@@ -75,7 +75,7 @@ export default class RotateGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.touches.length);
 						ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+			this.options.effect.moved(this, ev, this.#computeExtras(ev));
 			if (this.#aboveThreshold(ev))
 				return "active";
 			return;
@@ -92,7 +92,7 @@ export default class RotateGesture extends GestureHandler {
 			if (ev.touches.length != 2)
 				console.warn("LESS THAN 2 TOUCHES ", ev.type, ev.touches.length);
 			ev.preventDefault();
-			this.options.effect.moved(this, ev, this.getState(), this.#computeExtras(ev));
+			this.options.effect.moved(this, ev, this.#computeExtras(ev));
 			return;
 		}
 		if (ev.type == "touchend") {

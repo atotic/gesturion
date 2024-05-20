@@ -76,7 +76,7 @@ export default class RotateEffect extends GestureEffect {
 		this.initalDegrees = this.#parseTransform().currentDeg;
 	}
 
-	moved(gesture, ev, state, extras) {
+	moved(gesture, ev, extras) {
 		if (gesture.getState() != 'active')
 			return;
 		this.animateTargetToRotation(extras.rotation, 0);

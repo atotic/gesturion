@@ -13,12 +13,7 @@
  * } 
  * 
  * TODO:
- * Clarity for gestureEffect extras
- * 1) Lead with tests,
- * - unconstrained drag tests
- * - constrain direction
  * - constrain rectangle
- * 2) Drop:
  */
 
 import GestureHandler from "./gestureHandler.js"
@@ -156,7 +151,7 @@ export default class Drag extends GestureHandler {
   handleWaitEvent(ev) {
     if (ev.type == 'pointermove') {
     	this.#updatePointerInfo(ev);
-      this.options.effect.moved( this, ev, this.getState(), this.#moveExtras(ev));
+      this.options.effect.moved( this, ev, this.#moveExtras(ev));
       if (this.#aboveThreshold(ev))
         return 'active';
       return;
@@ -174,7 +169,7 @@ export default class Drag extends GestureHandler {
       return "idle";
     }
     if (ev.type == 'pointermove') {
-      this.options.effect.moved(this, ev, this.getState(), this.#moveExtras(ev));
+      this.options.effect.moved(this, ev, this.#moveExtras(ev));
       return;
     }
     if (ev.type == 'pointercancel' || ev.type == 'pointerleave') {
