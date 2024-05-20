@@ -10,15 +10,12 @@
 - effects/zoomEffect.js
 </pre>
 <div id="d1" style="width:200px;height:200px;border:5px solid green;background:#ddd">
-	<gesture-logger></gesture-logger>
 	Pinch on mobile.<br>
   On desktop, mouse wheel, or two fingers trackpad, mouse leave cancels.
 </div>
 
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
-  import GestureHandler from "../src/gestures/gestureHandler.js";
-  import GestureEffect from "../src/effects/gestureEffect.js";
   import PinchGesture from "../src/gestures/pinch.js";
   import ZoomEffect from "../src/effects/zoomEffect.js";
   import TestRunner from "./testFramework.js";
@@ -29,9 +26,7 @@
     if (el.classList.contains("gesture"))
       return;
     el.classList.add("gesture");
-  	let logger = el.querySelector("gesture-logger");
-    let effect = new ZoomEffect({zoomTarget: el});
-  	let gesture = new PinchGesture(el, {effect: effect});
+  	let gesture = new PinchGesture(el, {effect: new ZoomEffect()});
   	GestureManager.addGesture(gesture);
   }
 

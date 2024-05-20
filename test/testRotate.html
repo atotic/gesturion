@@ -26,8 +26,7 @@
   async function installRotateGesture() {
   	let el = document.querySelector("#d1");
   	let logger = el.querySelector("gesture-logger");
-    let effect = new RotateEffect({rotateTarget: el});
-  	let gesture = new RotateGesture(el, {effect: effect});
+  	let gesture = new RotateGesture(el, {effect: new RotateEffect()});
   	GestureManager.addGesture(gesture);
   }
 

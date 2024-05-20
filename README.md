@@ -1,7 +1,6 @@
 # js-gestures
 gesture recognition library
 ## TODO
-rtlDefaultButtonExpansion test is flaky everywhere!
 
 Observing arrays: async iterables with instructions (move, etc)
 Drag
@@ -19,6 +18,9 @@ Press, LongPress
 DoubleTap
 On effect registration
 Demo pages
+
+rtlDefaultButtonExpansion test is flaky everywhere!
+
 
 PullToBounce: reveal bottom empty space
 
@@ -206,6 +208,7 @@ https://m3.material.io/foundations/interaction/gestures
 
 ## DONE
 ```
+May-18 Converted all gesture add'l arguments to extras
 May-17 Starter drag gesture implementation
 May-16 Pinch completed on desktop via wheel event
 May-16 Pinch+zoom completed on touch

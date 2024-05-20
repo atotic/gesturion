@@ -3,7 +3,7 @@
  * 
  * Zooms an element using transforms
  * 
- * Works with pinch gesture.
+ * Works with PinchGesture.
  */
 
 import GestureEffect from "./gestureEffect.js";
@@ -12,9 +12,6 @@ export default class ZoomEffect extends GestureEffect {
 
 	constructor(options) {
 		super(options);
-		if (!options.zoomTarget)
-			throw "ZoomEffect requires zoomTarget option";
-		this.zoomTarget = options.zoomTarget;
 	}
 
 	parseTransform() {
@@ -65,7 +62,10 @@ export default class ZoomEffect extends GestureEffect {
 		}
 	}
 
-	idleStart() {}
+	idleStart(gesture) {
+		if (!this.zoomTarget)
+			this.zoomTarget = gesture.element();
+	}
 	waitStart() {}
 	activeStart() {
 		this.initalScale = this.parseTransform().scale;

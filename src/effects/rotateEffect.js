@@ -3,7 +3,6 @@
  * 
  * Rotates an element.
  * 
- * 
  */
 
 import GestureEffect from "./gestureEffect.js";
@@ -12,9 +11,6 @@ export default class RotateEffect extends GestureEffect {
 
 	constructor(options) {
 		super(options);
-		if (!options.rotateTarget)
-			throw "RotateEffect requires rotateTarget option";
-		this.rotateTarget = options.rotateTarget;
 	}
 
 	parseTransform() {
@@ -69,7 +65,10 @@ export default class RotateEffect extends GestureEffect {
 		// }
 	}
 
-	idleStart() {}
+	idleStart(gesture) {
+		if (!this.rotateTarget)
+			this.rotateTarget = gesture.element();
+	}
 	waitStart() {}
 	activeStart() {
 		this.initalDegrees = this.parseTransform().currentDeg;

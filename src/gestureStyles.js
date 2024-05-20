@@ -1,9 +1,9 @@
-/*
- * gesture library uses css styles
+/**
+ * Stylesheet manipulation for gesture library =
  * 
- * to avoid packaging all the styles in a single css file,
- * stylesheet is generated dynamically by javscript. 
- * 
+ * gesture code adds styles dynamically to a style tag.
+ * This avoids packaging all the styles in a single css file.
+ * In a single CSS file, most styles would remain unused.
  * Usage:
 import appendStyleRule from "../gestureStyles.js"
 appendStyleRule(`.${SelectNoneCSSClass}`, `{
