@@ -552,15 +552,16 @@
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
-      awaitTimeout(16);
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
-      awaitTimeout(16);
       await awaitSizeStopAnimating(menuItem);
       // pointermove all the way to the left expands default button
       el.dispatchEvent(createEvent("pointermove", el, { left: 20 }));
-      await awaitTimeout(16);
       await awaitSizeStopAnimating(menuItem);
+      // This test is flaky on Safart, ocasionally fails right here
+      // console.log("about to fail");
+      // last pointermove somehow makes element width 0
+      // Once I've noticed that event.pageX was too far to the right?
       if (menuItem.offsetWidth < 200)
         throw "Default button should expand to entire width, not " + menuItem.offsetWidth + "px";
       // pointermove to the middle shrinks default button
@@ -671,6 +672,7 @@
     }
   }
 
+// GestureEffect.ANIM_TIME = 100;
   TestRunner.test(installBoth);
   TestRunner.test(ltrInstallOnItem);
   TestRunner.test(rtlInstallOnItem);

@@ -139,6 +139,9 @@ function createEvent(type, element, location) {
     clientX: pageX - window.scrollX, 
     clientY: pageY - window.scrollY
   });
+  if (type == 'pointermove') {
+  // console.log("createEvent pointermove", ev.clientX, ev.clientY);
+  }
   return ev;
 }
 
@@ -158,7 +161,7 @@ async function awaitSizeStopAnimating(el, timeout=1000) {
     let millis = 40; // If this is too low, 
     // scrollIntoView causes iPhone sizes to change too slowly and tests fail
     let interval = window.setInterval( () => {
-      if (el.offsetWidth == lastWidth && el.offsetHeight == lastHeight) {
+      if (el.offsetWidth === lastWidth && el.offsetHeight === lastHeight) {
         window.clearInterval(interval);
         resolve();
       }

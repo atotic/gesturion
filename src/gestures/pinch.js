@@ -161,6 +161,5 @@ export default class PinchGesture extends GestureHandler {
 			this.options.effect.completed(this,ev, this.#computeExtras(ev));
 			return "idle";
 		}
-
 	}
 }
