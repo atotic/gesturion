@@ -18,7 +18,7 @@
  * - unconstrained drag tests
  * - constrain direction
  * - constrain rectangle
- * 
+ * 2) Drop:
  */
 
 import GestureHandler from "./gestureHandler.js"

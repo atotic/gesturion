@@ -190,6 +190,8 @@ pointerdown on drag source:
   startDrag
 3) startDrag
 
+4) deal with drag with multiple pointers: only 1 pointer id gets tracked
+
 Why not just use hammer.js:
 - not a fan of the API, demos. I am a fan of gesture composability
 
@@ -208,6 +210,7 @@ https://m3.material.io/foundations/interaction/gestures
 
 ## DONE
 ```
+May-18 Initial freeform drag implementation
 May-18 Converted all gesture add'l arguments to extras
 May-17 Starter drag gesture implementation
 May-16 Pinch completed on desktop via wheel event

@@ -96,6 +96,15 @@
     block: "nearest"
   }
 
+  function gestureInstalled(el) {
+    if (el.classList.contains("gestureInstalled"))
+      return true;
+    else {
+      el.classList.add("gestureInstalled");
+      return false;
+    }
+  }
+
   async function installBoth() {
      // Permanently install menu
     let el, effect, ltrGesture, rtlGesture;
@@ -104,7 +113,8 @@
       const COLOR = "color-mix(in srgb, yellow, orange)";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
-      if (el.style.backgroundColor != COLOR) {
+
+      if (!gestureInstalled(el)) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "both menus installed";
         effect = new SwipeHorizontalButtonMenuEffect(ltrGetDefaultMenu(el));
@@ -137,7 +147,7 @@
       const COLOR = "yellow";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
-      if (el.style.backgroundColor != COLOR) {
+      if (!gestureInstalled(el)) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "ltr menu installed";
         let effectOptions = ltrGetDefaultMenu(el);
@@ -166,7 +176,7 @@
       const COLOR = "orange";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
-      if (el.style.backgroundColor != COLOR) {
+      if (!gestureInstalled(el)) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "rtl menu installed";
         let effectOptions = rtlGetDefaultMenu(el);
@@ -194,7 +204,7 @@
     try {
       const COLOR = "yellow";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
-      if (el.style.backgroundColor != COLOR) {
+      if (!gestureInstalled(el)) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "ltr menu with default";
         let effectOptions = ltrGetDefaultMenu(el);
@@ -223,7 +233,7 @@
       const COLOR = "orange";
       el = document.querySelector(`.list .listItemContainer:nth-child(${itemIndex})`);
       el.scrollIntoView(scrollIntoViewOptions);
-      if (el.style.backgroundColor != COLOR) {
+      if (!gestureInstalled(el)) {
         // Only install once
         el.querySelector(".listItemContent").textContent = "rtl menu with default";
         let effectOptions = rtlGetDefaultMenu(el);
