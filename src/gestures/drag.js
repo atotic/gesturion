@@ -80,12 +80,24 @@ export default class Drag extends GestureHandler {
     }
   }
 
+  #constrainedPageCoords(ev) {
+    let c = {
+      pageX: ev.pageX,
+      pageY: ev.pageY
+    };
+    if (this.direction == 'horizontal')
+      c.pageY = this.startLocation.pageY;
+    else if (this.direction == 'vertical')
+      c.pageX = this.startLocation.pageX;
+    return c;
+  }
 	#updatePointerInfo(ev) {
+    let c = this.#constrainedPageCoords(ev);
     if (this.pointerInfo.x != -1) {
     	// Previous info exists, can compute speed
       let timeDelta = Math.max(ev.timeStamp - this.pointerInfo.timeStamp, 1);
-      this.pointerInfo.speedX = (ev.pageX - this.pointerInfo.x) * 100 / timeDelta;
-      this.pointerInfo.speedY = (ev.pageY - this.pointerInfo.y) * 100 / timeDelta;
+      this.pointerInfo.speedX = (c.pageX - this.pointerInfo.x) * 100 / timeDelta;
+      this.pointerInfo.speedY = (c.pageY - this.pointerInfo.y) * 100 / timeDelta;
     } else {
     	this.pointerInfo.speedX = 0;
     	this.pointerInfo.speedY = 0;
@@ -94,8 +106,8 @@ export default class Drag extends GestureHandler {
     	this.pointerInfo.speedX = GestureHandler.TEST_DEFAULT_SPEED;
     	this.pointerInfo.speedY = GestureHandler.TEST_DEFAULT_SPEED;
     }
-    this.pointerInfo.x = ev.pageX;
-    this.pointerInfo.y = ev.pageY;
+    this.pointerInfo.x = c.pageX;
+    this.pointerInfo.y = c.pageY;
     this.pointerInfo.timeStamp = ev.timeStamp;
   }
   name() {
@@ -129,13 +141,14 @@ export default class Drag extends GestureHandler {
     return maxDelta >= this.threshold;
   }
   #moveExtras(ev) {
+    let c = this.#constrainedPageCoords(ev);
   	return {
   		startX: this.startLocation.offsetX,
   		startY: this.startLocation.offsetY,
-  		pageX: ev.pageX,
-  		pageY: ev.pageY,
- 			deltaX: ev.pageX - this.startLocation.pageX,
- 			deltaY: ev.pageY - this.startLocation.pageY,
+  		pageX: c.pageX,
+  		pageY: c.pageY,
+ 			deltaX: c.pageX - this.startLocation.pageX,
+ 			deltaY: c.pageY - this.startLocation.pageY,
 	  	speedX: this.pointerInfo.speedX,
 	  	speedY: this.pointerInfo.speedY
 	  };

@@ -3,14 +3,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Drag</title>
 <style>
+  body {
+    min-height: 100vh;
+  }
 </style>
 <h1>Drag</h1>
 <pre>Tested:
 - gestures/drag.js
 </pre>
-<div id="d1" style="width:100px;height:100px;border:5px solid green;background:#ddd">
+<div id="d1" style="width:100px;height:100px;border:5px solid green;background:#ddd;display:inline-block">
 	#D1, freeform drag
 </div>
+<div id="d2" style="width:100px;height:100px;border:5px solid green;background:#ccc;display:inline-block">
+  #D2, vertical drag
+</div>
+<div id="d3" style="width:100px;height:100px;border:5px solid green;background:#bbb;display:inline-block">
+  #D3, horizontal drag
+</div>
+
 
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
@@ -27,6 +37,16 @@
       el.classList.add("gestureInstalled");
   	let gesture = new DragGesture(el, {effect: new DragEffect()});
   	GestureManager.addGesture(gesture);
+    GestureManager.addGesture(new DragGesture(
+      document.querySelector("#d2"), {
+        effect: new DragEffect(),
+        direction: 'vertical'
+      }));
+    GestureManager.addGesture(new DragGesture(
+      document.querySelector("#d3"), {
+        effect: new DragEffect(),
+        direction: 'horizontal'
+      }));
   }
 
   async function dragFreely() {
@@ -41,8 +61,40 @@
     el.dispatchEvent(createEvent("pointerup", el, { left: 0 }));
   }
 
+  async function dragVertical() {
+    let el = document.querySelector("#d2");
+    let startLoc = el.getBoundingClientRect();
+    el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    await awaitTimeout(0);
+    let loc = el.getBoundingClientRect();
+    if (loc.x != startLoc.x)
+      throw `Vertical drag moved horizontally! ${loc.x}, ${startLoc.x}`;
+    if (!(loc.y > startLoc.y))  
+      throw `Vertical drag did not move! ${loc.y}, ${startLoc.y}`;
+    el.dispatchEvent(createEvent("pointerup", el, { left: 0 }));
+  }
+
+  async function dragHorizontal() {
+   let el = document.querySelector("#d3");
+    let startLoc = el.getBoundingClientRect();
+    el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    await awaitTimeout(0);
+    let loc = el.getBoundingClientRect();
+    if (loc.y != startLoc.y)
+      throw `Horizontal drag moved vertically! ${loc.y}, ${startLoc.y}`;
+    if (!(loc.x > startLoc.x))  
+      throw `Vertical drag did not move! ${loc.x}, ${startLoc.x}`;
+    el.dispatchEvent(createEvent("pointerup", el, { left: 0 }));
+  }
+
   TestRunner.test(installDragGesture);
   TestRunner.test(dragFreely);
+  TestRunner.test(dragVertical);
+  TestRunner.test(dragHorizontal);
 
   installDragGesture();
 </script>

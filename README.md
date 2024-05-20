@@ -21,7 +21,6 @@ Demo pages
 
 rtlDefaultButtonExpansion test is flaky everywhere!
 
-
 PullToBounce: reveal bottom empty space
 
 Later:
