@@ -83,7 +83,7 @@ export default class Drag extends GestureHandler {
 	#updatePointerInfo(ev) {
     if (this.pointerInfo.x != -1) {
     	// Previous info exists, can compute speed
-      let timeDelta = Math.max(ev.timeStamp - this.lastPointer.timeStamp, 1);
+      let timeDelta = Math.max(ev.timeStamp - this.pointerInfo.timeStamp, 1);
       this.pointerInfo.speedX = (ev.pageX - this.pointerInfo.x) * 100 / timeDelta;
       this.pointerInfo.speedY = (ev.pageY - this.pointerInfo.y) * 100 / timeDelta;
     } else {

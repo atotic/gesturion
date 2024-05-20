@@ -34,6 +34,7 @@ export default class RotateGesture extends GestureHandler {
       { eventType: 'touchcancel'}
       ]
     ]]);
+  
   threshold = 2;
 
   constructor(element, options) {

@@ -9,11 +9,13 @@ import GestureEffect from "./gestureEffect.js";
 
 export default class RotateEffect extends GestureEffect {
 
+	rotateTarget; // Element being rotated
+	
 	constructor(options) {
 		super(options);
 	}
 
-	parseTransform() {
+	#parseTransform() {
     let parse = this.rotateTarget.style.transform.match(/(.*)rotate\(([^\)]+)\)(.*)/);
     if (parse) {
     	return {
@@ -36,14 +38,14 @@ export default class RotateEffect extends GestureEffect {
       a.cancel();
     }
     let finalRotation = this.initalDegrees + rotation;
-    let preT = this.parseTransform();
+    let preT = this.#parseTransform();
     let animation = this.rotateTarget.animate([
     		{transform: `${preT.prefix}rotate(${preT.currentDeg}deg)${preT.postfix}`},
     		{transform: `${preT.prefix}rotate(${finalRotation}deg)${preT.postfix}`}
   		], animOptions);
     animation.finished.finally( _ => {
     	// Reparse transform, in case someone else changed it
-    	let postT = this.parseTransform();
+    	let postT = this.#parseTransform();
     	this.rotateTarget.style.transform = `${postT.prefix}rotate(${finalRotation}deg)${postT.postfix}`;
     }).catch(err => {
     	// console.log("Animation cancelled");
@@ -71,7 +73,7 @@ export default class RotateEffect extends GestureEffect {
 	}
 	waitStart() {}
 	activeStart() {
-		this.initalDegrees = this.parseTransform().currentDeg;
+		this.initalDegrees = this.#parseTransform().currentDeg;
 	}
 
 	moved(gesture, ev, state, extras) {

@@ -11,7 +11,9 @@ const { colorize } = require('colorize-node');
 var TESTS = [
   "testSwipeHorizontal.html", 
   "testSwipeVertical.html",
-  "testRotate.html"
+  "testRotate.html",
+  "testPinch.html",
+  "testDrag.html"
 ];
 const assert = require("assert");
 

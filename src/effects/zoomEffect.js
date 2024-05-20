@@ -10,6 +10,8 @@ import GestureEffect from "./gestureEffect.js";
 
 export default class ZoomEffect extends GestureEffect {
 
+	zoomTarget;	// Element being zoomed
+	
 	constructor(options) {
 		super(options);
 	}

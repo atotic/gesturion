@@ -15,18 +15,15 @@
 
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
-  import GestureHandler from "../src/gestures/gestureHandler.js";
-  import GestureEffect from "../src/effects/gestureEffect.js";
   import DragGesture from "../src/gestures/drag.js";
-  // import DragEffect from "../src/effects/rotateEffect.js";
+  import DragEffect from "../src/effects/dragEffect.js";
   import TestRunner from "./testFramework.js";
   import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 
   async function installDragGesture() {
   	let el = document.querySelector("#d1");
   	let logger = el.querySelector("gesture-logger");
-    let effect = null;//new RotateEffect({rotateTarget: el});
-  	let gesture = new DragGesture(el, {effect: effect});
+  	let gesture = new DragGesture(el, {effect: new DragEffect()});
   	GestureManager.addGesture(gesture);
   }
 
