@@ -6,7 +6,9 @@
  * 
  * Options:
  * 
- * 
+ * Check out the simple routine 
+ * dropOptions
+ *   isTarget
  */
 
 import GestureEffect from "./gestureEffect.js";
@@ -85,9 +87,9 @@ export default class DropEffect extends GestureEffect {
 		return null;
 	}
 
-	clear(animate) {
+	clear(animate, extras) {
 		if (this.dropTarget) {
-			this.dropOptions.highlight(this.dropTarget, false, extras.source, ev);
+			this.dropOptions.highlight(this.dropTarget, false, extras ? extras.source : null, ev);
 		}
 	}
 
@@ -115,11 +117,11 @@ export default class DropEffect extends GestureEffect {
 			didDrop = this.dropOptions.drop(this.dropTarget, extras.source, ev);
 			this.dropTarget = null;
 		}
-		this.clear(!didDrop);
+		this.clear(!didDrop, extras);
 		return didDrop;
 	}
 	cancelled(gesture, ev, extras) {
-		this.clear();
+		this.clear(false, extras);
 	}
 }
 

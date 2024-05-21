@@ -28,13 +28,13 @@
 - gestures/drag.js
 - effects/dragEffect.js
 </pre>
-<div id="d1" style="width:100px;height:100px;border:5px solid green;background:#ddd;display:inline-block">
+<div id="d1" style="width:100px;height:100px;border:5px solid green;background:#ddd;display:inline-block;position:relative">
 	#D1, freeform drag
 </div>
-<div id="d2" style="width:100px;height:100px;border:5px solid green;background:#ccc;display:inline-block">
+<div id="d2" style="width:100px;height:100px;border:5px solid green;background:#ccc;display:inline-block;position:relative">
   #D2, vertical drag
 </div>
-<div id="d3" style="width:100px;height:100px;border:5px solid green;background:#bbb;display:inline-block">
+<div id="d3" style="width:100px;height:100px;border:5px solid green;background:#bbb;display:inline-block;position:relative">
   #D3, horizontal drag
 </div>
 <p>Drag plants from table into pots ⬇️</p>
@@ -137,11 +137,32 @@
     }
   }
 
+  async function dragPlant1ToPot() {
+    let d4 = document.querySelector("#d4");
+    let table = d4.querySelector(".table");
+    let plant1 = table.querySelector(".plant");
+    if (!plant1)
+      throw "all plants are gone";
+    let pot = d4.querySelector(".pot");
+
+    let potLocation = pot.getBoundingClientRect();
+    plant1.dispatchEvent(createEvent("pointerdown", plant1, { left: 5}));
+    plant1.dispatchEvent(createEvent("pointermove", plant1, { left: -30}));
+    plant1.dispatchEvent(createEvent("pointermove", document.body, { x: potLocation.x, y: potLocation.y}));
+    await awaitTimeout(0);
+    if (!pot.classList.contains("dropTargetHighlight"))
+      throw "Drop target (.pot) has not been highlighted";
+    plant1.dispatchEvent(createEvent("pointerup", plant1, { left: 5}));
+    if (plant1.parentElement != pot)
+      throw "Plant 1 should have been dropped into the pot";
+  }
+
   TestRunner.test(installDragGesture);
   TestRunner.test(dragFreely);
   TestRunner.test(dragVertical);
   TestRunner.test(dragHorizontal);
   TestRunner.test(installPlantDragging);
+  TestRunner.test(dragPlant1ToPot);
 
   installDragGesture();
   installPlantDragging();
