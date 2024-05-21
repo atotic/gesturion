@@ -1,7 +1,9 @@
 /** 
  * DragEffect 
  * 
- * Drags an element using transforms
+ * Drags an element, uses transform()
+ * 
+ * Can be combined with dropEffect option to implement drag'n'drop
  * 
  */
 
@@ -11,8 +13,14 @@ export default class DragEffect extends GestureEffect {
 
 	dragTarget; // element being dragged
 
+	dropEffect;	// Deals with drops
+	
 	constructor(options) {
 		super(options);
+		if (options) {
+			if ('dropEffect' in options)
+				this.dropEffect = options.dropEffect;
+		}
 	}
 
 	#parseTransform() {
@@ -38,6 +46,10 @@ export default class DragEffect extends GestureEffect {
     } else {
     	return {prefix:'', x: 0, y: 0, postfix:''};
 	  }
+  }
+
+  #dropExtras(gesture) {
+  	return {source: gesture.element()};
   }
 
   animateTargetToLocation(x, y, duration=GestureEffect.ANIM_TIME) {
@@ -74,26 +86,41 @@ export default class DragEffect extends GestureEffect {
 		} else {
 			cleanup();
 		}
+		if (this.dropEffect)
+			this.dropEffect.clear(animate);
   }
 
 	idleStart(gesture) {
 		if (!this.dragTarget)
 			this.dragTarget = gesture.element();
+		if (this.dropEffect)
+			this.dropEffect.idleStart(gesture);
 	}
-
-	waitStart() {}
-	activeStart() {}
+	waitStart(gesture, ev) {
+		if (this.dropEffect)
+			this.dropEffect.waitStart(gesture, ev);
+	}
+	activeStart(gesture, ev) {
+		if (this.dropEffect)
+			this.dropEffect.activeStart(gesture, ev, this.#dropExtras(gesture));		
+	}
 
 	moved(gesture, ev, extras) {
 		if (gesture.getState() != 'active')
 			return;
 		this.animateTargetToLocation(extras.deltaX, extras.deltaY, 0);
+		if (this.dropEffect)
+			this.dropEffect.moved(gesture, ev, this.#dropExtras(gesture));		
 	}
-
 	completed(gesture, ev) {
-		this.clear(true);
+		let didDrop = false;
+		if (this.dropEffect)
+			didDrop = this.dropEffect.completed(gesture, ev, this.#dropExtras(gesture));		
+		this.clear(!didDrop);
 	}
 	cancelled(gesture, ev) {
+		if (this.dropEffect)
+			this.dropEffect.cancelled(gesture, ev, this.#dropExtras(gesture));		
 		this.clear();
 	}
 }

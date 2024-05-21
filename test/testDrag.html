@@ -6,6 +6,22 @@
   body {
     min-height: 100vh;
   }
+  .plant {
+    width: 40px;
+    height: 40px;
+    font-size:36px;
+    border:1px solid purple;
+    border-radius: 20px;
+    background-color: white;
+  }
+  .pot {
+    position:absolute;
+    background-color: #5c2a0e57;
+    width: 40px;
+    height: 40px;
+    border-radius:22px;
+    border: 2px dotted brown;
+  }
 </style>
 <h1>Drag</h1>
 <pre>Tested:
@@ -21,12 +37,24 @@
 <div id="d3" style="width:100px;height:100px;border:5px solid green;background:#bbb;display:inline-block">
   #D3, horizontal drag
 </div>
-
-
+<p>Drag plants from table into pots ⬇️</p>
+<div id="d4" style="width:300px;height:200px;background-color:#bfb;margin:16px 0 0 16px;display: flex; justify-content:center;align-items:center;position:relative">
+  <div class="table" style="width:100px;height:100px;background-color:white;display:flex;flex-wrap:wrap; justify-content:space-around; " data-drop-target="1">
+    <div class="plant">🌹</div>
+    <div class="plant">🌸</div>
+    <div class="plant">🌻</div>
+    <div class="plant">🪻</div>
+  </div>
+  <div class="pot" data-drop-target="1" style="top:8px;left:8px;"></div>
+  <div class="pot" data-drop-target="1" style="bottom:8px;left:8px;"></div>
+  <div class="pot" data-drop-target="1" style="top:8px;right:8px;"></div>
+  <div class="pot" data-drop-target="1" style="bottom:8px;right:8px;"></div>
+</div>
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
+  import DropEffect from "../src/effects/dropEffect.js";
   import TestRunner from "./testFramework.js";
   import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 
@@ -78,7 +106,7 @@
   }
 
   async function dragHorizontal() {
-   let el = document.querySelector("#d3");
+    let el = document.querySelector("#d3");
     let startLoc = el.getBoundingClientRect();
     el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
     el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
@@ -92,10 +120,29 @@
     el.dispatchEvent(createEvent("pointerup", el, { left: 0 }));
   }
 
+  async function installPlantDragging() {
+    let el = document.querySelector("#d4");
+    if (el.classList.contains("gestureInstalled"))
+      return;
+    else
+      el.classList.add("gestureInstalled");
+
+    for (let plant of el.querySelectorAll(".plant")) {
+      let gesture = new DragGesture(plant, {
+        effect: new DragEffect({
+          dropEffect: new DropEffect()
+        })
+      });
+      GestureManager.addGesture(gesture);
+    }
+  }
+
   TestRunner.test(installDragGesture);
   TestRunner.test(dragFreely);
   TestRunner.test(dragVertical);
   TestRunner.test(dragHorizontal);
+  TestRunner.test(installPlantDragging);
 
   installDragGesture();
+  installPlantDragging();
 </script>

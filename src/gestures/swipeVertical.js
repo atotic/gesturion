@@ -10,7 +10,7 @@
  *   speed: px/100ms // how fast, px/100ms
  * }
  * 
- * Configuration options
+ * Options
  * threshold=3 {pixels} - how far to move before swipe activates. Surprisingly,
  *                        setting it to 0 does not seem to help with preventing scroll.
  * direction=both {dtu|utd|both}- restrict movement to
