@@ -4,15 +4,9 @@ gesture recognition library
 
 Observing arrays: async iterables with instructions (move, etc)
 Drag
-- constraints:
- BOUNDS
-  very much like swipe, but without scroll mechanism
-- effects:
-  dragFreely
-  drag and drop, will need drop effect
+  bounds constraints
 
-Press, LongPress
-DoubleTap
+Press, LongPress, DoubleTap
 On effect registration
 Demo pages
 
@@ -204,6 +198,7 @@ https://m3.material.io/foundations/interaction/gestures
 
 ## DONE
 ```
+May-21 Drag'n'drop sample implementation
 May-18 Initial freeform drag implementation
 May-18 Converted all gesture add'l arguments to extras
 May-17 Starter drag gesture implementation
