@@ -50,13 +50,32 @@
   <div class="pot" data-drop-target="1" style="top:8px;right:8px;"></div>
   <div class="pot" data-drop-target="1" style="bottom:8px;right:8px;"></div>
 </div>
+<p>Drag and clone plants from table into pots ⬇️</p>
+<p>Naive implementation does not work</p>
+<ol>
+  <li>Plants are cloned with CSS translation</li>
+  <li>Cloned plants do not have drag gesture installed</li>
+</ol>
+<div id="d5" style="width:300px;height:200px;background-color:#bfb;margin:16px 0 0 16px;display: flex; justify-content:center;align-items:center;position:relative">
+  <div class="table" style="width:100px;height:100px;background-color:white;display:flex;flex-wrap:wrap; justify-content:space-around; " data-drop-target="1">
+    <div class="plant">🌹</div>
+    <div class="plant">🌸</div>
+    <div class="plant">🌻</div>
+    <div class="plant">🪻</div>
+  </div>
+  <div class="pot" data-drop-target="1" style="top:8px;left:8px;"></div>
+  <div class="pot" data-drop-target="1" style="bottom:8px;left:8px;"></div>
+  <div class="pot" data-drop-target="1" style="top:8px;right:8px;"></div>
+  <div class="pot" data-drop-target="1" style="bottom:8px;right:8px;"></div>
+</div>
+
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
   import DropEffect from "../src/effects/dropEffect.js";
   import TestRunner from "./testFramework.js";
-  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+  import { LoggerEffect, createEvent, getScrolledBoundingClientRect, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 
   async function installDragGesture() {
   	let el = document.querySelector("#d1");
@@ -81,10 +100,10 @@
   async function dragFreely() {
     let el = document.querySelector("#d1");
     el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
-    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
-    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
     await awaitTimeout(0);
-    let loc = el.getBoundingClientRect();
+    let loc = getScrolledBoundingClientRect(el);
     if (loc.x < 300 || loc.y < 200)
       throw `Drag did not move element ${loc.x} ${loc.y}`;
     el.dispatchEvent(createEvent("pointerup", el, { left: 0 }));
@@ -92,12 +111,13 @@
 
   async function dragVertical() {
     let el = document.querySelector("#d2");
-    let startLoc = el.getBoundingClientRect();
+    let startLoc = getScrolledBoundingClientRect(el);
     el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
-    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
-    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
     await awaitTimeout(0);
-    let loc = el.getBoundingClientRect();
+    let loc = getScrolledBoundingClientRect(el);
+
     if (loc.x != startLoc.x)
       throw `Vertical drag moved horizontally! ${loc.x}, ${startLoc.x}`;
     if (!(loc.y > startLoc.y))  
@@ -107,12 +127,12 @@
 
   async function dragHorizontal() {
     let el = document.querySelector("#d3");
-    let startLoc = el.getBoundingClientRect();
+    let startLoc = getScrolledBoundingClientRect(el);
     el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
-    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
-    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 400}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 200, left: 400}));
     await awaitTimeout(0);
-    let loc = el.getBoundingClientRect();
+    let loc = getScrolledBoundingClientRect(el);
     if (loc.y != startLoc.y)
       throw `Horizontal drag moved vertically! ${loc.y}, ${startLoc.y}`;
     if (!(loc.x > startLoc.x))  
@@ -145,7 +165,7 @@
       throw "all plants are gone";
     let pot = d4.querySelector(".pot");
 
-    let potLocation = pot.getBoundingClientRect();
+    let potLocation = getScrolledBoundingClientRect(pot);
     plant1.dispatchEvent(createEvent("pointerdown", plant1, { left: 5}));
     plant1.dispatchEvent(createEvent("pointermove", plant1, { left: -30}));
     plant1.dispatchEvent(createEvent("pointermove", document.body, { x: potLocation.x, y: potLocation.y}));
@@ -156,6 +176,23 @@
     if (plant1.parentElement != pot)
       throw "Plant 1 should have been dropped into the pot";
   }
+  async function installPlantCloning() {
+    let el = document.querySelector("#d5");
+    if (el.classList.contains("gestureInstalled"))
+      return;
+    else
+      el.classList.add("gestureInstalled");
+
+    for (let plant of el.querySelectorAll(".plant")) {
+      let gesture = new DragGesture(plant, {
+        effect: new DragEffect({
+          dropEffect: new DropEffect({dropMethod: 'copy'})
+        })
+      });
+      GestureManager.addGesture(gesture);
+    }
+  }
+
 
   TestRunner.test(installDragGesture);
   TestRunner.test(dragFreely);
@@ -163,7 +200,9 @@
   TestRunner.test(dragHorizontal);
   TestRunner.test(installPlantDragging);
   TestRunner.test(dragPlant1ToPot);
+  TestRunner.test(installPlantCloning);
 
   installDragGesture();
   installPlantDragging();
+  installPlantCloning();
 </script>

@@ -5,6 +5,7 @@ gesture recognition library
 Observing arrays: async iterables with instructions (move, etc)
 Drag
   bounds constraints
+  drop result: copy vs move
 
 Press, LongPress, DoubleTap
 On effect registration
@@ -198,6 +199,8 @@ https://m3.material.io/foundations/interaction/gestures
 
 ## DONE
 ```
+May-24 horizontal test flakiness might come from scrollIntoView animations.
+May-24 Dnd move vs copy. Added 
 May-21 Drag'n'drop sample implementation
 May-18 Initial freeform drag implementation
 May-18 Converted all gesture add'l arguments to extras

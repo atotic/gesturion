@@ -68,10 +68,11 @@ async function runAllTestsWithBrowser(browser) {
     // Runs all browsers in parallel
     let browserSuites = [];
     browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
-    browserSuites.push( runAllTestsWithBrowser(Browser.FIREFOX));
+    browserSuites.push(runAllTestsWithBrowser(Browser.FIREFOX));
+    browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
     await Promise.all(browserSuites);
     // Safari often fails if run in parallel with Chrome/Firefox
-    await runAllTestsWithBrowser(Browser.SAFARI);
+    // await runAllTestsWithBrowser(Browser.SAFARI);
   } catch(e) {
     console.log(e);
   } finally {

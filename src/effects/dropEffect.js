@@ -32,8 +32,13 @@ function defaultHighlight(target, highlightOn, dragSource, ev) {
 }
 
 function defaultDrop(target, dragSource, ev) {
-	target.append(dragSource);
-	return true;
+	if (this.dropMethod == 'move')
+		target.append(dragSource);
+	else if (this.dropMethod == 'copy')
+		target.append(dragSource.cloneNode(true));
+	else
+		console.error("unknown drop method");
+	return this.dropMethod;
 }
 
 
@@ -55,7 +60,8 @@ export default class DropEffect extends GestureEffect {
 	dropOptions = {
 		isTarget: defaultIsTarget,
 		highlight: defaultHighlight,
-		drop: defaultDrop
+		drop: defaultDrop,
+		dropMethod: 'move'	// 'copy' or 'move'
 	};
 
 	constructor(options) {
@@ -74,6 +80,8 @@ export default class DropEffect extends GestureEffect {
 					this.dropOptions.highlight = options.highlight;
 				if ('drop' in options)
 					this.dropOptions.drop = options.drop;
+				if ('dropMethod' in options)
+					this.dropOptions.dropMethod = options.dropMethod;
 			}
 		}
 	}
@@ -111,14 +119,14 @@ export default class DropEffect extends GestureEffect {
 	}
 
 	completed(gesture, ev, extras) {
-		let didDrop = false;
+		let dropMethod;
 		if (this.dropTarget) {
 			this.dropOptions.highlight(this.dropTarget, false, extras.source, ev);
-			didDrop = this.dropOptions.drop(this.dropTarget, extras.source, ev);
+			dropMethod = this.dropOptions.drop(this.dropTarget, extras.source, ev);
 			this.dropTarget = null;
 		}
-		this.clear(!didDrop, extras);
-		return didDrop;
+		this.clear(false, extras);
+		return dropMethod;
 	}
 	cancelled(gesture, ev, extras) {
 		this.clear(false, extras);

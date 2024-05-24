@@ -117,8 +117,8 @@ customElements.define("gesture-logger", GestureLogger);
 function createEvent(type, element, location) {
   let elRect = element.getBoundingClientRect();
 
-  let pageX = elRect.x;
-  let pageY = elRect.y;
+  let pageX = elRect.x + window.scrollX;
+  let pageY = elRect.y + window.scrollY;
   if (location) {
     if (location.x)
       pageX += location.x;
@@ -143,6 +143,13 @@ function createEvent(type, element, location) {
   // console.log("createEvent pointermove", ev.clientX, ev.clientY);
   }
   return ev;
+}
+
+function getScrolledBoundingClientRect(el) {
+  let r = el.getBoundingClientRect();
+  r.x += window.scrollX;
+  r.y += window.scrollY;
+  return r;
 }
 
 async function awaitTimeout(timeout=200) {
@@ -191,6 +198,7 @@ export {
   LoggerEffect, 
   GestureLogger, 
   createEvent, 
+  getScrolledBoundingClientRect,
   awaitTimeout, 
   awaitSizeStopAnimating, 
   logEvent

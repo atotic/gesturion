@@ -132,10 +132,11 @@ export default class DragEffect extends GestureEffect {
 			this.dropEffect.moved(gesture, ev, this.#dropExtras(gesture));		
 	}
 	completed(gesture, ev) {
-		let didDrop = false;
+		let dropMethod;
 		if (this.dropEffect)
-			didDrop = this.dropEffect.completed(gesture, ev, this.#dropExtras(gesture));		
-		this.clear(!didDrop);
+			dropMethod = this.dropEffect.completed(gesture, ev, this.#dropExtras(gesture));
+		let animate = !dropMethod || dropMethod == 'copy';
+		this.clear(animate);
 	}
 	cancelled(gesture, ev) {
 		if (this.dropEffect)
