@@ -25,10 +25,10 @@
 
   },
   "devDependencies": {
-    "colorize-node": "^0.5.1",
+    "colorize-node": "^1.0.0",
     "http-server": "^14.1.1",
     "jsdoc": "^4.x",
     "markdown-live": "^1.x",
-    "selenium-webdriver": "^4.19.0"
+    "selenium-webdriver": "^4.21.0"
   }
 }

@@ -2,32 +2,21 @@
 gesture recognition library
 ## TODO
 
-Memory usage test
-Handle removal of element with active gesture
-Full mail app demo
+1. Handle removal of element with active gesture
+2. Memory usage test (500K extra memory per element)
+3. Demo pages
+4. Make sure single pointer gestures are only handling single pointer
+5. On effect registration
 
+
+## TODO later
 - Should activation of a gesture cause all other gestures on same element
 to become idle?
-
 Drag
   bounds constraints
-
-Make sure single pointer gestures are only handling single pointer
-
 Tap, 
 DoubleTap
-
-On effect registration
-Demo pages
-
-rtlDefaultButtonExpansion test is flaky everywhere!
-
-Later:
 Rotate - add desktop support with option+cursor
-
-Corner cases
-- memory leak test (add 400K array to objects we are trying to not leak)
-- handle removal of element with an active gesture
 
 
 Contact Red Blob games about what I've done. He might be interested
