@@ -22,12 +22,20 @@ const assert = require("assert");
 var failedTests = [];
 var testCount = 0;
 
+async function awaitTimeout(timeout=200) {
+  return new Promise((resolve, reject) => {
+    setTimeout( _ => resolve(), timeout);
+  });
+}
+
 async function runTest(fileName, driver, browser) {
   let startTime = Date.now();
   let url = `http://127.0.0.1:8082/test/${fileName}`;
   await driver.get(url);
   let title = await driver.getTitle();
   let runAllButton = await driver.findElement(By.id('runAllTestsAutomated'));
+  if (browser == "safari")  // Without timeout, the click sometimes does not work in Safari
+    await awaitTimeout(1000);
   await runAllButton.click();
   let json = await driver.findElement(By.id("seleniumTestReport")).getText();
   let result = JSON.parse(json);

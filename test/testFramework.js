@@ -94,7 +94,14 @@ export class TestRunner {
 
   // Runs all tests, and stores a JSON-encoded result inside a <PRE>
   runAutomatedTests() {
-    // Runs all tests, stores result as JSON 
+    // Visual indication that tests are running.
+    // Might help with debugging Safari hangups
+    let d = document.createElement("h6");
+    d.setAttribute("style", "position:fixed;right:0;top:0");
+    d.textContent = "AUTOMATED TEST RUNNING";
+    document.body.prepend(d);
+    // Runs all tests, stores result as JSON inside a div
+    // so Selenium can read it.
     const SELENIM_DIV = "seleniumTestReport";
     let reportDiv = document.getElementById(SELENIM_DIV);
     if (reportDiv)
@@ -118,6 +125,7 @@ export class TestRunner {
         }
         reportDiv.textContent = JSON.stringify(report);
         document.body.append(reportDiv);
+        d.remove();
       });
   }
 
