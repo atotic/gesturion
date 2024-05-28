@@ -133,8 +133,6 @@ export default class GestureHandler {
         this.options.effect.waitStart(this, event);
         break;
       case 'active':
-        if (!event)
-          console.error("ActiveStart without an event");
         this.options.effect.activeStart(this, event);
         break;
     }

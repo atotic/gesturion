@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Press</title>
+<style>
+</style>
+<h1>Press </h1>
+<pre>Tested:
+- gestures/press.js
+- effects/highlightEffect.js
+</pre>
+<div id="d1" style="width:100px;height:100px;border:5px solid green;background:#ddd">
+	Manual: Press and hold to activate<br>
+</div>
+<div id="d2" style="width:100px;height:100px;border:5px solid green;background:#ddd">
+	Automated tests<br>
+</div>
+<script type="module">
+  import GestureManager from "../src/gestureManager.js";
+  import PressGesture from "../src/gestures/press.js";
+  import HighlightEffect from "../src/effects/highlightEffect.js";
+  import GestureEffect from "../src/effects/gestureEffect.js";
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+
+  async function installPressGesture() {
+  	let el = document.querySelector("#d1");
+    if (el.classList.contains("gesture"))
+      return;
+    el.classList.add("gesture");
+  	let gesture = new PressGesture(el, {effect: new HighlightEffect()});
+  	GestureManager.addGesture(gesture);
+  }
+
+  async function testPress() {
+  	let el = document.querySelector("#d2");
+  	let timeout = 30;
+  	let gesture = new PressGesture(el, {effect: new HighlightEffect(), timeout: timeout});
+  	try {
+	  	GestureManager.addGesture(gesture);
+
+	  	el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+	    el.dispatchEvent(createEvent("pointermove", el, { left: 7 }));
+	    await awaitTimeout(40);
+	    // Gesture should be active now
+	    if (el.getAnimations().length == 0)
+	    	throw `Gesture should have started animating after ${timeout}ms`;
+	    await awaitTimeout(GestureEffect.ANIM_TIME);
+	  }
+	  finally {
+	  	GestureManager.removeGesture(gesture);
+	  }
+  }
+
+  async function testCancelOnMovement() {
+  	let el = document.querySelector("#d2");
+  	let timeout = 30;
+  	let gesture = new PressGesture(el, {effect: new HighlightEffect(), timeout: timeout});
+  	try {
+	  	GestureManager.addGesture(gesture);
+	  	el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+	    el.dispatchEvent(createEvent("pointermove", el, { left: 20 }));
+	    if (gesture.getState() != 'idle')
+	    	throw `Gesture should have gone back to idle after movement`;
+	    // Gesture should be active now
+	  }
+	  finally {
+	  	GestureManager.removeGesture(gesture);
+	  }
+  }
+
+  TestRunner.test(installPressGesture);
+  TestRunner.test(testPress);
+  TestRunner.test(testCancelOnMovement);
+  installPressGesture();
+</script>
+

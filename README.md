@@ -2,12 +2,21 @@
 gesture recognition library
 ## TODO
 
-Observing arrays: async iterables with instructions (move, etc)
+Memory usage test
+Handle removal of element with active gesture
+Full mail app demo
+
+- Should activation of a gesture cause all other gestures on same element
+to become idle?
+
 Drag
   bounds constraints
-  drop result: copy vs move
 
-Press, LongPress, DoubleTap
+Make sure single pointer gestures are only handling single pointer
+
+Tap, 
+DoubleTap
+
 On effect registration
 Demo pages
 
@@ -197,8 +206,12 @@ https://m3.material.io/foundations/interaction/gestures
   https://developer.apple.com/design/human-interface-guidelines/gestures#Standard-gestures
 - https://bestofjs.org/projects?tags=test&sort=monthly-downloads
 
+Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/supporting-both-tap-and-longpress-on-button-in-swiftui/)
+
 ## DONE
 ```
+May-27 Initial set of gestures is complete
+May-27 implemented PressGesture with HightlightEffect. GestureManager got requestStateChange
 May-24 horizontal test flakiness might come from scrollIntoView animations.
 May-24 Dnd move vs copy. Added 
 May-21 Drag'n'drop sample implementation

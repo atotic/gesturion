@@ -31,7 +31,10 @@ Usage, Other:
 
 import appendStyleRule from "./gestureStyles.js";
 
+// Element[GMSym] has a Map<eventType, [GestureHandler]> 
+// It's a map of GestureHandlers for event types.
 const GMSym = Symbol("GestureManagerSymbol");
+
 let SelectNoneCSSClass = "ableGestureSelectNone";
 
 class GestureManager extends EventTarget {
@@ -129,6 +132,43 @@ Implementation:
     gesture.options.effect.clear();
   }
 
+  /**
+   * @returns {Array<GestureHandler>}
+   */
+  activeGestures() {
+    return this.#activeGestures;
+  }
+
+  /**
+   * @returns boolean -- true if state did change
+   */
+  requestStateChange(gesture, state, othersGoIdle) {
+    if (state == 'active') {
+      if (this.#activeGestures.length != 0)
+        return false;
+      // On activation, other gestures on same element go to idle
+      this.#forceOtherGesturesToIdle(gesture);
+      this.#setGestureState(gesture, state);
+      return true;
+    }
+    // idle/waiting requests are processed immediately
+    this.#setGestureState(gesture, state);
+    return true;
+  }
+
+  #forceOtherGesturesToIdle(gesture) {
+    let handlerMap = gesture.element()[GMSym];
+    if (handlerMap) {
+      for (let [eventType, handlers] of gesture.element()[GMSym]) {
+        for (let handler of handlers)
+          if (handler != gesture && handler.getState() != 'idle') {
+            this.#setGestureState(handler, 'idle');
+            console.log(`Forcing gesture to idle`);
+          }
+      }
+    }
+  }
+
   #addToActive(gesture) {
     let activeIdx = this.#activeGestures.indexOf(gesture);
     if (activeIdx != -1) {
@@ -150,13 +190,6 @@ Implementation:
       this.#updateTextSelectionPrevention();
       this.#updateScrollPrevention();
     }
-  }
-
-  /**
-   * @returns {Array<GestureHandler>}
-   */
-  activeGestures() {
-    return this.#activeGestures;
   }
 
   #canonicalEventSpec(eventSpec, gesture) {

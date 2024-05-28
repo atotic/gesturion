@@ -13,8 +13,10 @@ var TESTS = [
   "testSwipeVertical.html",
   "testRotate.html",
   "testPinch.html",
-  "testDrag.html"
+  "testDrag.html",
+  "testPress.html"
 ];
+
 const assert = require("assert");
 
 var failedTests = [];
@@ -67,9 +69,9 @@ async function runAllTestsWithBrowser(browser) {
   try {
     // Runs all browsers in parallel
     let browserSuites = [];
+    browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
     browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
     browserSuites.push(runAllTestsWithBrowser(Browser.FIREFOX));
-    browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
     await Promise.all(browserSuites);
     // Safari often fails if run in parallel with Chrome/Firefox
     // await runAllTestsWithBrowser(Browser.SAFARI);
