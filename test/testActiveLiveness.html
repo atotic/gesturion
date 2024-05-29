@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Active gesture liveness check</title>
+<style>
+</style>
+<h1>Active gesture </h1>
+<pre>GestureManager keeps track of active gestures. Only one gesture
+can be active at a time. If the gesture is removed while active,
+it might not deactivate, because it'll never receive the deactivation events.
+
+GestureManager runs a liveness check on all active gestures every 500ms.
+If the gesture element getClientRects() list is empty, we assume element 
+has been removed from DOM, and idle the gesture. 
+</pre>
+<template id="t1">
+  <div class="container" style="width:100px;heigth:100px;position:relative;border:1px solid black;background:#ddd">
+    <div class="target" style="width:40px;height:40px;font-size:36px;border-radius: 20px;background-color: white;">🌻</div>
+  </div>
+</template>
+<script type="module">
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+  import GestureManager from "../src/gestureManager.js";
+  import DragGesture from "../src/gestures/drag.js";
+  import DragEffect from "../src/effects/dragEffect.js";
+
+  async function testDomRemovalWhileActive() {
+  	let t = document.querySelector("#t1");
+    let container = t.content.cloneNode(true).firstElementChild;
+    let target = container.querySelector(".target");
+    document.body.append(container);
+  	let gesture = new DragGesture(target, {effect: new DragEffect()});
+  	GestureManager.addGesture(gesture);
+    try {
+      target.dispatchEvent(createEvent("pointerdown", target, { left: 5 }));
+      await awaitTimeout(100);
+      target.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+      target.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+      // Now we are dragging and active, lets remove the element
+      await awaitTimeout(400);
+      container.remove();
+      GestureManager.livenessCheck();
+      if (GestureManager.activeGestures().length > 0)
+        throw "Gesture from deleted element was not removed";
+    }
+    finally {
+      container.remove();
+    }
+  }
+
+  TestRunner.test(testDomRemovalWhileActive);
+</script>

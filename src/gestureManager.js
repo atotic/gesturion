@@ -82,6 +82,8 @@ Implementation:
 - not doing drag'n'drop. Can do drag, drop does not really fit:
   - drop gestures are only active once drag starts.
 */
+  #boundLivenessCheck;
+
   HandlerTypes = new Map(); // "gestureName" => GestureHandler
 
   #activeGestures = []; // currently active GestureHandler
@@ -169,6 +171,38 @@ Implementation:
     }
   }
 
+  // Active gestures whose elements have been removed from DOM
+  // must be deactivated
+  livenessCheck() {
+    let removeFromActive = [];
+    for (let gesture of this.#activeGestures) {
+      let isLive = true;
+      // TODO, determine whether element is 
+      let el = gesture.element();
+      if (el && el.offsetWidth == 0) { // Removed element size is 0
+        if (!el.parentNode || el.getClientRects().length == 0) {
+          // TODO: unsure what the correct "node is in DOM" check is
+          // Could walk the tree, but not sure how to traverse ShadowDOM boundaries
+          isLive = false;
+        }
+      }
+      if (!isLive)
+        removeFromActive.push(gesture);
+    }
+    for (let gesture of removeFromActive) {
+      console.log("liveness removal ", gesture.name());
+      this.#setGestureState(gesture, 'idle');
+    }
+    this.#scheduleLivenessCheck();
+  }
+
+  #scheduleLivenessCheck() {
+    if (!this.#boundLivenessCheck)
+      this.#boundLivenessCheck = this.livenessCheck.bind(this);
+    if (this.#activeGestures.length > 0)
+      window.setTimeout(this.#boundLivenessCheck, 500);
+  }
+
   #addToActive(gesture) {
     let activeIdx = this.#activeGestures.indexOf(gesture);
     if (activeIdx != -1) {
@@ -181,6 +215,7 @@ Implementation:
     this.dispatchEvent(new CustomEvent(this.ACTIVE_GESTURE_EVENT, {
       detail: this.#activeGestures
     } ));
+    this.#scheduleLivenessCheck();
   }
 
   #removeFromActive(gesture) {
@@ -277,7 +312,11 @@ Implementation:
       for (let spec of gesture.eventSpecs(oldState))
         this.#removeGestureListener(spec, gesture);
     }
-    gesture.setState(newState, event);
+    try {
+      gesture.setState(newState, event);
+    } catch(err) {
+      console.error("GestureHandler.setState threw an exception", gesture.name(), err);
+    }
 
     for (let spec of gesture.eventSpecs(newState)) {
       this.#addGestureListener(spec, gesture);

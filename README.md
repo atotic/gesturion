@@ -2,7 +2,6 @@
 gesture recognition library
 ## TODO
 
-1. Handle removal of element with active gesture
 2. Memory usage test (500K extra memory per element)
 3. Demo pages
 4. Make sure single pointer gestures are only handling single pointer
@@ -199,6 +198,7 @@ Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/s
 
 ## DONE
 ```
+May-28 Liveness check for active gestures
 May-27 Initial set of gestures is complete
 May-27 implemented PressGesture with HightlightEffect. GestureManager got requestStateChange
 May-24 horizontal test flakiness might come from scrollIntoView animations.
