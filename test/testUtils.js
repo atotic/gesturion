@@ -133,14 +133,22 @@ function createEvent(type, element, location) {
     if (location.bottom)
       pageY += elRect.height - location.bottom;
   }
-  let ev = new PointerEvent(type, {
+  let ev;
+  if (type == 'wheel') {
+    ev = new WheelEvent(type, {
     bubbles: true, 
-    timeStamp: 5,
     clientX: pageX - window.scrollX, 
-    clientY: pageY - window.scrollY
+    clientY: pageY - window.scrollY,
+    deltaX: location.deltaX ? location.deltaX : 0,
+    deltaY: location.deltaY ? location.deltaY : 0,
+    deltaZ: location.deltaZ ? location.deltaZ : 0
   });
-  if (type == 'pointermove') {
-  // console.log("createEvent pointermove", ev.clientX, ev.clientY);
+  } else {
+    ev = new PointerEvent(type, {
+      bubbles: true, 
+      clientX: pageX - window.scrollX, 
+      clientY: pageY - window.scrollY
+    });
   }
   return ev;
 }

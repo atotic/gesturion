@@ -16,7 +16,7 @@ var TESTS = [
   "testDrag.html",
   "testPress.html",
   "testActiveLiveness.html",
-  // "testMemory.html"
+  "testMemory.html"
 ];
 
 const assert = require("assert");
@@ -36,9 +36,9 @@ async function runTest(fileName, driver, browser) {
   await driver.get(url);
   let title = await driver.getTitle();
   let runAllButton = await driver.findElement(By.id('runAllTestsAutomated'));
-  // if (browser == "safari")  // Without timeout, the click sometimes does not work in Safari
-  //   await awaitTimeout(1000);
-  console.log("CLICKING IT");
+  if (browser == "safari")  // Without timeout, the click sometimes does not work in Safari
+    await awaitTimeout(1000);
+  // console.log(browser, "CLICKING IT");
   await runAllButton.click();
   let json = await driver.findElement(By.id("seleniumTestReport")).getText();
   let result = JSON.parse(json);
@@ -81,8 +81,8 @@ async function runAllTestsWithBrowser(browser) {
     // Runs all browsers in parallel
     let browserSuites = [];
     browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
-    // browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
-    // browserSuites.push(runAllTestsWithBrowser(Browser.FIREFOX));
+    browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
+    browserSuites.push(runAllTestsWithBrowser(Browser.FIREFOX));
     await Promise.all(browserSuites);
     // Safari often fails if run in parallel with Chrome/Firefox
     // await runAllTestsWithBrowser(Browser.SAFARI);

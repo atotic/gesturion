@@ -1,0 +1,110 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory</title>
+<style>
+  .gestureElement {
+    display:inline-block;
+  }
+</style>
+<h1>Memory leaks </h1>
+<pre>GestureManager should not leak any memory even if Gestures are not unregistered.
+This is a manual test. It will create some elements, and gestures.
+Each element and gesture will have a 500K payload.
+It performs the gestures, then deletes everything.
+
+In Developer Tools, take a memory snapshot, run the test, then snapshot again.
+
+There should be no extra memory leaked.
+
+Test passes if before and after deletion heap snapshots are about the same.
+
+</pre>
+<div id="destination" style="width:300px">
+<template id="t1">
+  <div class="container" style="width:100px;heigth:100px;position:relative;border:1px solid black;background:#ddd">
+    <div class="target" style="width:40px;height:40px;font-size:36px;border-radius: 20px;background-color: white;">🌻</div>
+  </div>
+</template>
+
+<script type="module">
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+  import GestureManager from "../src/gestureManager.js";
+  import DragGesture from "../src/gestures/drag.js";
+  import DragEffect from "../src/effects/dragEffect.js";
+  import PinchGesture from "../src/gestures/pinch.js";
+  import ZoomEffect from "../src/effects/zoomEffect.js";
+
+  // Big array so leaks are visible
+  function bigArray() {
+    let a = new Array();
+    for (let i=0; i<100_000; i++)
+      a.push(i);
+    return a;
+  }
+  let scrollIntoViewOptions = {
+    behavior: "instant",
+    block: "nearest"
+  }
+
+  let dest = document.querySelector("#destination");
+
+  async function dragElement() {
+    let t = document.querySelector("#t1");
+    let container = t.content.cloneNode(true).firstElementChild;
+    container.classList.add("gestureElement");
+    container.leakLoad = bigArray();
+    let target = container.querySelector(".target");
+    dest.append(container);
+    container.scrollIntoView(scrollIntoViewOptions);
+
+    let gesture = new DragGesture(target, {effect: new DragEffect()});
+    gesture.leakLoad = bigArray();
+    GestureManager.addGesture(gesture);
+    target.dispatchEvent(createEvent("pointerdown", target, { left: 5 }));
+    target.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+    target.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+    await awaitTimeout(300);
+    target.dispatchEvent(createEvent("pointerup", document.body, { top: 300, left: 300}));
+  }
+
+  async function zoomElement() {
+    let t = document.querySelector("#t1");
+    let container = t.content.cloneNode(true).firstElementChild;
+    container.classList.add("gestureElement");
+    container.leakLoad = bigArray();
+    dest.append(container);
+    container.scrollIntoView(scrollIntoViewOptions);
+    let gesture = new PinchGesture(container, {effect: new ZoomEffect()});
+    gesture.leakLoad = bigArray();
+    GestureManager.addGesture(gesture);
+    container.dispatchEvent(createEvent("wheel", container, { deltaY: 500 }));
+    container.dispatchEvent(createEvent("wheel", container, { deltaY: 500 }));
+    container.dispatchEvent(createEvent("wheel", container, { deltaY: 500 }));
+    await awaitTimeout(100);
+    container.dispatchEvent(createEvent("mouseleave", container, { top: 300, left: 300}));
+  }
+
+  async function createElements() {
+    await dragElement();
+    await dragElement();
+    await dragElement();
+    await dragElement();
+    await dragElement();
+    await zoomElement();
+    await zoomElement();
+    await zoomElement();
+    await zoomElement();
+    await zoomElement();
+    return "Take heap snapshot, arrays should be 4+MB";
+  }
+  async function deleteElements() {
+    for (let el of document.querySelectorAll(".gestureElement"))
+      el.remove();
+    return "Take heap snapshot";
+  }
+
+  TestRunner.test(createElements);
+  TestRunner.test(deleteElements);
+</script>
