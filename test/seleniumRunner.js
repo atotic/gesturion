@@ -70,6 +70,12 @@ async function runAllTestsWithBrowser(browser) {
     console.log(colorize.white(browser + " complete"));
   } catch(e) {
     console.log(browser, t, e);
+    failedTests.push({
+      browser: browser,
+      fileName: t,
+      status: "FAIL: Infra failure, probably Safari!",
+      name: "INFRA"
+    });
   } finally {
     await driver.quit();
   }

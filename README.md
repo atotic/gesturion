@@ -1,10 +1,10 @@
 # js-gestures
 gesture recognition library
 ## TODO
-4. Make sure single pointer gestures are only handling single pointer
-5. On effect registration
+1. On effect registration
+2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages
-
+4. Documentation
 
 ## TODO later
 - Should activation of a gesture cause all other gestures on same element
