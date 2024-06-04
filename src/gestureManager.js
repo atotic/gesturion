@@ -104,7 +104,7 @@ Implementation:
   registerGestureHandler(handler) {
     if (!handler)
       throw `registerHandler called without a handler`;
-    let name = handler.name();
+    let name = handler.name;
     if (!name)
       throw `GestureHandler did not provide a name`;
     if (this.HandlerTypes.has(name))
@@ -301,7 +301,8 @@ Implementation:
   }
 
   // Set gesture state, and setup gesture's event listeners
-  #setGestureState(gesture, newState, event=null) {
+  // @param {boolean} forceInlineHandler - force install of idle inline handler
+  #setGestureState(gesture, newState, event=null, forceInlineHandler=false) {
     // remove all old state listeners
     let oldState = gesture.getState();
     if (oldState == newState) {
@@ -317,9 +318,17 @@ Implementation:
     } catch(err) {
       console.error("GestureHandler.setState threw an exception", gesture.name(), err);
     }
-
-    for (let spec of gesture.eventSpecs(newState)) {
-      this.#addGestureListener(spec, gesture);
+    // Gesture handlers are 
+    let discardInlineHandler = gesture.options.inlineHandler && newState == "idle";
+    if (discardInlineHandler && !forceInlineHandler) {
+      // inlineHandlers are discarded when they go to back to idle
+      // console.log("Discarding idle inline handler");
+      this.#removeAllEventSpecs(gesture);
+    } else {
+      // In
+      for (let spec of gesture.eventSpecs(newState)) {
+        this.#addGestureListener(spec, gesture);
+      }
     }
     if (oldState == 'active')
       this.#removeFromActive(gesture);
@@ -330,13 +339,6 @@ Implementation:
   // Gestures often prevent text selection during gesture
   // Implemented by setting user-select:none on <BODY>
   #updateTextSelectionPrevention() {
-    // TODO
-    // Bug: if we stop tracking a gesture in active state,
-    //   selection might be stuck being disabled, bad UX.
-    // This can happen if element stops being tracked in the middle of the gesture.
-    // For example, if element is deleted from DOM.
-    // Fix: heartbeat that reenables selection if no active gestures
-    //   need testcase for this.
     // console.log("preventTextSelection", prevent);
     let prevent = false;
     for (let g of this.#activeGestures) {
@@ -393,12 +395,12 @@ Implementation:
   handleGHEvent(event) {
     let allGestureHandlers = event.currentTarget[GMSym];
     if (!allGestureHandlers) {
-      console.warn("No GestureHanders of any type for ", ev.currentTarget, ev);
+      console.warn("No GestureHanders of any type for ", event.currentTarget, event);
       return;
     }
     let eventGestureHandlers = allGestureHandlers.get(event.type);
     if (!eventGestureHandlers) {
-      console.warn("No GestureHanders of type ", ev.type, " for ", ev.currentTarget, ev);
+      console.warn("No GestureHanders of type ", event.type, " for ", event.currentTarget, event);
       return;
     }
     let stateRequests = [];
@@ -454,31 +456,20 @@ Implementation:
 
   // TODO, experimental, enable registration of gestures in onevent handlers
   // Usage:
-  // <div onpointerdown="GestureHandler.onhandler.bind({gesture: 'RotateGesture', effect: 'RotateEffect'})">
+  // <div onpointerdown="GestureHandler.On.bind({gesture: 'RotateGesture', effect: 'RotateEffect'})">
   // Ugly, but might be useful
-  static onhandler(ev) {
+  OnEvent(ev, gestureProto, effectProto, gestureOptions, effectOptions) {
     // this contains our options because of bind
-    if (!this.gesture)
-      throw "GestureName is undefined";
-    if (!this.effect)
-      throw "Effect name is undefined";
     let target = ev.currentTarget;
-
-    let gestureHandlerType = singleton.HandlerTypes.get(this.gesture);
-    if (gestureHandlerType === undefined) 
-      throw `Unrecognized gesture type "${this.gesture}". Did you forget to register it?`;
-    let effectHandlerType = singleton.EffectTypes.get(this.effect);
-    if (effectHandlerType === undefined) 
-      throw `Unrecognized effect type "${this.effect}". Did you forget to register it?`;
-
-    let effect = new effectHandlerType();
-    let gesture = new gestureHandlerType(target, {effect: effect});
-    singleton.#setGestureState(gesture, 'idle');
+    gestureOptions ||= {};
+    gestureOptions.effect = new effectProto(effectOptions);
+    gestureOptions.inlineHandler = true;
+    let gesture = new gestureProto(ev.currentTarget, gestureOptions);
     try {
-      // TODO, really need to pass this to GestureManager.handleGHEvent
-      gesture.handleEvent(ev);
+      singleton.#setGestureState(gesture, 'idle', null, true);
+      singleton.handleGHEvent(ev);
     } catch(err) {
-      console.error("Unexpected error handing instant registration event");
+      console.error("Unexpected error handing instant registration event", err);
     }
   }
 }

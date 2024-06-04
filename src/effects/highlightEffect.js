@@ -22,6 +22,7 @@ export default class HighlightEffect extends GestureEffect {
 	idleStart(gesture) {}
 	waitStart() {}
 	activeStart(gesture) {
+		// console.log("starting highlight");
 		let el = gesture.element();
 		if (!el)
 			return console.warn("No element to highlight");

@@ -8,6 +8,11 @@ TODO run all tests, not just one!
 const {By, Builder, Browser} = require('selenium-webdriver');
 const { colorize } = require('colorize-node');
 
+// const logging = require('selenium-webdriver/lib/logging');
+// logger = logging.getLogger('webdriver');
+// logger.setLevel(logging.Level.FINEST);
+// logging.installConsoleHandler();
+
 var TESTS = [
   "testSwipeHorizontal.html", 
   "testSwipeVertical.html",
@@ -16,7 +21,8 @@ var TESTS = [
   "testDrag.html",
   "testPress.html",
   "testActiveLiveness.html",
-  "testMemory.html"
+  "testMemory.html",
+  "testInlineHandler.html"
 ];
 
 const assert = require("assert");
@@ -73,7 +79,7 @@ async function runAllTestsWithBrowser(browser) {
     failedTests.push({
       browser: browser,
       fileName: t,
-      status: "FAIL: Infra failure, probably Safari!",
+      status: "FAIL: Infra failure!",
       name: "INFRA"
     });
   } finally {

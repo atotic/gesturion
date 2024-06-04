@@ -1,7 +1,6 @@
 # js-gestures
 gesture recognition library
 ## TODO
-1. On effect registration
 2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages
 4. Documentation
@@ -196,6 +195,7 @@ Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/s
 
 ## DONE
 ```
+Jun-4 Inline event handlers implemented as GestureManager.OnEvent
 May-28 Memory usage test passes!
 May-28 Liveness check for active gestures
 May-27 Initial set of gestures is complete

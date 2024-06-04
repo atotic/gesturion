@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inline event handlers</title>
+<style>
+</style>
+<h1>GestureManager.OnEvent </h1>
+<pre style="white-space:pre-wrap">Inline event handlers can process gestures with GestureManager.OnEvent.
+Gestures and effects classes used as inline handlers MUST be registered
+in global namespace.
+They are modules by default, so you must do this manually.
+See registerGestures() test for example.
+</pre>
+<div id="d1" 
+  style="width:100px;height:100px;border:5px solid green;background:#ddd"
+  onpointerdown="GestureManager.OnEvent(event, PressGesture, HighlightEffect)"
+>
+  Manual test of long press to highlight.
+</div>
+<div id="d2" 
+  style="width:100px;height:100px;border:5px solid green;background:#ddd"
+  onpointerdown="GestureManager.OnEvent(event, DragGesture, DragEffect)"
+>
+  Manual test: drag this tile.
+</div>
+
+<script type="module">
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating, getScrolledBoundingClientRect } from "./testUtils.js";
+  import GestureManager from "../src/gestureManager.js";
+  import PressGesture from "../src/gestures/press.js";
+  import HighlightEffect from "../src/effects/highlightEffect.js";
+  import DragGesture from "../src/gestures/drag.js";
+  import DragEffect from "../src/effects/dragEffect.js";
+
+  async function registerGestures() {
+    // Gestures registered 
+    globalThis.GestureManager = GestureManager;
+    globalThis.PressGesture = PressGesture;
+    globalThis.HighlightEffect = HighlightEffect;
+    globalThis.DragGesture = DragGesture;
+    globalThis.DragEffect = DragEffect;
+  }
+
+  async function testDrag() {
+    let el = document.querySelector("#d2");
+    el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+    el.dispatchEvent(createEvent("pointermove", document.body, { top: 300, left: 300}));
+    await awaitTimeout(0);
+    let loc = getScrolledBoundingClientRect(el);
+    if (loc.x < 300 || loc.y < 200)
+      throw `Drag did not move element ${loc.x} ${loc.y}`;
+    el.dispatchEvent(createEvent("pointerup", el, { left: 0 }));
+  }
+
+  TestRunner.test(registerGestures);
+  TestRunner.test(testDrag);
+  registerGestures();
+</script>

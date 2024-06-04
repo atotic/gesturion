@@ -16,12 +16,12 @@
 	Automated tests<br>
 </div>
 <script type="module">
+  import TestRunner from "./testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
   import GestureManager from "../src/gestureManager.js";
   import PressGesture from "../src/gestures/press.js";
   import HighlightEffect from "../src/effects/highlightEffect.js";
   import GestureEffect from "../src/effects/gestureEffect.js";
-  import TestRunner from "./testFramework.js";
-  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
 
   async function installPressGesture() {
   	let el = document.querySelector("#d1");

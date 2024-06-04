@@ -39,6 +39,7 @@ export default class GestureHandler {
     effect: new GestureEffect(),
     preventTextSelection: true, // should disable text selection when gesture is active?
     preventScrollOnMove: true, // shold disable default scroll on pointer move?
+    inlineHandler: false  // true if this is an inline event handler
   };
 
   /**
@@ -56,6 +57,8 @@ export default class GestureHandler {
         this.options.preventTextSelection = options.preventTextSelection;
       if ('preventScrollOnMove' in options)
         this.options.preventScrollOnMove = options.preventScrollOnMove;
+      if ('inlineHandler' in options)
+        this.options.inlineHandler = options.inlineHandler;
     }
   }
 
@@ -108,15 +111,6 @@ export default class GestureHandler {
   /* OVERRIDES END */
 
   element() { return this.#element; }
-
-  waitExtras(ev) {
-    // override to provide additional arguments to GestureEffect.waitStart()
-    return null;
-  }
-  activeExtras(ev) {
-    // override to provide additional arguments to GestureEffect.activeStart()
-    return null;
-  }
 
   setState(newState, event) {
     if (this.myState == newState) {
