@@ -1,9 +1,11 @@
 # js-gestures
 gesture recognition library
 ## TODO
+1. Figure out how to trace selenium
 2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages
 4. Documentation
+5. Accessibility
 
 ## TODO later
 - Should activation of a gesture cause all other gestures on same element
@@ -120,6 +122,7 @@ Naming:
 js-gestures describes it, but a bit too generic.
 able-gestures (has a11y angle in the name)
 gesturability - too clever?
+gesturion
 
 Also, if ever doing a video, introduce some fun hand gestures: middle finger, etc 
 
