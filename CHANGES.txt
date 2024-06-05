@@ -1,0 +1,63 @@
+Jun-4 Figure out how to trace selenium, and figured out why tests were flakey. Run automatically button was being clicked before ready.
+Jun-4 Inline event handlers implemented as GestureManager.OnEvent
+May-28 Memory usage test passes!
+May-28 Liveness check for active gestures
+May-27 Initial set of gestures is complete
+May-27 implemented PressGesture with HightlightEffect. GestureManager got requestStateChange
+May-24 horizontal test flakiness might come from scrollIntoView animations.
+May-24 Dnd move vs copy. Added 
+May-21 Drag'n'drop sample implementation
+May-18 Initial freeform drag implementation
+May-18 Converted all gesture add'l arguments to extras
+May-17 Starter drag gesture implementation
+May-16 Pinch completed on desktop via wheel event
+May-16 Pinch+zoom completed on touch
+May-15 Implemented Rotate gesture+effect for touch (trackpad does not work?)
+May-14 SwipeVertical gets waitForScrollBoundary
+May-13 Allow GestureEffect to set default Gesture options gestureOptionOverrides()
+May-13 Started aborting animations, and found new edge cases
+May-12 Initial pullToRefresh done. Still needs scroll integration
+May-12 Long investigation of vertical swipes on mobile in test/investigation/preventScroll.html
+May-2 Started SwipeVertical
+May-1 Collapse for testFramework so I can see tests on iOS
+May-1 Multiple gestures on same element are now exclusive
+Apr-30 EffectCleaner is now configurable. It gests initialized in gestureEffect constructor.
+Apr-30 SwipeLeft/Right unify to SwipeHorizontal
+Apr-30 test.description can be used as name
+Apr-30 testSwipeLtr fully featured
+Apr-26 npm run test will run Selenium, and display results
+Apr-26 Add window.onerror to testFramework to catch uncaught errors
+Apr-26 GestureEffect.ANIM_TIME
+Apr-26 SwipeLeft tests done. 6 mighty tests for button menu!
+Apr-24 Created small testFramework that can be run by Selenium
+Apr-23 EffectCleaner cleans on pointerdown. To make it work,
+       gestureManager has to do "stopPropagation"
+Apr-22 globalEffectClear: still needs to handle null clicks
+Apr-22 Add speed to swipes, reveal/hide by quick swipe.
+Apr-19 Prevent scrolling only if gesture is active
+Apr-19 Dismiss menu on click in content area
+Apr-19 Removed partials
+Apr-19 Add instantActiveOnWait to resume gesture
+Apr-19 Multi-message swipe test
+Apr-18 swipe callback options
+Apr-18 implemented default mode for swipe
+Apr-17 refactored out buttonMenu, swipeLeftButtomMenuEffect
+Apr-16 making progress in separating out button menus, effects
+Apr-16 styles needed will be dynamically added by every component with appendStyleRule
+Apr-12 preventScrollOnMove gestureHandler option
+Apr-11 gestureEffect initial API
+Apr-9 SwipeLeft: animateMenuToWidth
+Apr-3 SwipeLeft: add clear method for feedbacks
+Apr-3 SwipeLeft: animate all movement, animate message body too
+Apr-3 SwipeLeft: show over 50%, hide under 50%
+Mar-30 SwipeLeft animations
+Mar-30 SwipeLeft listen on body
+Mar-30 GestureManager: disable text selection (user-select on body)
+Mar-22 Callbacks should be flat part of options
+Mar-22 gesture-logger custom element for testing
+Mar-22 1st gesture implementation: swipeLeft
+Mar-22 Initial gesture API
+         use jsdoc to document public API and interesting types
+Mar-19 Implemented partial callbacks
+Mar-?? https://bestofjs.org/projects?tags=test&sort=monthly-downloads
+

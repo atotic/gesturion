@@ -21,6 +21,8 @@ var TESTS = [
   "testInlineHandler.html"
 ];
 
+// const TESTHOST='127.0.0.1:8082';
+const TESTHOST='192.168.1.7:8082';
 const assert = require("assert");
 
 var failedTests = [];
@@ -34,7 +36,7 @@ async function awaitTimeout(timeout=200) {
 
 async function runTest(fileName, driver, browser) {
   let startTime = Date.now();
-  let url = `http://127.0.0.1:8082/test/${fileName}`;
+  let url = `http://${TESTHOST}/test/${fileName}`;
   await driver.get(url);
   let title = await driver.getTitle();
   await driver.wait(until.elementLocated(By.className('automatedTestReadyForClick')));
@@ -85,6 +87,45 @@ async function runAllTestsWithBrowser(browser) {
   }
 }
 
+async function runAllTestsWithIPhone() {
+  let driver;
+  let t;
+  let browser = "iPhone";
+  try {
+    const logging = require('selenium-webdriver/lib/logging');
+    logger = logging.getLogger('driver');
+    logger.setLevel(logging.Level.ALL);
+    logging.installConsoleHandler();
+    console.log(colorize.white(browser));
+    driver = await new Builder()
+      .withCapabilities({
+        'safari:deviceType': 'iPhone',
+        'safari:useSimulator': true,
+        'platformName': 'ios',
+      })
+    .forBrowser("safari").build();
+
+    // const logging = require('selenium-webdriver/lib/logging');
+    // logger = logging.getLogger('driver');
+    // logger.setLevel(logging.Level.ALL);
+    // logging.installConsoleHandler();
+    await driver.manage().setTimeouts({implicit: 10000});
+    for (t of TESTS)
+      await runTest(t, driver, browser);
+    console.log(colorize.white(browser + " complete"));
+  } catch(e) {
+    console.log(browser, t, e);
+    failedTests.push({
+      browser: browser,
+      fileName: t,
+      status: "FAIL: Infra failure!",
+      name: "INFRA"
+    });
+  } finally {
+    await driver.quit();
+  }
+}
+
 (async function main() {
   let startTime = Date.now();
   try {
@@ -93,6 +134,7 @@ async function runAllTestsWithBrowser(browser) {
     browserSuites.push(runAllTestsWithBrowser(Browser.SAFARI));
     browserSuites.push(runAllTestsWithBrowser(Browser.CHROME));
     browserSuites.push(runAllTestsWithBrowser(Browser.FIREFOX));
+    // browserSuites.push(runAllTestsWithIPhone());
     await Promise.all(browserSuites);
     // Safari often fails if run in parallel with Chrome/Firefox
     // await runAllTestsWithBrowser(Browser.SAFARI);
