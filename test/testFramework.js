@@ -98,6 +98,7 @@ export class TestRunner {
     // Might help with debugging Safari hangups
     let d = document.createElement("h6");
     d.setAttribute("style", "position:fixed;right:0;top:0");
+    d.setAttribute("id", "automatedTestRunning");
     d.textContent = "AUTOMATED TEST RUNNING";
     document.body.prepend(d);
     // Runs all tests, stores result as JSON inside a div
@@ -141,6 +142,9 @@ export class TestRunner {
         .addEventListener("click" , _ => singleton.runAll());
       ui.querySelector("#runAllTestsAutomated")
         .addEventListener("click", _ => singleton.runAutomatedTests());
+      // Class name signals selenium runner that button can be clicked
+      ui.querySelector("#runAllTestsAutomated")
+        .classList.add("automatedTestReadyForClick");
       ui.querySelector("#collapse")
         .addEventListener("click", _ => {
             ui.querySelector("table").classList.toggle("hidden")

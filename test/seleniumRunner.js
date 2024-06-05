@@ -5,13 +5,9 @@ TODO run all tests, not just one!
 // https://www.npmjs.com/package/fast-glob
 // https://www.selenium.dev/documentation/webdriver/
  */
-const {By, Builder, Browser} = require('selenium-webdriver');
+const {By, Builder, Browser, logging, until} = require('selenium-webdriver');
 const { colorize } = require('colorize-node');
 
-// const logging = require('selenium-webdriver/lib/logging');
-// logger = logging.getLogger('webdriver');
-// logger.setLevel(logging.Level.FINEST);
-// logging.installConsoleHandler();
 
 var TESTS = [
   "testSwipeHorizontal.html", 
@@ -41,11 +37,9 @@ async function runTest(fileName, driver, browser) {
   let url = `http://127.0.0.1:8082/test/${fileName}`;
   await driver.get(url);
   let title = await driver.getTitle();
-  let runAllButton = await driver.findElement(By.id('runAllTestsAutomated'));
-  if (browser == "safari")  // Without timeout, the click sometimes does not work in Safari
-    await awaitTimeout(1000);
-  // console.log(browser, "CLICKING IT");
-  await runAllButton.click();
+  await driver.wait(until.elementLocated(By.className('automatedTestReadyForClick')));
+  let runAllButtom = await driver.findElement(By.className('automatedTestReadyForClick'));
+  await runAllButtom.click();
   let json = await driver.findElement(By.id("seleniumTestReport")).getText();
   let result = JSON.parse(json);
   let timeTaken = Date.now() - startTime;
@@ -70,6 +64,10 @@ async function runAllTestsWithBrowser(browser) {
   try {
     console.log(colorize.white(browser));
     driver = await new Builder().forBrowser(browser).build();
+    // const logging = require('selenium-webdriver/lib/logging');
+    // logger = logging.getLogger('driver');
+    // logger.setLevel(logging.Level.ALL);
+    // logging.installConsoleHandler();
     await driver.manage().setTimeouts({implicit: 10000});
     for (t of TESTS)
       await runTest(t, driver, browser);

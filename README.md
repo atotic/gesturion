@@ -1,11 +1,11 @@
 # js-gestures
 gesture recognition library
 ## TODO
-1. Figure out how to trace selenium
 2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages
 4. Documentation
-5. Accessibility
+5. Accessibility 
+
 
 ## TODO later
 - Should activation of a gesture cause all other gestures on same element
@@ -182,6 +182,8 @@ Why not just use hammer.js:
 - not a fan of the API, demos. I am a fan of gesture composability
 
 ## References
+https://www.smashingmagazine.com/2021/03/complete-guide-accessible-front-end-components/#accessible-comics
+
 https://shoelace.style/ cool library of web components, about to
 become Web Awesome
 
@@ -198,6 +200,7 @@ Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/s
 
 ## DONE
 ```
+Jun-4 Figure out how to trace selenium, and figured out why tests were flakey. Run automatically button was being clicked before ready.
 Jun-4 Inline event handlers implemented as GestureManager.OnEvent
 May-28 Memory usage test passes!
 May-28 Liveness check for active gestures
