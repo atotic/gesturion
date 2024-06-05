@@ -6,7 +6,6 @@ gesture recognition library
 4. Documentation
 5. Accessibility 
 
-UUID 0008120-000C30890CD8C01E
 ## TODO later
 - Should activation of a gesture cause all other gestures on same element
 to become idle?
