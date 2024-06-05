@@ -18,7 +18,7 @@
   "homepage": "https://github.com/atotic/js-gestures#README.md",
   "scripts": {
     "localhost": "'./node_modules/.bin/http-server' --port 8082 -c-1",
-    "test": "node test/seleniumRunner.js",
+    "test": "node test/framework/seleniumRunner.js",
     "md": "npx mdlive",
     "wc": "find . -not \\( -path ./test -prune \\) -not \\( -path ./node_modules -prune \\) -not \\( -path ./.git -prune \\) -name '*.js' -or -name '*.html' | xargs wc",
     "test-wc": "find ./test -name '*.js' -or -name '*.html' | xargs wc"

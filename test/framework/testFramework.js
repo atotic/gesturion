@@ -4,7 +4,7 @@ Simple TestRunner
 
 Usage:
 
-import TestRunner from "./testFramework.js";
+import TestRunner from "./framework/testFramework.js";
 
 async function test1 {
   if (bad)

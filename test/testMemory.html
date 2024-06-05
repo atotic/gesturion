@@ -28,8 +28,8 @@ Test passes if before and after deletion heap snapshots are about the same.
 </template>
 
 <script type="module">
-  import TestRunner from "./testFramework.js";
-  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+  import TestRunner from "./framework/testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./utils.js";
   import GestureManager from "../src/gestureManager.js";
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";

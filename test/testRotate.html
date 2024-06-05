@@ -20,8 +20,8 @@
   import GestureEffect from "../src/effects/gestureEffect.js";
   import RotateGesture from "../src/gestures/rotate.js";
   import RotateEffect from "../src/effects/rotateEffect.js";
-  import TestRunner from "./testFramework.js";
-  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+  import TestRunner from "./framework/testFramework.js";
+  import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./utils.js";
 
   async function installRotateGesture() {
   	let el = document.querySelector("#d1");

@@ -74,8 +74,8 @@
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
   import DropEffect from "../src/effects/dropEffect.js";
-  import TestRunner from "./testFramework.js";
-  import { LoggerEffect, createEvent, getScrolledBoundingClientRect, awaitTimeout, awaitSizeStopAnimating } from "./testUtils.js";
+  import TestRunner from "./framework/testFramework.js";
+  import { LoggerEffect, createEvent, getScrolledBoundingClientRect, awaitTimeout, awaitSizeStopAnimating } from "./utils.js";
 
   async function installDragGesture() {
   	let el = document.querySelector("#d1");

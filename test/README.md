@@ -17,7 +17,6 @@ npm run test
 All tests are inside independed html files inside `./test` directory.
 Open any file, and you'll see a test runner in top right corner.
 
-
 # Writing your own tests
 
 A test is an async function. It should throw an error on failure.
@@ -27,8 +26,7 @@ See any existing test files for examples.
 
 Selenium is the only dependency. The rest is a custom-written minimalist framework.
 
-`testFramework.js` defines TestRunner, a framework for running unit tests inside a
-single HTML file. Usage is simple:
+`framework/testFramework.js` defines TestRunner, a framework for running unit tests inside a single HTML file. Usage is simple:
 
 ```javascript
 TestRunner.test(test1,  "Test title" );
@@ -45,4 +43,4 @@ If you'd like to visually slow down animations, set GestureEffect.ANIM_TIME in m
 
 Selenium is used to run all tests automatically in different browsers.
 
-`testUtils.js` has helper functions that are useful for testing gestures.
+`utils.js` has helper functions that are useful for testing gestures.
