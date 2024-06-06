@@ -44,3 +44,7 @@ If you'd like to visually slow down animations, set GestureEffect.ANIM_TIME in m
 Selenium is used to run all tests automatically in different browsers.
 
 `utils.js` has helper functions that are useful for testing gestures.
+
+# Problems
+
+- Safari will occasionally fail with an "INFRA" error. Try again...
