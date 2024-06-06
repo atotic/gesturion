@@ -50,8 +50,17 @@ export default class GestureHandler {
     this.#element = element;
     if (options) {
       if ('effect' in options) {
+        if (options.effect.gestureOptionOverrides)
         options = {...options, ...options.effect.gestureOptionOverrides()};
         this.options.effect = options.effect;
+        for (let p of Object.getOwnPropertyNames(GestureEffect.prototype)
+) {
+          // Define required methods not defined by options.effect
+          if (p != 'constructor' && !(p in this.options.effect)) {
+            console.warn("GestureEffect did not define a function", p);
+            this.options.effect[p] = () => {};
+          }
+        }
       }
       if ('preventTextSelection' in options)
         this.options.preventTextSelection = options.preventTextSelection;

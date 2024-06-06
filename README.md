@@ -2,9 +2,10 @@
 gesture recognition library
 ## TODO
 2. Make sure single pointer gestures are only handling single pointer
+2. Rename library. Make sure npm module name is available
 3. Demo pages
 4. Documentation
-5. Accessibility 
+5. Accessibility
 
 ## TODO later
 - Should activation of a gesture cause all other gestures on same element
@@ -199,6 +200,7 @@ Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/s
 
 ## DONE
 ```
+Jun-6 Inline effect handlers can define simple object effects.
 Jun-4 Figure out how to trace selenium, and figured out why tests were flakey. Run automatically button was being clicked before ready.
 Jun-4 Inline event handlers implemented as GestureManager.OnEvent
 May-28 Memory usage test passes!

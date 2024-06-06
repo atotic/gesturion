@@ -462,7 +462,7 @@ Implementation:
     // this contains our options because of bind
     let target = ev.currentTarget;
     gestureOptions ||= {};
-    gestureOptions.effect = new effectProto(effectOptions);
+    gestureOptions.effect = typeof effectProto == 'function' ? new effectProto(effectOptions) : effectProto;
     gestureOptions.inlineHandler = true;
     let gesture = new gestureProto(ev.currentTarget, gestureOptions);
     try {
