@@ -9,9 +9,8 @@ Demo framework
   view transitions would be cool
     https://developer.chrome.com/docs/web-platform/view-transitions/cross-document
     https://github.com/bramus/view-transitions-demos/blob/main/src/stack-navigator/mpa/scripts.js
-    https://github.com/WICG/view-transitions/blob/main/explainer.md#mpa-vs-spa-solutions
-
-
+    https://github.com/WICG/view-transitions/blob/main/explainer.md
+    https://drafts.csswg.org/css-view-transitions/
 
 List app: a list with button menus, drag, popout on long press
   Do the whole mail thing

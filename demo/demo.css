@@ -1,9 +1,22 @@
+
+body {
+  font-family: system-ui;
+  background-color: #f3f2f8;
+}
+a {
+  text-decoration: none;
+}
+
 /* View transitions -- not part of gestures
    They make page transitions animate for that polished mobile look
+   Copypaste from https://github.com/bramus/view-transitions-demos
  */
 
 @view-transition {
   navigation: auto;
+}
+::view-transition {
+  background: black;
 }
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -26,7 +39,6 @@
     animation-name: fade-in;
   }
 }
-/* View transitions copypaste https://github.com/bramus/view-transitions-demos */
 @keyframes slide-in {
   from {
     translate: 100vw 0;
@@ -46,10 +58,6 @@
   to {
     opacity: 0;
   }
-}
-
-::view-transition {
-  background: black;
 }
 
 @media (prefers-reduced-motion: reduce) {

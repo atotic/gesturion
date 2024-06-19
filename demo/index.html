@@ -4,19 +4,22 @@
 <link rel="stylesheet" type="text/css" href="./demo.css">
 <title>Gesturion demos</title>
 <style>
+	pre {
+		border-radius: 8px;
+		background-color: white;
+		padding: 8px;
+		font-size: larger;
+		white-space: pre-wrap;
+	}
 </style>
 <script>
-	document.documentElement.dataset.transition = "pop";
+	document.documentElement.dataset.transition = "pop";  // view transitions
 </script>
 <body>
 	<h1>Gesturion demos</h1>
-	<ul>
-			<li><a href="list.html">Item list</a> uses many different gestures.
-			<ol>
-					<li>Swipe up to refresh</li>
-					<li>swipe left/right for button menu</li>
-					<li>press and hold and drag to reorder items</li>
-					<li>press and long hold to pop up information</li>
-			</ol>
-		</ul>
+	<pre><a href="list.html"><b>Item list</b> demonstraing multiple interacting gestures.
+  1. Swipe down to refresh
+  2. Swipe left/right for button menu
+  3. Press and hold and drag to reorder items
+  4. Press and long hold to pop up information</a></pre>
 </body>

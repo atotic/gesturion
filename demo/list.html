@@ -4,10 +4,79 @@
 <link rel="stylesheet" type="text/css" href="./demo.css">
 <title>Drag</title>
 <style>
+	body {
+		margin: 0px;
+/*		background-color: yellow;*/
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+		overflow:hidden;
+	}
+	h1 {
+		margin: 0.2em 0 0.2em 8px;
+	}
+	header {
+		margin: 8px;
+	}
+	#list {
+/*		background-color: orange;*/
+		flex-grow: 1;
+		flex-shrink: 1;
+		overflow:auto;
+	}
+	.listItemContainer {
+		border-top: 1px solid #ddd;
+		min-height: 64px;
+	}
+	.listItemContent {
+		padding: 4px 8px 4px 8px;
+		font-size: smaller;
+	}
+	.listItemHeader {
+		font-size: larger;
+		font-weight: 500;
+	}
+
 </style>
-<script>
-	document.documentElement.dataset.transition = "push";
-</script>
 <body>
-	<div><a href="./index.html">&lt; Demos</a></div>
-	<h1>List demo</h1>
+<header ><a href="./index.html">&lt; Demos</a></header>
+<h1>List demo</h1>
+<div id="list"></div>
+<template id="listItemT">
+	<div class="listItemContainer">
+		<div class="listItemContent">
+			<div class="listItemHeader"></div>
+			<div class="listItemCopy"></div>
+		</div>
+	</div>
+</template>
+<script type="module">
+  import GestureManager from "../src/gestureManager.js";
+  import DragGesture from "../src/gestures/drag.js";
+  import DragEffect from "../src/effects/dragEffect.js";
+  import DropEffect from "../src/effects/dropEffect.js";
+
+	document.documentElement.dataset.transition = "push";
+	let listItemSetup = [
+		["Swipe left", "swipe left to reveal a button menu"],
+		["Swipe right", "swipe right to reveal a different button menu"],
+		["Swipe down", "swipe down to reveal a spinner, and load more items"],
+		["Press and hold and drag", "rearrange items by dragging"],
+		["Press and long hold", "will pop up a details menu"],
+		["In case this is confusing", "you can do all gestures on all list items"]
+	];
+	function initListItems() {
+		let list = document.querySelector("#list");
+		let liTemplate = document.querySelector("#listItemT").content;
+		for (let i=0; i<5; ++i) {
+			for (let liData of listItemSetup) {
+				let li = liTemplate.cloneNode(true).firstElementChild;
+				li.querySelector(".listItemHeader").textContent = liData[0];
+				li.querySelector(".listItemCopy").textContent = liData[1];
+				list.append(li);
+			} 
+		}
+	}
+	initListItems();
+</script>
+</body>
