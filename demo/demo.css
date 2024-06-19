@@ -1,0 +1,59 @@
+/* View transitions -- not part of gestures
+   They make page transitions animate for that polished mobile look
+ */
+
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+:root[data-transition="push"] {
+  &::view-transition-old(root) {
+    animation-name: fade-out;
+  }
+  &::view-transition-new(root) {
+    animation-name: slide-in;
+  }
+}
+:root[data-transition="pop"] {
+  &::view-transition-old(root) {
+    animation-name: slide-out;
+  }
+  &::view-transition-new(root) {
+    animation-name: fade-in;
+  }
+}
+/* View transitions copypaste https://github.com/bramus/view-transitions-demos */
+@keyframes slide-in {
+  from {
+    translate: 100vw 0;
+  }
+}
+@keyframes slide-out {
+  to {
+    translate: 100vw 0 ;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition {
+  background: black;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root) {
+    animation-duration: 0s;
+  }
+}

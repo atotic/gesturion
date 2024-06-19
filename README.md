@@ -1,9 +1,24 @@
-# js-gestures
+# gesturion
 gesture recognition library
 ## TODO
 2. Make sure single pointer gestures are only handling single pointer
-2. Rename library. Make sure npm module name is available
-3. Demo pages
+3. Demo pages - initially on github, also put them on codepen?
+
+Demo framework
+  index page 
+  view transitions would be cool
+    https://developer.chrome.com/docs/web-platform/view-transitions/cross-document
+    https://github.com/bramus/view-transitions-demos/blob/main/src/stack-navigator/mpa/scripts.js
+    https://github.com/WICG/view-transitions/blob/main/explainer.md#mpa-vs-spa-solutions
+
+
+
+List app: a list with button menus, drag, popout on long press
+  Do the whole mail thing
+
+Pinch/rotate
+Inline handlers
+
 4. Documentation
 5. Accessibility
 
@@ -200,6 +215,7 @@ Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/s
 
 ## DONE
 ```
+Jun-20 Starting demo pages, view transitions work
 Jun-6 Inline effect handlers can define simple object effects.
 Jun-4 Figure out how to trace selenium, and figured out why tests were flakey. Run automatically button was being clicked before ready.
 Jun-4 Inline event handlers implemented as GestureManager.OnEvent
