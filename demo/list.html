@@ -22,11 +22,13 @@
 /*		background-color: orange;*/
 		flex-grow: 1;
 		flex-shrink: 1;
-		overflow:auto;
+		overflow: auto;
 	}
 	.listItemContainer {
 		border-top: 1px solid #ddd;
 		min-height: 64px;
+		position: relative;
+		background-color: white;
 	}
 	.listItemContent {
 		padding: 4px 8px 4px 8px;
@@ -52,6 +54,10 @@
 </template>
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
+	import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
+  import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
+  import createButtonMenu from "../src/effects/buttonMenu.js";
+
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
   import DropEffect from "../src/effects/dropEffect.js";
@@ -65,18 +71,92 @@
 		["Press and long hold", "will pop up a details menu"],
 		["In case this is confusing", "you can do all gestures on all list items"]
 	];
+
+  function createListElement(data) {
+  	let el = document.querySelector("#listItemT").content.cloneNode(true).firstElementChild;
+		el.querySelector(".listItemHeader").textContent = data[0];
+		el.querySelector(".listItemCopy").textContent = data[1];
+
+    let nullClickHandler = _ => { };
+
+		/*
+		Left swipe gesture
+		Swipe gesture is defined by three objects:
+			1. SwipeHorizontal - gesture handler
+			2. SwipeHorizontalButtonMenuEffect 
+	  		gesture effect that creates a button menu on swipe.
+	  		handles sizing of the button menu in response to gesture
+	  		it will also grow the default button if marked with data-gesture-default
+	  	3. createButtonMenu - function that creates the button menu DOM
+		*/
+		let effect = new SwipeHorizontalButtonMenuEffect({
+      container: el,
+      contentSelector: ".listItemContent",
+      direction: "ltr",
+      menuBuilder: createButtonMenu,
+      menuBuilderOptions: {
+        items: [
+          { title: "Purple", color: "purple", action: nullClickHandler },
+          { title: "Green", color: "green", action: nullClickHandler },
+          { title: "Brown", color: "brown", action: nullClickHandler }
+        ]
+      }
+    });
+    let gesture = new SwipeHorizontal(el, { effect: effect });
+    GestureManager.addGesture(gesture);
+
+    // Right swipe gesture
+
+    // Delete action: deletes an item by animating it away
+    let deleteAction = ev => {
+      let deleteMe = ev.currentTarget;
+      while (deleteMe && !deleteMe.classList.contains("listItemContainer"))
+        deleteMe = deleteMe.parentElement;
+      if (!deleteMe)
+        throw "Could not find container to delete";
+      deleteMe.animate([
+        { height: `${deleteMe.offsetHeight}px`, minHeight: `${deleteMe.offsetHeight}px`},
+        { height: "0", minHeight: "0" }
+      ],
+        { duration: 200 })
+        .finished.then(_ => {
+          deleteMe.remove();
+          effect.clear();
+        });
+    };
+  	effect = new SwipeHorizontalButtonMenuEffect({
+    container: el,
+    contentSelector: ".listItemContent",
+    direction: "rtl",
+    menuBuilder: createButtonMenu,
+    menuBuilderOptions: {
+      items: [
+        { title: "Blue", color: "blue", action: nullClickHandler },
+        // By default, button click will close the menu.
+        // Set preventClickAutoClose because we will handle menu closure manually
+        // after delete animation is complete.
+        { title: "Delete", color: "red", default: true, action: deleteAction, preventClickAutoClose: true }
+      ]
+    }
+    });
+    gesture = new SwipeHorizontal(el, { effect: effect });
+    GestureManager.addGesture(gesture);
+
+    // Pull-to-refresh gesture
+		return el;
+  }
+
 	function initListItems() {
 		let list = document.querySelector("#list");
 		let liTemplate = document.querySelector("#listItemT").content;
 		for (let i=0; i<5; ++i) {
 			for (let liData of listItemSetup) {
-				let li = liTemplate.cloneNode(true).firstElementChild;
-				li.querySelector(".listItemHeader").textContent = liData[0];
-				li.querySelector(".listItemCopy").textContent = liData[1];
+				let li = createListElement(liData);
 				list.append(li);
 			} 
 		}
 	}
+
 	initListItems();
 </script>
 </body>

@@ -13,7 +13,8 @@ Demo framework
     https://drafts.csswg.org/css-view-transitions/
 
 List app: a list with button menus, drag, popout on long press
-  Do the whole mail thing
+1. Swipe left menu 
+2. Swipe right menu
 
 Pinch/rotate
 Inline handlers
