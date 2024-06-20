@@ -32,9 +32,6 @@ export default class PullToRefreshEffect extends GestureEffect {
   state; 
 
   hideTimeoutId; 
-  // TESTING ONLY: CSS selector for element that will display remaining time to hide
-  testTimerSelector;  
-  testTimerInfo; 
 
   container;  // container where panel will be added to the top
   hideTimeout = 1000; // automatically hide after timeout
@@ -46,7 +43,7 @@ export default class PullToRefreshEffect extends GestureEffect {
     if (!options.container)
       throw "PullToRefreshEffect options.container not set";
     this.container = options.container;
-    for (let p of ['panelBuilder', 'panelBuilderOptions', 'hideTimeout', 'testTimerSelector']) {
+    for (let p of ['panelBuilder', 'panelBuilderOptions', 'hideTimeout']) {
       if (p in options)
         this[p] = options[p];
     }
@@ -84,32 +81,12 @@ export default class PullToRefreshEffect extends GestureEffect {
     return animation;
   }
 
-  startTestTimeleftLogger() {
-    if (!this.testTimerSelector)
-      return;
-    this.clearTestTimeleftLogger();
-    let intervalCb = (() => {
-      let el = document.querySelector(this.testTimerSelector);
-      if (!el)
-        return console.warn("Could not find ", this.testTimerSelector);
-      let timeLeft = this.testTimerInfo.endTime - Date.now();
-      el.textContent = (timeLeft / 100).toFixed(0);
-      if (timeLeft < 0)
-        this.clearTestTimeleftLogger();
-    }).bind(this);
-    this.testTimerInfo = {
-      intervalCb: intervalCb,
-      endTime: Date.now() + this.hideTimeout
-    };
-    this.testTimerInfo.intervalId = window.setInterval(this.testTimerInfo.intervalCb, 60);
-  }
-
-  clearTestTimeleftLogger() {
-    if (!this.testTimerInfo)
-      return;
-    document.querySelector(this.testTimerSelector).textContent ='.';
-    window.clearInterval(this.testTimerInfo.intervalId);
-    delete this.testTimerInfo;
+  timeLeftTillCloseTestingOnly() {
+    if (this.hideTimeoutStopTime) {
+      let timeLeft = this.hideTimeoutStopTime - Date.now();
+      return (timeLeft / 100).toFixed(0);  
+    }
+    return null;
   }
 
   startHideTimeout() {
@@ -120,12 +97,12 @@ export default class PullToRefreshEffect extends GestureEffect {
     if (!this.boundTimeoutCallback)
       this.boundTimeoutCallback = this.timeoutCallback.bind(this);
     this.hideTimeoutId = window.setTimeout(this.boundTimeoutCallback, this.hideTimeout);
-    this.startTestTimeleftLogger();
+    this.hideTimeoutStopTime = Date.now() + this.hideTimeout;
   }
 
   timeoutCallback() {
     delete this.hideTimeoutId;
-    this.clearTestTimeleftLogger();
+    delete this.hideTimeoutStopTime;
     // Hide if not in the middle of the gesture
     if (this.state != 'active')
       this.clear(true);
@@ -139,8 +116,8 @@ export default class PullToRefreshEffect extends GestureEffect {
     if (this.hideTimeoutId) {
       window.clearTimeout(this.hideTimeoutId);
       delete this.hideTimeoutId;
+      delete this.hideTimeoutStopTime;
     }
-    this.clearTestTimeleftLogger();
 
     if (this.panel) {
       let cleanup = () => {

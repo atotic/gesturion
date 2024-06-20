@@ -85,6 +85,15 @@ with browser scroll gestures.
     let el = document.querySelector("#d2");
     el.style.borderColor = "green";
     let effect = new PullToRefreshEffect({container: el, testTimerSelector: "#d2timer"});
+    window.setInterval(_ => {
+      let timeLeft = effect.timeLeftTillCloseTestingOnly();
+      let timerDisplay = document.querySelector("#d2timer");
+
+      if (timeLeft !== null)
+        timerDisplay.textContent = timeLeft;
+      else
+        timerDisplay.textContent = ".";
+    }, 60);
     let gesture = new SwipeVertical(el, {effect: effect});
     GestureManager.addGesture(gesture);
   }
