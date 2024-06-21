@@ -84,7 +84,7 @@ with browser scroll gestures.
   async function installVerticalOnD2() {
     let el = document.querySelector("#d2");
     el.style.borderColor = "green";
-    let effect = new PullToRefreshEffect({container: el, testTimerSelector: "#d2timer"});
+    let effect = new PullToRefreshEffect({container: el});
     window.setInterval(_ => {
       let timeLeft = effect.timeLeftTillCloseTestingOnly();
       let timerDisplay = document.querySelector("#d2timer");

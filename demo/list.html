@@ -29,6 +29,8 @@
 		min-height: 64px;
 		position: relative;
 		background-color: white;
+		user-select: none;
+		-webkit-user-select: none;
 	}
 	.listItemContent {
 		padding: 4px 8px 4px 8px;
@@ -38,6 +40,17 @@
 		font-size: larger;
 		font-weight: 500;
 	}
+	@keyframes grow-vertical {
+	  from {
+	    height: 0;
+	    min-height: 0;
+	  }
+	}
+	
+	.animateGrow {
+		animation: grow-vertical 0.2s ease-in;
+	}
+
 
 </style>
 <body>
@@ -54,25 +67,41 @@
 </template>
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
+
 	import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
   import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
   import createButtonMenu from "../src/effects/buttonMenu.js";
+
+  import SwipeVertical from "../src/gestures/swipeVertical.js";
+  import PullToRefreshEffect from "../src/effects/pullToRefreshEffect.js";
 
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
   import DropEffect from "../src/effects/dropEffect.js";
 
+  // ViewTransitions: this document is pushed on top
 	document.documentElement.dataset.transition = "push";
+
+	// Helper 
+	async function awaitTimeout(timeout=200) {
+	  return new Promise((resolve, reject) => {
+	    window.setTimeout( _ => resolve(), timeout);
+	  });
+	}
+
 	let listItemSetup = [
-		["Swipe left", "swipe left to reveal a button menu"],
-		["Swipe right", "swipe right to reveal a different button menu"],
-		["Swipe down", "swipe down to reveal a spinner, and load more items"],
+		["Swipe left", "swipe left to reveal a button menu. Keep swiping to trigger default 'delete' button."],
+		["Swipe right", "swipe right to reveal a different button menu."],
+		["Swipe down", `swipe down to reveal a spinner, and load more items. 
+			This gesture is not as smooth as I'd like on touchscreens. 
+			The browser often hijacks vertical swipes for scrolling. 
+			For best results, swipe slowly.`],
 		["Press and hold and drag", "rearrange items by dragging"],
 		["Press and long hold", "will pop up a details menu"],
 		["In case this is confusing", "you can do all gestures on all list items"]
 	];
 
-  function createListElement(data) {
+  function createListElement(data, listContainer) {
   	let el = document.querySelector("#listItemT").content.cloneNode(true).firstElementChild;
 		el.querySelector(".listItemHeader").textContent = data[0];
 		el.querySelector(".listItemCopy").textContent = data[1];
@@ -143,15 +172,40 @@
     GestureManager.addGesture(gesture);
 
     // Pull-to-refresh gesture
+    // Uses default spinner. Adds 3 items to the bottom fo the list
+    let activateCallback = async (effect) => {
+    	let data = ["spinner ", "This item added by spinner"];
+    	let list = document.querySelector("#list");
+    	let prefix = Math.floor(Math.random()*1000).toString(36);
+    	await awaitTimeout(500);
+    	data[1] = `${prefix} 1 This item added by spinner `;
+    	let item = createListElement(data, list);
+    	item.classList.add("animateGrow");
+    	list.insertBefore(item, list.querySelector(".listItemContainer"));
+    	await awaitTimeout(500);
+    	data[1] = `${prefix} 2 This item added by spinner `;
+    	item = createListElement(data, list);
+    	item.classList.add("animateGrow");
+    	list.insertBefore(item, list.querySelector(".listItemContainer"));
+    	await awaitTimeout(500);
+    	data[1] = `${prefix} 3 This item added by spinner `;
+    	item = createListElement(data, list);
+    	item.classList.add("animateGrow");
+    	list.insertBefore(item, list.querySelector(".listItemContainer"));
+    	effect.clear(true);
+    };
+    // Make spinner not auto-hide. Will 
+    effect = new PullToRefreshEffect({container: listContainer, activateCallback: activateCallback, hideTimeout: 100000});
+    gesture = new SwipeVertical(el, {effect: effect, threshold: 6 });
+    GestureManager.addGesture(gesture);
 		return el;
   }
 
 	function initListItems() {
 		let list = document.querySelector("#list");
-		let liTemplate = document.querySelector("#listItemT").content;
-		for (let i=0; i<5; ++i) {
+		for (let i=0; i<1; ++i) {
 			for (let liData of listItemSetup) {
-				let li = createListElement(liData);
+				let li = createListElement(liData, list);
 				list.append(li);
 			} 
 		}

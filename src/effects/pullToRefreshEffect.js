@@ -33,7 +33,9 @@ export default class PullToRefreshEffect extends GestureEffect {
 
   hideTimeoutId; 
 
+  // Options:
   container;  // container where panel will be added to the top
+  activateCallback; // called when spinner is fully revealed.
   hideTimeout = 1000; // automatically hide after timeout
   panelBuilder = defaultPanelBuilder;
   panelBuilderOptions;
@@ -43,7 +45,7 @@ export default class PullToRefreshEffect extends GestureEffect {
     if (!options.container)
       throw "PullToRefreshEffect options.container not set";
     this.container = options.container;
-    for (let p of ['panelBuilder', 'panelBuilderOptions', 'hideTimeout']) {
+    for (let p of ['panelBuilder', 'panelBuilderOptions', 'hideTimeout', 'activateCallback']) {
       if (p in options)
         this[p] = options[p];
     }
@@ -180,6 +182,7 @@ export default class PullToRefreshEffect extends GestureEffect {
   
   completed(gesture, ev, extras) {
     this.state = "idle";
+    // console.log("spin completed", ev.type);    
     let flickDown = extras.speed > GestureEffect.flickSpeed;
     let dismiss = !this.panel;
     // dismiss if short, and not flicked down
@@ -190,11 +193,14 @@ export default class PullToRefreshEffect extends GestureEffect {
     } else {
       this.startHideTimeout();
       this.animatePanelToHeight(this.defaultHeight);
+      if (this.activateCallback)
+        this.activateCallback(this);
     }
   }
 
   cancelled(gesture, ev) {
     this.state = "idle";
+    // console.log("spin cancelled", ev.type);
     // No panel
     if (!this.panel) {
       this.clear();

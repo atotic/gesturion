@@ -61,6 +61,7 @@ appendStyleRule(`.${CONTAINER_CLASS}`, `{
   top:0;
   height: 100%;
   user-select: none;
+  -webkit-user-select: none;
 }`);
 appendStyleRule(`.${ITEM_CLASS}`, `{
   flex-grow: 1;

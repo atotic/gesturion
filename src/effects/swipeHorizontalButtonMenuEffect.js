@@ -242,7 +242,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       let oversize = newWidth - this.container.offsetWidth + boundary;
       if (oversize > 0)
         newWidth = this.container.offsetWidth - boundary + oversize / 8;
-      let defaultOn = newWidth / this.container.offsetWidth > 0.8 || newWidth > 500;
+      let defaultOn = newWidth / this.container.offsetWidth > 0.6 || newWidth > 500;
       this.setDefaultMode(defaultOn);
     }
     this.animateMenuToWidth(newWidth, 0);
