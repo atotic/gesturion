@@ -10,7 +10,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100svh; /* Makes body not scroll. Vertical swipe will not compete with built-in document scroller */
-		overflow:hidden;
+		width: 100vw;
 	}
 	h1 {
 		margin: 0.2em 0 0.2em 8px;
@@ -21,7 +21,8 @@
 	#list {
 		flex-grow: 1;
 		flex-shrink: 1;
-		overflow: auto;
+		overflow-y: auto;
+		overflow-x: hidden; /* Prevents sliding automation from spilling out */
 	}
 	.listItemContainer {
 		border-top: 1px solid #ddd;
@@ -86,6 +87,31 @@
 	    window.setTimeout( _ => resolve(), timeout);
 	  });
 	}
+
+	// Pull-to-refresh action.
+	// Pretends it is loading 3 items asynchrnously
+	// Inserts them to the top of the list
+	async function pullToRefeshAction(effect) {
+  	let data = ["spinner ", "This item added by spinner"];
+  	let list = document.querySelector("#list");
+  	let prefix = Math.floor(Math.random()*1000).toString(36);
+  	await awaitTimeout(500);
+  	data[1] = `${prefix} 1 This item added by spinner. Delete by swipe to left`;
+  	let item = createListElement(data, list);
+  	item.classList.add("animateGrow");
+  	list.insertBefore(item, list.querySelector(".listItemContainer"));
+  	await awaitTimeout(500);
+  	data[1] = `${prefix} 2 This item added by spinner `;
+  	item = createListElement(data, list);
+  	item.classList.add("animateGrow");
+  	list.insertBefore(item, list.querySelector(".listItemContainer"));
+  	await awaitTimeout(500);
+  	data[1] = `${prefix} 3 This item added by spinner `;
+  	item = createListElement(data, list);
+  	item.classList.add("animateGrow");
+  	list.insertBefore(item, list.querySelector(".listItemContainer"));
+  	effect.clear(true);
+  };
 
 	let listItemSetup = [
 		["Swipe left", "swipe left to reveal a button menu. Keep swiping to trigger default 'delete' button."],
@@ -162,7 +188,8 @@
         // By default, button click will close the menu.
         // Set preventClickAutoClose because we will handle menu closure manually
         // after delete animation is complete.
-        { title: "Delete", color: "red", default: true, action: deleteAction, preventClickAutoClose: true }
+        { title: "Delete", color: "red", default: true, 
+        	action: deleteAction, preventClickAutoClose: true }
       ]
     }
     });
@@ -170,31 +197,17 @@
     GestureManager.addGesture(gesture);
 
     // Pull-to-refresh gesture
-    // Uses default spinner. Adds 3 items to the bottom fo the list
-    let activateCallback = async (effect) => {
-    	let data = ["spinner ", "This item added by spinner"];
-    	let list = document.querySelector("#list");
-    	let prefix = Math.floor(Math.random()*1000).toString(36);
-    	await awaitTimeout(500);
-    	data[1] = `${prefix} 1 This item added by spinner. Delete by swipe to left`;
-    	let item = createListElement(data, list);
-    	item.classList.add("animateGrow");
-    	list.insertBefore(item, list.querySelector(".listItemContainer"));
-    	await awaitTimeout(500);
-    	data[1] = `${prefix} 2 This item added by spinner `;
-    	item = createListElement(data, list);
-    	item.classList.add("animateGrow");
-    	list.insertBefore(item, list.querySelector(".listItemContainer"));
-    	await awaitTimeout(500);
-    	data[1] = `${prefix} 3 This item added by spinner `;
-    	item = createListElement(data, list);
-    	item.classList.add("animateGrow");
-    	list.insertBefore(item, list.querySelector(".listItemContainer"));
-    	effect.clear(true);
-    };
+    // Uses default spinner. 
     // Make spinner not auto-hide. Will 
-    effect = new PullToRefreshEffect({container: listContainer, activateCallback: activateCallback, hideTimeout: 100000});
+    effect = new PullToRefreshEffect({container: listContainer, 
+    	activateCallback: pullToRefeshAction, hideTimeout: 100000});
     gesture = new SwipeVertical(el, {effect: effect, threshold: 6 });
+    GestureManager.addGesture(gesture);
+
+    // Drag gesture
+    let dropEffect = new DropEffect();
+    effect = new DragEffect();
+    gesture = new DragGesture(el, {effect: effect, direction: 'vertical'});
     GestureManager.addGesture(gesture);
 		return el;
   }

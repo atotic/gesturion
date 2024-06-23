@@ -20,6 +20,7 @@ export default class DragEffect extends GestureEffect {
 
 	dragTarget; // element being dragged
 
+	// Options
 	dropEffect;	// Deals with drops
 	noZIndex = false;
 	constructor(options) {
