@@ -36,7 +36,7 @@ export default class SwipeHorizontal extends GestureHandler {
       ]
     ]]);
 
-  threshold = 3; // travel at least this much before activation
+  threshold = 5; // travel at least this much before activation
   direction = "both"; // ltr|rtl|all swiping left,right, or both?
 
   pageStart = { x: -1, y: -1}

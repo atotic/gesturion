@@ -17,6 +17,7 @@
  */
 
 import GestureHandler from "./gestureHandler.js"
+import GestureManager from "../gestureManager.js"
 
 export default class Drag extends GestureHandler {
 
@@ -37,14 +38,11 @@ export default class Drag extends GestureHandler {
       ]
     ]]);
 
-  threshold = 3; // travel at least this much before activation
-  direction = "both"; // horizontal|vertical|both
-
-  startLocation = {	// Initial poiinterdown location
-  	pageX: -1,
-  	pageY: -1,
-  	offsetX: -1, // MouseEvent.offsetX, padding edge coordinates
-  	offsetY: -1
+  startLocation = { // Initial poiinterdown location
+    pageX: -1,
+    pageY: -1,
+    offsetX: -1, // MouseEvent.offsetX, padding edge coordinates
+    offsetY: -1
   }
 
   pointerInfo = { // pointer information
@@ -54,10 +52,17 @@ export default class Drag extends GestureHandler {
     speedX: 0,
     speedY: 0
   };
+  #boundTimeoutCb;
+  // Options
+  threshold = 3; // travel at least this much before activation
+  timeoutThreshold; // activate after timeout milliseconds if no pointer movement.
+  direction = "both"; // horizontal|vertical|both
+
   /**
    * @param {Object} options 
    * @param {number} options.threshold - how far to move before swipe activates
-   * @param {string} options.direction - 
+   * @param {number} options.timeoutThreshold - if set, activate after timeout ms, if no pointer movement 
+   * @param {string} options.direction - horizontal, vertical, or both
    * @param {*} options.* - see GestureHandler.constructor options
    */
 
@@ -68,6 +73,8 @@ export default class Drag extends GestureHandler {
       options = {...options, ...options.effect.gestureOptionOverrides()};
     if ('threshold' in options)
       this.threshold = parseInt(options.threshold);
+    if ('timeoutThreshold' in options)
+      this.timeoutThreshold = parseInt(options.timeoutThreshold);
     if ('direction' in options) {
       if (['horizontal', 'vertical', 'both'].indexOf(options.direction) == -1)
         throw `Invalid options.direction "${options.direction}"`;
@@ -105,6 +112,28 @@ export default class Drag extends GestureHandler {
     this.pointerInfo.y = c.pageY;
     this.pointerInfo.timeStamp = ev.timeStamp;
   }
+
+  timeoutCb() {
+    delete this.timeoutId;
+    if (this.getState() != 'active')
+      GestureManager.requestStateChange(this, 'active');
+  }
+  #startTimeout() {
+    if (this.timeoutId) {
+      console.warn("duplicate call to startTimedThreshold");
+      this.#stopTimeout()
+    }
+    if (!this.#boundTimeoutCb)
+      this.#boundTimeoutCb = this.timeoutCb.bind(this);
+    this.timeoutId = window.setTimeout(this.#boundTimeoutCb, this.timeoutThreshold);
+  }
+  #stopTimeout() {
+    if (!('timeoutId' in this))
+      return;
+    window.clearTimeout(this.tioutId);
+    delete this.timeoutId;
+  }
+
   name() {
     return "Drag";
   }
@@ -124,6 +153,8 @@ export default class Drag extends GestureHandler {
       this.#updatePointerInfo(ev);
       if (this.threshold == 0 || this.options.effect.hasVisibleEffect())
         return "active";
+      if (this.timeoutThreshold > 0)
+        this.#startTimeout();
       return 'waiting';
     }
     console.warn("Unexpected idle event", ev.type);
@@ -157,6 +188,7 @@ export default class Drag extends GestureHandler {
       return;
     }
     if (ev.type == 'pointerleave' || ev.type == 'pointercancel' || ev.type == 'pointerup') {
+      this.#stopTimeout();
       this.options.effect.cancelled(this, ev);
       return "idle";
     }
@@ -164,6 +196,7 @@ export default class Drag extends GestureHandler {
   }
 
   handleActiveEvent(ev) {
+    this.#stopTimeout();
     if (ev.type == 'pointerup') {
       this.options.effect.completed(this, ev, this.#moveExtras(ev));
       return "idle";

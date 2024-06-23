@@ -2,12 +2,16 @@
 body {
   font-family: system-ui;
   background-color: #f3f2f8;
+  width:100%;
+  overflow: hidden;
 }
 a {
   text-decoration: none;
 }
 
-/* View transitions -- not part of gestures
+-webkit-touch-callout: none; /* Hides annoying share menu */
+
+/* View transitions -- not part of gestures, but a cool html/css feature
    They make page transitions animate for that polished mobile look
    Copypaste from https://github.com/bramus/view-transitions-demos
  */

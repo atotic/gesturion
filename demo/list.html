@@ -2,14 +2,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="./demo.css">
-<title>Drag</title>
+<title>List demo</title>
 <style>
 	body {
 		margin: 0px;
 /*		background-color: yellow;*/
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
+		height: 100svh; /* Makes body not scroll. Vertical swipe will not compete with built-in document scroller */
 		overflow:hidden;
 	}
 	h1 {
@@ -19,18 +19,16 @@
 		margin: 8px;
 	}
 	#list {
-/*		background-color: orange;*/
 		flex-grow: 1;
 		flex-shrink: 1;
 		overflow: auto;
 	}
 	.listItemContainer {
 		border-top: 1px solid #ddd;
-		min-height: 64px;
-		position: relative;
+		min-height: 80px;
+		position: relative; /* Required for absolutely positioned button menu */
 		background-color: white;
-		user-select: none;
-		-webkit-user-select: none;
+		user-select: none;  -webkit-user-select: none;
 	}
 	.listItemContent {
 		padding: 4px 8px 4px 8px;
@@ -40,13 +38,13 @@
 		font-size: larger;
 		font-weight: 500;
 	}
+
 	@keyframes grow-vertical {
 	  from {
 	    height: 0;
 	    min-height: 0;
 	  }
 	}
-	
 	.animateGrow {
 		animation: grow-vertical 0.2s ease-in;
 	}
@@ -67,7 +65,7 @@
 </template>
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
-
+  import GestureEffect from "../src/effects/gestureEffect.js"
 	import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
   import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
   import createButtonMenu from "../src/effects/buttonMenu.js";
@@ -147,7 +145,7 @@
         { height: `${deleteMe.offsetHeight}px`, minHeight: `${deleteMe.offsetHeight}px`},
         { height: "0", minHeight: "0" }
       ],
-        { duration: 200 })
+        { duration: GestureEffect.ANIM_TIME })
         .finished.then(_ => {
           deleteMe.remove();
           effect.clear();
@@ -178,7 +176,7 @@
     	let list = document.querySelector("#list");
     	let prefix = Math.floor(Math.random()*1000).toString(36);
     	await awaitTimeout(500);
-    	data[1] = `${prefix} 1 This item added by spinner `;
+    	data[1] = `${prefix} 1 This item added by spinner. Delete by swipe to left`;
     	let item = createListElement(data, list);
     	item.classList.add("animateGrow");
     	list.insertBefore(item, list.querySelector(".listItemContainer"));

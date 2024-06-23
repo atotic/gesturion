@@ -219,6 +219,7 @@ Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/s
 
 ## DONE
 ```
+Jun-22 Added timeout activate to drag. Discovered svh units that fix scrolling issue
 Jun-21 Pull-to-refresh, button menus work
 Jun-20 Starting demo pages, view transitions work
 Jun-6 Inline effect handlers can define simple object effects.

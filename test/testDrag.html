@@ -69,6 +69,9 @@
   <div class="pot" data-drop-target="1" style="bottom:8px;right:8px;"></div>
 </div>
 
+<div id="testTimeout" style="width:100px;height:100px;border: 1px solid black">
+Timeout fire test</div>
+
 <script type="module">
   import GestureManager from "../src/gestureManager.js";
   import DragGesture from "../src/gestures/drag.js";
@@ -96,6 +99,18 @@
         direction: 'horizontal'
       }));
   }
+
+  async function timeoutActivation() {
+    let el = document.querySelector("#testTimeout");
+    let gesture = new DragGesture(el, {effect: new DragEffect(), timeoutThreshold: 100});
+    GestureManager.addGesture(gesture);
+    el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
+    await awaitTimeout(200);
+    if (gesture.getState() != 'active') 
+      throw "Gesture should have activated after 100ms";
+    GestureManager.removeGesture(gesture);
+  }
+
 
   async function dragFreely() {
     let el = document.querySelector("#d1");
@@ -176,6 +191,7 @@
     if (plant1.parentElement != pot)
       throw "Plant 1 should have been dropped into the pot";
   }
+
   async function installPlantCloning() {
     let el = document.querySelector("#d5");
     if (el.classList.contains("gestureInstalled"))
@@ -193,11 +209,11 @@
     }
   }
 
-
   TestRunner.test(installDragGesture);
   TestRunner.test(dragFreely);
   TestRunner.test(dragVertical);
   TestRunner.test(dragHorizontal);
+  TestRunner.test(timeoutActivation);
   TestRunner.test(installPlantDragging);
   TestRunner.test(dragPlant1ToPot);
   TestRunner.test(installPlantCloning);
