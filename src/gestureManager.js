@@ -35,7 +35,7 @@ import appendStyleRule from "./gestureStyles.js";
 // It's a map of GestureHandlers for event types.
 const GMSym = Symbol("GestureManagerSymbol");
 
-let SelectNoneCSSClass = "ableGestureSelectNone";
+let SelectNoneCSSClass = "gesturionSelectNone";
 
 class GestureManager extends EventTarget {
   /* Implementation notes:

@@ -122,6 +122,7 @@ export default class GestureHandler {
   element() { return this.#element; }
 
   setState(newState, event) {
+    // console.log(this.name(), newState);
     if (this.myState == newState) {
       console.warn("setState noop", newState);
     }

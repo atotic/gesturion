@@ -1,17 +1,15 @@
 /** 
  * DragEffect 
  * 
- * Drags an element, uses transform()
+ * Drags an element, uses transform() for visual effects.
  * 
  * Can be combined with dropEffect option to implement drag'n'drop.
  * 
  * This implementation of drag'n'drop does not cover all the details
  * that go into full d'n'd implementation. For example:
- * - dragged item often need a z-index:1 to keep it in front of other elements
- * - what happens when you drop: 
- *   - is element cloned, removed, how are its styles cleared up
- * 
- * It can be used an inspiration for a complete d'n'd implementation.
+ * - what happens when you drop, is element cloned, removed,
+ *   how are its styles cleared up
+ * It is intended to be used an inspiration for a full d'n'd implementation.
  */
 
 import GestureEffect from "./gestureEffect.js";
@@ -22,14 +20,18 @@ export default class DragEffect extends GestureEffect {
 
 	// Options
 	dropEffect;	// Deals with drops
-	noZIndex = false;
+	noZIndex = false; // If true, do not use z-index to keep dragged item on top
+	dragStyle = "";
+
 	constructor(options) {
 		super(options);
 		if (options) {
 			if ('dropEffect' in options)
 				this.dropEffect = options.dropEffect;
 			if ('noZIndex' in options)
-				thks.noZIndex = options.noZIndex;
+				this.noZIndex = options.noZIndex;
+			if ('dragStyle' in options)
+				this.dragStyle = options.dragStyle;
 		}
 	}
 
@@ -97,6 +99,8 @@ export default class DragEffect extends GestureEffect {
 	    if (!this.noZIndex) {
 	    	this.dragTarget.style.position = '';
 		    this.dragTarget.style.zIndex = '';
+		    if (this.dragStyle)
+		    	this.dragTarget.classList.remove(this.dragStyle);
 		  }
   	}
 		if (animate) {
@@ -123,6 +127,10 @@ export default class DragEffect extends GestureEffect {
 	activeStart(gesture, ev) {
 		if (this.dropEffect)
 			this.dropEffect.activeStart(gesture, ev, this.#dropExtras(gesture));		
+		if (this.dragStyle) {
+			this.dragTarget.classList.add(this.dragStyle);
+			this.animateTargetToLocation(0,0,0);
+		}
 	}
 
 	moved(gesture, ev, extras) {
@@ -145,3 +153,5 @@ export default class DragEffect extends GestureEffect {
 		this.clear();
 	}
 }
+
+

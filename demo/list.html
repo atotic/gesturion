@@ -50,6 +50,9 @@
 		animation: grow-vertical 0.2s ease-in;
 	}
 
+	.dragStyle {
+		box-shadow: 0px 0px 5px 0px rgba(60, 56, 47,1);
+	}
 
 </style>
 <body>
@@ -206,8 +209,12 @@
 
     // Drag gesture
     let dropEffect = new DropEffect();
-    effect = new DragEffect();
-    gesture = new DragGesture(el, {effect: effect, direction: 'vertical'});
+    effect = new DragEffect({dragStyle: "dragStyle"});
+    gesture = new DragGesture(el, {
+    	effect: effect, 
+    	direction: 'vertical', 
+    	threshold: 20, 
+    	timeoutThreshold: 500});
     GestureManager.addGesture(gesture);
 		return el;
   }

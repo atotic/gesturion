@@ -115,10 +115,12 @@ export default class Drag extends GestureHandler {
 
   timeoutCb() {
     delete this.timeoutId;
+    // console.log("timeoutCb");
     if (this.getState() != 'active')
       GestureManager.requestStateChange(this, 'active');
   }
   #startTimeout() {
+    // console.log("startTimeout");
     if (this.timeoutId) {
       console.warn("duplicate call to startTimedThreshold");
       this.#stopTimeout()
@@ -128,10 +130,20 @@ export default class Drag extends GestureHandler {
     this.timeoutId = window.setTimeout(this.#boundTimeoutCb, this.timeoutThreshold);
   }
   #stopTimeout() {
+    // console.log("stopTimeout");
     if (!('timeoutId' in this))
       return;
-    window.clearTimeout(this.tioutId);
+    window.clearTimeout(this.timeoutId);
     delete this.timeoutId;
+  }
+  setState(newState, event) {
+    super.setState(newState, event);
+    if (this.timeoutThreshold > 0) {
+      if (newState == 'waiting')
+        this.#startTimeout();
+      else
+        this.#stopTimeout();
+    }
   }
 
   name() {
@@ -153,8 +165,6 @@ export default class Drag extends GestureHandler {
       this.#updatePointerInfo(ev);
       if (this.threshold == 0 || this.options.effect.hasVisibleEffect())
         return "active";
-      if (this.timeoutThreshold > 0)
-        this.#startTimeout();
       return 'waiting';
     }
     console.warn("Unexpected idle event", ev.type);
@@ -188,7 +198,6 @@ export default class Drag extends GestureHandler {
       return;
     }
     if (ev.type == 'pointerleave' || ev.type == 'pointercancel' || ev.type == 'pointerup') {
-      this.#stopTimeout();
       this.options.effect.cancelled(this, ev);
       return "idle";
     }
@@ -196,7 +205,6 @@ export default class Drag extends GestureHandler {
   }
 
   handleActiveEvent(ev) {
-    this.#stopTimeout();
     if (ev.type == 'pointerup') {
       this.options.effect.completed(this, ev, this.#moveExtras(ev));
       return "idle";

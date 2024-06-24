@@ -14,7 +14,7 @@
 import GestureEffect from "./gestureEffect.js";
 import appendStyleRule from "../gestureStyles.js"
 
-let DROP_TARGET_HIGHLIGHT = "dropTargetHighlight";
+let DROP_TARGET_HIGHLIGHT = "gesturionDropTargetHighlight";
 
 // Default drop functions
 // Not intended for real-world use, just something to show 

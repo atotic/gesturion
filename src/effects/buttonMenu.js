@@ -13,8 +13,8 @@
    * @param {string} options.itemClass - CSS class to assign to button
    * @returns menu element
    */
-let CONTAINER_CLASS = "swipeHorizontalButtonMenuContainer";
-let ITEM_CLASS = "swipeHorizontalMenuItem";
+let CONTAINER_CLASS = "gesturionSwipeHorizontalButtonMenuContainer";
+let ITEM_CLASS = "gesturionSwipeHorizontalMenuItem";
 
 export default function createButtonMenu(effect, container, options) {
   let menu = document.createElement("div");
@@ -53,6 +53,9 @@ export default function createButtonMenu(effect, container, options) {
   }
   return menu;
 }
+
+createButtonMenu.defaultItemClass = ITEM_CLASS;
+createButtonMenu.defaultContainerClass = CONTAINER_CLASS;
 
 appendStyleRule(`.${CONTAINER_CLASS}`, `{
   display:flex;

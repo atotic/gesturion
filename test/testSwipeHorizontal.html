@@ -57,6 +57,8 @@
   import TestRunner from "./framework/testFramework.js";
   import { LoggerEffect, createEvent, awaitTimeout, awaitSizeStopAnimating } from "./utils.js";
 
+  let MENU_ITEM_CLASS = "." + createButtonMenu.defaultItemClass;
+
   function ltrGetDefaultMenu(container) {
     let nullClickHandler = _ => { };
     return {
@@ -269,7 +271,7 @@
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 30 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      let menuItem = el.querySelector(MENU_ITEM_CLASS);
       el.dispatchEvent(createEvent("pointerup", el, { left: 30 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth == 0)
@@ -293,7 +295,7 @@
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 30 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      let menuItem = el.querySelector(MENU_ITEM_CLASS);
       el.dispatchEvent(createEvent("pointerup", el, { right: 30 }));
       await awaitSizeStopAnimating(menuItem);
       if (menuItem.offsetWidth == 0)
@@ -317,7 +319,7 @@
       GestureHandler.TEST_DEFAULT_SPEED = 1;
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      let menuItem = el.querySelector(MENU_ITEM_CLASS);
       el.dispatchEvent(createEvent("pointermove", el, { left: 30 }));
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointerup", el, { left: 30 }));
@@ -345,7 +347,7 @@
       GestureHandler.TEST_DEFAULT_SPEED = 1;
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      let menuItem = el.querySelector(MENU_ITEM_CLASS);
       el.dispatchEvent(createEvent("pointermove", el, { right: 30 }));
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointerup", el, { right: 30 }));
@@ -388,10 +390,10 @@
       el.dispatchEvent(createEvent("pointermove", el, { left: 200 }));
       el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
       // Wait till end of animation
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem")
+      let menuItem = el.querySelector(MENU_ITEM_CLASS)
       await awaitSizeStopAnimating(menuItem);
       // Click on the button
-      let button = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      let button = el.querySelector(`${MENU_ITEM_CLASS}:nth-child(3)`);
       button.dispatchEvent(createEvent("click", button, { y: 5, x: 5 }));
       if (buttonClicked == false)
         throw "Did not click on the button";
@@ -432,10 +434,10 @@
       el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
       el.dispatchEvent(createEvent("pointerup", el, { right: 200 }));
       // Wait till end of animation
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem")
+      let menuItem = el.querySelector(MENU_ITEM_CLASS)
       await awaitSizeStopAnimating(menuItem);
       // Click on the button
-      let button = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      let button = el.querySelector(`${MENU_ITEM_CLASS}:nth-child(3)`);
       button.dispatchEvent(createEvent("click", button, { y: 5, right: 5 }));
       if (buttonClicked == false)
         throw "Did not click on the button";
@@ -465,7 +467,7 @@
       el.dispatchEvent(createEvent("pointermove", el, { left: 10 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 200 }));
       el.dispatchEvent(createEvent("pointerup", el, { left: 200 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      let menuItem = el.querySelector(MENU_ITEM_CLASS);
       await awaitSizeStopAnimating(menuItem);
       // Click outside of the button
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
@@ -494,7 +496,7 @@
       el.dispatchEvent(createEvent("pointermove", el, { right: 10 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
       el.dispatchEvent(createEvent("pointerup", el, { right: 200 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem");
+      let menuItem = el.querySelector(MENU_ITEM_CLASS);
       await awaitSizeStopAnimating(menuItem);
       // Click outside of the button
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
@@ -524,7 +526,7 @@
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      let menuItem = el.querySelector(`${MENU_ITEM_CLASS}:nth-child(3)`);
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointermove", el, { left: 200 }));
       await awaitSizeStopAnimating(menuItem);
@@ -561,7 +563,7 @@
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      let menuItem = el.querySelector(`${MENU_ITEM_CLASS}:nth-child(3)`);
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointermove", el, { right: 200 }));
       await awaitSizeStopAnimating(menuItem);
@@ -621,7 +623,7 @@
       el.dispatchEvent(createEvent("pointerdown", el, { left: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
       el.dispatchEvent(createEvent("pointermove", el, { left: 50 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      let menuItem = el.querySelector(`${MENU_ITEM_CLASS}:nth-child(3)`);
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointermove", el, { right: 5 }));
       await awaitSizeStopAnimating(menuItem);
@@ -669,7 +671,7 @@
       el.dispatchEvent(createEvent("pointerdown", el, { right: 5 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
       el.dispatchEvent(createEvent("pointermove", el, { right: 50 }));
-      let menuItem = el.querySelector(".swipeHorizontalMenuItem:nth-child(3)");
+      let menuItem = el.querySelector(`${MENU_ITEM_CLASS}:nth-child(3)`);
       await awaitSizeStopAnimating(menuItem);
       el.dispatchEvent(createEvent("pointermove", el, { screenLeft: 5 }));
       await awaitSizeStopAnimating(menuItem);

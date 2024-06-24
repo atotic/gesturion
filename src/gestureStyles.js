@@ -12,7 +12,7 @@ appendStyleRule(`.${SelectNoneCSSClass}`, `{
  */
 
 export default function appendStyleRule(selector, declaration) {
-  let SHEET_ID = "able-gestures-style";
+  let SHEET_ID = "gesturion-styles";
   let styleElement = document.getElementById(SHEET_ID);
   if (!styleElement) {
     styleElement = document.createElement("style");

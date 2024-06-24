@@ -185,7 +185,7 @@ Timeout fire test</div>
     plant1.dispatchEvent(createEvent("pointermove", plant1, { left: -30}));
     plant1.dispatchEvent(createEvent("pointermove", document.body, { x: potLocation.x, y: potLocation.y}));
     await awaitTimeout(0);
-    if (!pot.classList.contains("dropTargetHighlight"))
+    if (!pot.classList.contains("gesturionDropTargetHighlight"))
       throw "Drop target (.pot) has not been highlighted";
     plant1.dispatchEvent(createEvent("pointerup", plant1, { left: 5}));
     if (plant1.parentElement != pot)

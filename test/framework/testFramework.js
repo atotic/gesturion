@@ -131,7 +131,7 @@ export class TestRunner {
   }
 
   #ui() {
-    const TEST_PANEL_ID = "AbleTestPanel";
+    const TEST_PANEL_ID = "GesturionTestPanel";
     let ui = document.querySelector(`#${TEST_PANEL_ID}`);
     if (!ui) {
       ui = document.createElement("div");

@@ -22,7 +22,7 @@
 import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
 
-let POSITION_RELATIVE_CLASS="swipePositionRelative";
+let POSITION_RELATIVE_CLASS="gesturionPositionRelative";
 
 export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
 
@@ -58,6 +58,16 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       this.direction = options.direction;
     }
   }
+  getMenuItemClass() {
+    if (this.menuBuilderOptions && this.menuBuilderOptions.itemClass)
+      return this.menuBuilderOptions.itemClass;
+    if (this.menuBuilder.itemClass) {
+      return this.menuBuilder.defaultItemClass;
+    }
+    console.warn("menuBuilder should specify menuItemClass");
+    return "gesturionSwipeHorizontalMenuItem";
+  }
+
   gestureOptionOverrides() {
     return {direction: this.direction};
   }
@@ -123,7 +133,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       duration: GestureEffect.ANIM_TIME,
       easing: 'ease-out'
     }
-    for (let item of this.menu.querySelectorAll(".swipeHorizontalMenuItem")) {
+    for (let item of this.menu.querySelectorAll(`.${this.getMenuItemClass()}`)) {
       if (defaultOn) {
         if (item == this.defaultButton)
           continue;

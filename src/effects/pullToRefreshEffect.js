@@ -6,7 +6,6 @@
  * 
  * Use SwipeVertical gesture.
  */
-import appendStyleRule from "../gestureStyles.js"
 import GestureEffect from "./gestureEffect.js";
 
 // Default spinner panel builder
