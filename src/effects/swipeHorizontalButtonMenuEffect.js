@@ -61,7 +61,7 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
   getMenuItemClass() {
     if (this.menuBuilderOptions && this.menuBuilderOptions.itemClass)
       return this.menuBuilderOptions.itemClass;
-    if (this.menuBuilder.itemClass) {
+    if (this.menuBuilder.defaultItemClass) {
       return this.menuBuilder.defaultItemClass;
     }
     console.warn("menuBuilder should specify menuItemClass");
