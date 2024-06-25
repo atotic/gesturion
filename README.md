@@ -5,6 +5,7 @@ gesture recognition library
 1. GestureManager.getIdle gestures on an element
 2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages - initially on github, also put them on codepen?
+4. How to package the library? Minified single file would be good?
 
 Demo framework
   index page 
@@ -219,6 +220,7 @@ dmose: contact https:///javascriptweekly.com/ or tldr.tech newsletterxxz
 
 ## DONE
 ```
+Jun-25 Initial cut of list demo complete
 Jun-24 View Transitions no longer work. Seems to be related to module loading. Building up a test case at ~/vtBug
 Jun-22 Added timeout activate to drag. Discovered svh units that fix scrolling issue
 Jun-21 Pull-to-refresh, button menus work
