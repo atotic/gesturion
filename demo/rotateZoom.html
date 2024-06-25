@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./demo.css">
+<title>Rotate/zoom demo</title>
+<body>
+<header ><a href="./index.html">&lt; Demos</a></header>
+<h1>Rotate/zoom demo</h1>
+<script type="module">
+	document.documentElement.dataset.transition = "push";
+	  // ViewTransitions: this document is pushed on top
+	import GestureManager from "../src/gestureManager.js";
+  import GestureEffect from "../src/effects/gestureEffect.js"
+	import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
+  import SwipeHorizontalButtonMenuEffect from "../src/effects/swipeHorizontalButtonMenuEffect.js";
+  import createButtonMenu from "../src/effects/buttonMenu.js";
+
+  import SwipeVertical from "../src/gestures/swipeVertical.js";
+  import PullToRefreshEffect from "../src/effects/pullToRefreshEffect.js";
+
+  import DragGesture from "../src/gestures/drag.js";
+  import DragEffect from "../src/effects/dragEffect.js";
+  import DropEffect from "../src/effects/dropEffect.js";
+
+</script>

@@ -70,6 +70,9 @@
 	</div>
 </template>
 <script type="module">
+  // ViewTransitions: this document is pushed on top
+	document.documentElement.dataset.transition = "push";
+
   import GestureManager from "../src/gestureManager.js";
   import GestureEffect from "../src/effects/gestureEffect.js"
 	import SwipeHorizontal from "../src/gestures/swipeHorizontal.js";
@@ -82,9 +85,6 @@
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
   import DropEffect from "../src/effects/dropEffect.js";
-
-  // ViewTransitions: this document is pushed on top
-	document.documentElement.dataset.transition = "push";
 
 	// Helper 
 	async function awaitTimeout(timeout=200) {
@@ -136,7 +136,6 @@
 		el.querySelector(".listItemCopy").textContent = data[1];
 
     let nullClickHandler = _ => { };
-
 		/*
 		Left swipe gesture
 		Swipe gesture is defined by three objects:
@@ -230,7 +229,6 @@
 			} 
 		}
 	}
-
 	initListItems();
 </script>
 </body>
