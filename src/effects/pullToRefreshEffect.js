@@ -50,6 +50,10 @@ export default class PullToRefreshEffect extends GestureEffect {
     }
   }
 
+  name() {
+    return "PullToRefresh";
+  }
+
   gestureOptionOverrides() { 
     return {direction:'utd', waitForScrollBoundary: true };
   }

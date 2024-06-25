@@ -24,6 +24,10 @@ export default class GestureEffect {
   clear(animate) {
     console.warn("clear not handled");
   }
+
+  name() {
+    return "GestureEffect";
+  }
   // Any elements created by this gesture. Only used by EffectCleaner to 
   // exclude elements from cleanup
   element() {

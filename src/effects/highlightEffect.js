@@ -19,6 +19,8 @@ export default class HighlightEffect extends GestureEffect {
 
 	clear(animate) {}
 
+	name() { return "Highlight"; }
+	
 	idleStart(gesture) {}
 	waitStart() {}
 	activeStart(gesture) {

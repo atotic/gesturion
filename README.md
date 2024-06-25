@@ -1,10 +1,8 @@
 # gesturion
 gesture recognition library
 ## TODO
-web-components: allow custom elements to create light-dom elements
-  can web-components style light dom: yes, using ::slotted selector
-  https://javascript.info/shadow-dom-style
 
+1. GestureManager.getIdle gestures on an element
 2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages - initially on github, also put them on codepen?
 
@@ -217,8 +215,11 @@ https://m3.material.io/foundations/interaction/gestures
 
 Multiple gestures are not so [easy in Swift either](https://steipete.com/posts/supporting-both-tap-and-longpress-on-button-in-swiftui/)
 
+dmose: contact https:///javascriptweekly.com/ or tldr.tech newsletterxxz
+
 ## DONE
 ```
+Jun-24 View Transitions no longer work. Seems to be related to module loading. Building up a test case at ~/vtBug
 Jun-22 Added timeout activate to drag. Discovered svh units that fix scrolling issue
 Jun-21 Pull-to-refresh, button menus work
 Jun-20 Starting demo pages, view transitions work

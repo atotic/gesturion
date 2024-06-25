@@ -6,9 +6,13 @@
  * 
  * Options:
  * 
- * Check out the simple routine 
  * dropOptions
- *   isTarget
+ *   isTarget - callback, returns true if element is a target. 
+ *              Default: see defaultIsTarget function.
+ *   highlight - callback. should turn drop target highlight on and off
+ * 							Default: see defaultHighlight function
+ *   drop - callback, drop action. Should perform the drop with given source
+ * 							Default: see defaultDrop function.
  */
 
 import GestureEffect from "./gestureEffect.js";
@@ -84,6 +88,10 @@ export default class DropEffect extends GestureEffect {
 					this.dropOptions.dropMethod = options.dropMethod;
 			}
 		}
+	}
+
+	name() {
+		return "Drop";
 	}
 
 	#findDropTarget(gesture, ev, extras) {

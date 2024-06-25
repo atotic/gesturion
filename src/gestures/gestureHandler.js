@@ -76,6 +76,15 @@ export default class GestureHandler {
   /** @returns string */
   name() { return "GestureHandler"; }
 
+  fullName() {
+    let full = this.name();
+    if (this.effect) {
+      if (this.effect.name)
+        full += ":" + this.effect.name();
+      else
+        full += ":UnnamedEffect";
+    }
+  }
   /**
    * @return {Element} - element created by gestureEffect
    */

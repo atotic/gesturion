@@ -58,6 +58,10 @@ export default class SwipeHorizontalButtonMenuEffect extends GestureEffect {
       this.direction = options.direction;
     }
   }
+
+  name() {
+    return `SwipeHorizontalButtonMenu(${this.direction})`;
+  }
   getMenuItemClass() {
     if (this.menuBuilderOptions && this.menuBuilderOptions.itemClass)
       return this.menuBuilderOptions.itemClass;

@@ -16,6 +16,10 @@ export default class ZoomEffect extends GestureEffect {
 		super(options);
 	}
 
+	name() {
+		return "Zoom";
+	}
+
 	parseTransform() {
     let parse = this.zoomTarget.style.transform.match(/(.*)scale\(([^\)]+)\)(.*)/);
     if (parse) {

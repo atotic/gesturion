@@ -15,6 +15,10 @@ export default class RotateEffect extends GestureEffect {
 		super(options);
 	}
 
+	name() {
+		return "Rotate";
+	}
+
 	#parseTransform() {
     let parse = this.rotateTarget.style.transform.match(/(.*)rotate\(([^\)]+)\)(.*)/);
     if (parse) {

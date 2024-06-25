@@ -84,7 +84,8 @@
 
   import DragGesture from "../src/gestures/drag.js";
   import DragEffect from "../src/effects/dragEffect.js";
-  import DropEffect from "../src/effects/dropEffect.js";
+  // import DropEffect from "../src/effects/dropEffect.js";
+  import MoveListItemEffect from "../src/effects/moveListItemEffect.js";
 
 	// Helper 
 	async function awaitTimeout(timeout=200) {
@@ -209,13 +210,16 @@
     GestureManager.addGesture(gesture);
 
     // Drag gesture
-    let dropEffect = new DropEffect();
-    effect = new DragEffect({dragStyle: "dragStyle"});
+    let dropEffect = new MoveListItemEffect({
+    	listContainer: listContainer,
+    	listElementSelector: ".listItemContainer"
+    });
+    effect = new DragEffect({dragStyle: "dragStyle", dropEffect: dropEffect});
     gesture = new DragGesture(el, {
     	effect: effect, 
     	direction: 'vertical', 
     	threshold: 20, 
-    	timeoutThreshold: 500});
+    	timeoutThreshold: 300});
     GestureManager.addGesture(gesture);
 		return el;
   }

@@ -35,6 +35,12 @@ export default class DragEffect extends GestureEffect {
 		}
 	}
 
+	name() {
+		let dropName = ":UnnnamedDropEffect";
+		if (this.dropEffect && this.dropEffect.name)
+			dropName = ":" + this.dropEffect.name();
+		return "Drag" + (this.dropEffect ? dropName : "");
+	}
 	#parseTransform() {
     let parse = this.dragTarget.style.transform.match(/(.*)translate\(([^\)]+)\)(.*)/);
     if (parse) {
