@@ -22,7 +22,7 @@ var TESTS = [
 ];
 
 // const TESTHOST='127.0.0.1:8082';
-const TESTHOST='192.168.1.7:8082';
+const TESTHOST='localhost:8082';
 const assert = require("assert");
 
 var failedTests = [];

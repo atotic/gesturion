@@ -5,8 +5,9 @@ gesture recognition library
 1. GestureManager.getIdle gestures on an element
 2. Make sure single pointer gestures are only handling single pointer
 3. Demo pages - initially on github, also put them on codepen?
-4. How to package the library? Minified single file would be good?
+https://blog.codepen.io/documentation/embedded-pens/
 
+4. How to package the library? Minified single file would be good?
 Demo framework
   index page 
   view transitions would be cool
@@ -55,7 +56,8 @@ https://www.redblobgames.com/blog/2024-04-17-draggable-examples/
   - Something like this, but for the web: https://developer.android.com/guide/topics/ui/accessibility/principles#accessibility-actions
   - a11y front end developer, maybe talk to her
     https://www.ellyloel.com/blog/front-end-development-s-identity-crisis/
-
+https://alice.pages.igalia.com/blog/how-shadow-dom-and-accessibility-are-in-conflict/
+https://www.smashingmagazine.com/2021/03/complete-guide-accessible-front-end-components/#accessible-comics
 - library is a module
 - tests
 - bundlers should strip out unused gestures (rollup, webpack)
